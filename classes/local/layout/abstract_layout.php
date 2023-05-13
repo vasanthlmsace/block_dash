@@ -165,23 +165,25 @@ abstract class abstract_layout implements layout_interface, \templatable {
 
                 self::$currentgroupid++;
             } else {
-                foreach ($this->get_data_source()->get_sorted_fields() as $availablefield) {
-                    if ($availablefield->has_attribute(identifier_attribute::class)) {
-                        continue;
+                if ($this->get_data_source()->get_sorted_fields()) {
+                    foreach ($this->get_data_source()->get_sorted_fields() as $availablefield) {
+                        if ($availablefield->has_attribute(identifier_attribute::class)) {
+                            continue;
+                        }
+
+                        if ($availablefield->has_attribute(context_attribute::class)) {
+                            continue;
+                        }
+
+                        $fieldname = 'config_preferences[available_fields][' . $availablefield->get_alias() .
+                        '][visible]';
+
+                        $group[] = $mform->createElement('hidden', $fieldname, 0);
+                        $mform->setType($fieldname, PARAM_BOOL);
                     }
-
-                    if ($availablefield->has_attribute(context_attribute::class)) {
-                        continue;
-                    }
-
-                    $fieldname = 'config_preferences[available_fields][' . $availablefield->get_alias() .
-                    '][visible]';
-
-                    $group[] = $mform->createElement('hidden', $fieldname, 0);
-                    $mform->setType($fieldname, PARAM_BOOL);
+                    $mform->addGroup($group, 'available_fields', '',
+                        [''], false);
                 }
-                $mform->addGroup($group, 'available_fields', '',
-                    [''], false);
             }
         }
 
