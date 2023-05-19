@@ -301,7 +301,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
      */
     protected function map_data($mapping, data_collection_interface $datacollection) {
         foreach ($mapping as $newname => $fieldname) {
-            if ($fieldname && !is_array($fieldname)) {
+            if ($fieldname && !is_array($fieldname) && isset($datacollection[$fieldname])) {
                 $datacollection->add_data(new field($newname, $datacollection[$fieldname], true));
             } else if ($fieldname && is_array($fieldname)) {
                 $value = array_map(function($field) use ($datacollection) {
