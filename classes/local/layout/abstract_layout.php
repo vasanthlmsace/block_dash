@@ -278,7 +278,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
             }
         }
 
-        $formhtml = $this->get_data_source()->get_filter_collection()->create_form_elements();
+        $layout = isset($config->preferences['layout']) ? $config->preferences['layout'] : '';
+        $formhtml = $this->get_data_source()->get_filter_collection()->create_form_elements('', $layout);
 
         if (!is_null($templatedata['data'])) {
             $templatedata = array_merge($templatedata, [

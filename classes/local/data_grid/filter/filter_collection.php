@@ -49,6 +49,13 @@ class filter_collection implements filter_collection_interface {
     private $context;
 
     /**
+     * Set the current page layout for filters.
+     *
+     * @var string $layout
+     */
+    public $layout;
+
+    /**
      * Filter collection constructor.
      *
      * @param string $uniqueidentifier
@@ -280,12 +287,14 @@ class filter_collection implements filter_collection_interface {
      * @throws \Exception
      * @return string|null
      */
-    public function create_form_elements($elementnameprefix = '') {
+    public function create_form_elements($elementnameprefix = '', $layout='') {
         if (!$this->has_filters()) {
             return null;
         }
 
         $html = '';
+        // Set the current block instnace layout if available.
+        $this->layout = $layout;
 
         foreach ($this->get_filters() as $filter) {
             $html .= $filter->create_form_element($this, $elementnameprefix);
