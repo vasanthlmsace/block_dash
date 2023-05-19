@@ -472,12 +472,12 @@ $string['details_area_locations'] = 'Details area locations';
 $string['details_area_locations_help'] = 'Enter the details for each location you want to display in the details area.';
 $string['details_bg_color'] = 'Details Background color';
 $string['details_text_color'] = 'Details Text color';
-$string['masonarycustomfield'] = "Dash Masonary features";
+$string['masonarycustomfield'] = "Dash settings";
 $string['strgridsize'] = "Grid size";
 $string['gridsizeoptions'] = "Wide\nTall\nSquare";
 $string['strpromotion'] = "Promotion";
 $string['promotionoptions'] = "Featured\nNormal\nDimmed";
-$string['strcssclass'] = "Cssclass";
+$string['strcssclass'] = "CSS classes";
 
 $string['strmasonrysearch'] = "Search box";
 $string['strmasonrysort'] = "Sorting";
@@ -495,3 +495,8 @@ $string['details_body_2'] = "Details Body 2";
 $string['details_body_3'] = "Details Body 3";
 $string['details_footer_left'] = "Details Footer left";
 $string['details_footer_right'] = "Details Footer right";
+$string['strdisabled'] = "Disabled";
+$string['strexpanding'] = "Expanding";
+$string['strfloating'] = "Floating";
+$string['strmodal'] = "Modal";
+
