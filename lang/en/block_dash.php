@@ -419,7 +419,7 @@ $string['enrollmentoptions'] = 'Enrolment methods';
 
 
 $string['strslider'] = "Slider";
-$string['strmasonry'] = "Masonary";
+$string['strmasonry'] = "Masonry";
 $string['layoutmode'] = "Layout mode";
 $string['layoutmode_help'] = "Select which mode appers on the widget";
 $string['autoplay'] = 'Autoplay';
@@ -472,7 +472,7 @@ $string['details_area_locations'] = 'Details area locations';
 $string['details_area_locations_help'] = 'Enter the details for each location you want to display in the details area.';
 $string['details_bg_color'] = 'Details Background color';
 $string['details_text_color'] = 'Details Text color';
-$string['masonarycustomfield'] = "Dash settings";
+$string['masonrycustomfield'] = "Dash settings";
 $string['strgridsize'] = "Grid size";
 $string['gridsizeoptions'] = "Wide\nTall\nSquare";
 $string['strpromotion'] = "Promotion";
