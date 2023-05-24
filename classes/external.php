@@ -214,12 +214,9 @@ class external extends external_api {
         if (!isset($config->preferences)) {
             $config->preferences = [];
         }
-
         $configpreferences = isset($data['config_preferences']) ? $data['config_preferences'] : [];
         $config->preferences = self::recursive_config_merge($config->preferences, $configpreferences, '');
-
         $block->instance_config_save($config);
-
         return [
             'validationerrors' => false
         ];
@@ -230,10 +227,10 @@ class external extends external_api {
      *
      * @param string $existingconfig
      * @param array|object $newconfig
-     * @param string $arraykey
+     * @param bool $recursive
      * @return mixed
      */
-    private static function recursive_config_merge($existingconfig, $newconfig, $arraykey = '') {
+    private static function recursive_config_merge($existingconfig, $newconfig, $recursive = false) {
         // If existing config is a scalar value than always overwrite. No point in looping new config.
         // This allows preferences that were a scalar to be assigned as arrays by new preferences.
         if (is_scalar($existingconfig)) {
@@ -242,7 +239,11 @@ class external extends external_api {
 
         // If array contains only scalars, overwrite with new config. No more looping required for this level.
         if (is_array($existingconfig) && !self::is_array_multidimensional($existingconfig)) {
-            return $newconfig;
+            if (!$recursive) {
+                return array_merge($existingconfig, $newconfig);
+            } else {
+                return $newconfig;
+            }
         }
 
         // Recursively overwrite values.
@@ -250,13 +251,11 @@ class external extends external_api {
             if (is_scalar($value)) {
                 $existingconfig[$key] = $value;
             } else if (is_array($value)) {
-                $v = self::recursive_config_merge(isset($existingconfig[$key]) ? $existingconfig[$key]
-                    : [], $newconfig[$key], $key);
+                $v = self::recursive_config_merge($existingconfig[$key], $newconfig[$key], true);
                 unset($existingconfig[$key]);
                 $existingconfig[$key] = $v;
             }
         }
-
         return $existingconfig;
     }
 
