@@ -284,6 +284,7 @@ class filter_collection implements filter_collection_interface {
      * Create form for filters.
      *
      * @param string $elementnameprefix
+     * @param string $layout
      * @throws \Exception
      * @return string|null
      */

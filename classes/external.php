@@ -214,9 +214,12 @@ class external extends external_api {
         if (!isset($config->preferences)) {
             $config->preferences = [];
         }
+
         $configpreferences = isset($data['config_preferences']) ? $data['config_preferences'] : [];
         $config->preferences = self::recursive_config_merge($config->preferences, $configpreferences, '');
+
         $block->instance_config_save($config);
+
         return [
             'validationerrors' => false
         ];
@@ -251,11 +254,13 @@ class external extends external_api {
             if (is_scalar($value)) {
                 $existingconfig[$key] = $value;
             } else if (is_array($value)) {
-                $v = self::recursive_config_merge($existingconfig[$key], $newconfig[$key], true);
+                $v = self::recursive_config_merge(isset($existingconfig[$key]) ? $existingconfig[$key]
+                    : [], $newconfig[$key], true);
                 unset($existingconfig[$key]);
                 $existingconfig[$key] = $v;
             }
         }
+
         return $existingconfig;
     }
 

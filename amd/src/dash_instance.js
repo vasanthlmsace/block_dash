@@ -49,7 +49,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             // Adding support for tab filters.
             this.getRoot().on('click', 'button.tab-filter', function(e) {
                 e.preventDefault();
-                var elem = $(e.currentTarget)
+                var elem = $(e.currentTarget);
 
                 var value = $(e.currentTarget).attr('data-value');
                 var select = $(e.currentTarget).parents('.sort-group').find('select');
@@ -63,7 +63,6 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                         if (index > -1) {
                             prevVal.splice(index, 1);
                             value = prevVal;
-                            console.log(value);
                         }
                     }
                 } else {
@@ -79,7 +78,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 // Filter results, go back to first page.
                 this.currentPage = 0;
                 this.refresh();
-            }.bind(this))
+            }.bind(this));
 
             this.getBlockContentArea().on('click', '.page-link', function(e) {
                 e.preventDefault();
