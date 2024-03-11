@@ -27,73 +27,98 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = [
     'block/dash:addinstance' => [
         'riskbitmask' => RISK_SPAM | RISK_XSS,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => [
-            'editingteacher' => CAP_PREVENT,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
         ],
     ],
     'block/dash:myaddinstance' => [
-        'riskbitmask'  => RISK_PERSONAL,
-        'captype'      => 'read',
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes'   => [
+        'archetypes' => [
             'manager' => CAP_ALLOW,
-            'user'    => CAP_PREVENT,
-        ]
+            'editingteacher' => CAP_ALLOW,
+            'user' => CAP_PREVENT,
+        ],
     ],
     // View members.
     'block/dash:mygroups_view' => [
-        'riskbitmask'  => RISK_PERSONAL,
-        'captype'      => 'read',
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes'   => [
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'user'    => CAP_ALLOW,
-        ]
+            'user' => CAP_ALLOW,
+        ],
     ],
     // View members.
     'block/dash:mygroups_viewmembers' => [
-        'riskbitmask'  => RISK_PERSONAL,
-        'captype'      => 'read',
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes'   => [
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'user'    => CAP_ALLOW,
-        ]
+            'user' => CAP_ALLOW,
+        ],
     ],
     'block/dash:mygroups_addusers' => [
-        'riskbitmask'  => RISK_PERSONAL,
-        'captype'      => 'read',
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes'   => [
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'user'    => CAP_PREVENT,
-        ]
+            'user' => CAP_PREVENT,
+        ],
     ],
     'block/dash:mygroups_leavegroup' => [
-        'riskbitmask'  => RISK_PERSONAL,
-        'captype'      => 'read',
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes'   => [
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'user'    => CAP_ALLOW,
-        ]
+            'user' => CAP_ALLOW,
+        ],
     ],
     'block/dash:mygroups_creategroup' => [
-        'riskbitmask'  => RISK_PERSONAL,
-        'captype'      => 'read',
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes'   => [
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'user'    => CAP_PREVENT,
-        ]
+            'user' => CAP_PREVENT,
+        ],
+    ],
+
+    'block/dash:managewidget' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'user' => CAP_PREVENT,
+        ],
+    ],
+
+    'block/dash:managedatasource' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'user' => CAP_PREVENT,
+        ],
     ],
 ];

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Container for structuring data, usually from a database.
+ * Container for structuring data, usually from a database. Supports PHP 8.1 and above.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
@@ -25,12 +25,13 @@
 namespace block_dash\local\data_grid\data;
 
 use context;
+
 /**
  * Container for structuring data, usually from a database.
  *
  * @package block_dash
  */
-class data_collection implements data_collection_interface, \ArrayAccess {
+class data_collection_new implements data_collection_interface, \ArrayAccess {
 
     /**
      * @var field_interface[]
@@ -215,7 +216,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset) {
+    public function offsetGet(mixed $offset): mixed {
         if ($offset == 'data') {
             return $this->get_data();
         }
@@ -239,7 +240,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value) {
+    public function offsetSet(mixed $offset, mixed $value): void {
         throw new \coding_exception('Setting data not supported with array access.');
     }
 
@@ -252,7 +253,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset) {
+    public function offsetUnset(mixed $offset): void {
         throw new \coding_exception('Unsetting data not supported with array access.');
     }
 }

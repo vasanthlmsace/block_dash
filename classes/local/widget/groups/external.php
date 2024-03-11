@@ -24,9 +24,10 @@
 
 namespace block_dash\local\widget\groups;
 
-use external_api;
-
 defined('MOODLE_INTERNAL') || die('No direct access');
+
+require_once($CFG->libdir . '/externallib.php');
+use external_api;
 
 require_once($CFG->dirroot . '/user/selector/lib.php');
 require_once($CFG->dirroot . '/group/lib.php');
@@ -89,9 +90,9 @@ class external extends external_api {
         $group = groups_get_group($groupid);
         $courseid = $group->courseid;
         if ($group) {
-            $potentialmembersselector = new \group_non_members_selector('addselect', array(
-                'groupid' => $groupid, 'courseid' => $courseid
-            ));
+            $potentialmembersselector = new \group_non_members_selector('addselect', [
+                'groupid' => $groupid, 'courseid' => $courseid,
+            ]);
             $users = $potentialmembersselector->find_users($query);
             $list = [];
             foreach ($users as $role => $user) {
@@ -114,9 +115,9 @@ class external extends external_api {
     public static function add_members_parameters() {
 
         return new \external_function_parameters(
-            array(
+            [
                 'formdata' => new \external_value(PARAM_RAW, 'The data from the user notes'),
-            )
+            ]
         );
     }
     /**
@@ -183,7 +184,7 @@ class external extends external_api {
         global $USER;
 
         ['groupid' => $groupid] = self::validate_parameters(self::leave_group_parameters(), [
-            'groupid' => $groupid
+            'groupid' => $groupid,
         ]);
 
         if ($groupid && isloggedin()) {

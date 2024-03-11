@@ -2,7 +2,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
     'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2', 'core/fragment', 'core/templates'],
     function($, UI, Log, Ajax, Notification, ModalEvents, PreferencesModal, DatePicker, Select2, Fragment, Templates) {
 
-        var DashInstance = function(root, blockInstanceId, blockContextid, editing, istotara, pagelayout) {
+        var DashInstance = function(root, blockInstanceId, blockContextid, editing, istotara, pagelayout, pagecontext) {
             this.root = $(root);
             this.blockInstanceId = blockInstanceId;
             this.blockContextid = blockContextid;
@@ -13,6 +13,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             this.sortDirections = {};
             this.isTotara = istotara;
             this.pageLayout = pagelayout;
+            this.pageContext = pagecontext;
             this.init();
         };
 
@@ -20,7 +21,53 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
         DashInstance.prototype.FILTER_FORM_SELECTOR = '.filter-form';
 
         DashInstance.prototype.init = function() {
+
             Log.debug('Initializing dash instance', this);
+
+            // Select datasource for configuration.
+            if (this.getRoot().find('.dash-configuration-form').length > 0) {
+
+                this.getRoot().find('.dash-configuration-form').removeClass('hide');
+                this.getRoot()
+                    .find('[data-target="subsource-config"] [type=radio], [name="config_data_source_idnumber"]')
+                    .addClass('norefresh');
+
+                // Hide the preference link for others.
+                this.getRoot().find('.dash-edit-preferences').hide();
+
+                // Select the parent datasource for the sub config.
+                this.getRoot().on('change', '[data-target="subsource-config"] [type=radio]', function(e) {
+                    var subConfig;
+                    if (e.target.closest('[data-target="subsource-config"]')) {
+                        subConfig = e.target.closest('[data-target="subsource-config"]');
+                        if (subConfig.parentNode !== null) {
+                            var dataSource = subConfig.parentNode.querySelector('[name="config_data_source_idnumber"]');
+                            dataSource.click(); // = true;
+                        }
+                    }
+                }.bind(this));
+
+                this.getRoot().find('.dash-configuration-form [name="config_data_source_idnumber"]').on('change', function() {
+
+                    var dataSource = this.getRoot().find('.dash-configuration-form');
+                    var formData = $(dataSource).find('form').serialize();
+
+                    // Now we can continue...
+                    Ajax.call([{
+                        methodname: 'block_dash_submit_preferences_form',
+                        args: {
+                            contextid: this.blockContextid,
+                            jsonformdata: JSON.stringify(formData)
+                        },
+                        done: function() {
+                            // Hide the preference link for others.
+                            this.getRoot().find('.dash-edit-preferences').show();
+                            this.refresh();
+                        }.bind(this),
+                    }])[0].fail(Notification.exception);
+                }.bind(this));
+
+            }
 
             this.initDatePickers();
             this.initSelect2();
@@ -33,7 +80,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                         this.refresh();
                     }.bind(this));
             }
-            this.getRoot().on('change', 'select:not(.norefresh), input:not(.select2-search__field)',
+            this.getRoot().on('change', 'select:not(.norefresh), input:not(.select2-search__field, .norefresh)',
                 function(e) {
                 e.preventDefault();
 
@@ -69,6 +116,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     target: '_self',
                 });
 
+                // Add input fields with your data
                 form.append($('<input>', { type: 'hidden', name: 'download', value: args.download }));
                 form.append($('<input>', { type: 'hidden', name: 'block_instance_id', value: args.block_instance_id }));
                 form.append($('<input>', { type: 'hidden', name: 'filter_form_data', value: args.filter_form_data }));
@@ -117,7 +165,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
 
             this.getBlockContentArea().on('click', '.page-link', function(e) {
                 e.preventDefault();
-				this.currentPage = $(e.target).data('page');
+                this.currentPage = $(e.target).data('page');
                 this.refresh();
             }.bind(this));
 
@@ -184,6 +232,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     "sort_field": this.sortField,
                     "sort_direction": sortDirection,
                     "pagelayout" : this.pageLayout,
+                    "pagecontext" : this.pageContext,
                 }
             };
             return Ajax.call([request])[0];

@@ -23,26 +23,29 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+      mssql:
+        image: mcr.microsoft.com/mssql/server
+        env:
+          SA_PASSWORD: "Test123#"
+          ACCEPT_EULA: "Y"
+          MSSQL_PID: "Express"
+        ports:
+          - 1433:1433
+        options: --health-cmd "sqlcmd -S DESKTOP-24SAGEE\SQLEXPRESS -U SA -P 'Test123#' -Q 'SELECT 1'" --health-interval 10s --health-timeout 5s --health-retries 5
 
     strategy:
       fail-fast: false
       matrix:
         include:
           - php: '8.0'
-            moodle-branch: 'MOODLE_400_STABLE'
+            moodle-branch: 'MOODLE_403_STABLE'
+            database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_403_STABLE'
             database: 'pgsql'
-          # - php: '7.4'
-          #   moodle-branch: 'MOODLE_311_STABLE'
-          #   database: 'mariadb'
-          # - php: '7.4'
-          #   moodle-branch: 'MOODLE_311_STABLE'
-          #   database: 'pgsql'
-          # - php: '7.4'
-          #   moodle-branch: 'MOODLE_310_STABLE'
-          #   database: 'pgsql'
-          # - php: '7.3'
-          #   moodle-branch: 'MOODLE_39_STABLE'
-          #   database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_403_STABLE'
+            database: 'mssql'
 
     steps:
       - name: Check out repository code
@@ -105,14 +108,14 @@ jobs:
       #   if: ${{ always() }}
       #   run: moodle-plugin-ci mustache
 
-      - name: Grunt
-        if: ${{ always() }}
-        run: moodle-plugin-ci grunt
+      # - name: Grunt
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci grunt
 
       # - name: PHPUnit tests
       #   if: ${{ always() }}
       #   run: moodle-plugin-ci phpunit
 
-      # - name: Behat features
-      #   if: ${{ always() }}
-      #   run: moodle-plugin-ci behat --profile chrome
+      - name: Behat features
+        if: ${{ always() }}
+        run: moodle-plugin-ci behat --profile chrome
