@@ -23,15 +23,6 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
-      mssql:
-        image: mcr.microsoft.com/mssql/server
-        env:
-          SA_PASSWORD: "Test123#"
-          ACCEPT_EULA: "Y"
-          MSSQL_PID: "Express"
-        ports:
-          - 1433:1433
-        options: --health-cmd "sqlcmd -S DESKTOP-24SAGEE\SQLEXPRESS -U SA -P 'Test123#' -Q 'SELECT 1'" --health-interval 10s --health-timeout 5s --health-retries 5
 
     strategy:
       fail-fast: false
@@ -44,8 +35,11 @@ jobs:
             moodle-branch: 'MOODLE_403_STABLE'
             database: 'pgsql'
           - php: '8.0'
-            moodle-branch: 'MOODLE_403_STABLE'
-            database: 'mssql'
+            moodle-branch: 'MOODLE_400_STABLE'
+            database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_400_STABLE'
+            database: 'pgsql'
 
     steps:
       - name: Check out repository code
