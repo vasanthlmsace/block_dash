@@ -116,10 +116,8 @@ class block_builder {
      * @throws \moodle_exception
      */
     public function get_block_content() {
-        // @codingStandardsIgnoreStart
-        global $OUTPUT, $CFG, $PAGE;
-        // Ignore the phplint due to block class not allowed to include the PAGE global variable.
-        // @codingStandardsIgnoreEnd
+
+        global $OUTPUT, $CFG;
 
         /** @var renderer $renderer */
         $renderer = $this->blockinstance->page->get_renderer('block_dash');

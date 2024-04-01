@@ -769,3 +769,23 @@ $string['restrictcurrentsection_desc'] = "If a dash block with the content addon
 $string['learningpathstart'] = 'Start';
 $string['learningpathfinish'] = 'Finish';
 $string['nocourselearnigpath'] = "No courses have been added to the learning path yet.";
+
+// ... enrol program string.
+$string['programimagelink'] = 'Program image linked';
+$string['smart_coursebutton'] = 'Smart course button';
+$string['fullnamelinked'] = 'Fullname linked';
+$string['contextlinked'] = 'Context linked';
+$string['description'] = 'Description';
+$string['programs:view'] = 'View programs';
+$string['selfallocationwithkey'] = 'Sigup (Key required)';
+$string['viewprogram'] = 'View program';
+
+$string['createdate'] = 'Created date';
+$string['modifiedate'] = 'Last modified date';
+$string['duedate'] = 'Due date';
+$string['categoryurl'] = 'Category URL';
+$string['modulename'] = 'Module Name';
+$string['programbg'] = "Enrol Program image";
+$string['programbg_desc'] = "";
+
+

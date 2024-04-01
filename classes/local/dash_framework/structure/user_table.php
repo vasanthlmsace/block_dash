@@ -136,7 +136,7 @@ class user_table extends table {
                     'field' => 'name',
                     'delimiter' => ',', // Separator between each ID in SQL select.
                 ]),
-            ]),
+            ], [], field_interface::VISIBILITY_VISIBLE, ''),
         ];
 
         require_once("$CFG->dirroot/user/profile/lib.php");
@@ -146,7 +146,8 @@ class user_table extends table {
             $fields[] = new field('pf_' . strtolower($customfield->shortname),
                 new lang_string('customfield', 'block_dash', ['name' => format_string($customfield->name)]),
                 $this, "(SELECT profile$i.data FROM {user_info_data} profile$i
-                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)"
+                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
+                [], [],field_interface::VISIBILITY_VISIBLE , '',
             );
 
             $i++;
