@@ -79,7 +79,7 @@ class block_builder {
             $format = course_get_format($this->blockinstance->page->course->id);
             $course = $format->get_course();
             if (isset($this->blockinstance->config->data_source_idnumber) && $this->blockinstance->page->user_is_editing() &&
-            $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype') {
+                $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype') {
                 return true;
             }
         }

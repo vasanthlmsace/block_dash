@@ -41,7 +41,7 @@ Feature: Dash program to show the list of course categories data
     And I navigate to "Appearance > Default Dashboard page" in site administration
     And I turn dash block editing mode on
     And I add the "Dash" block
-    And I click on "#id_config_data_source_idnumber_block_dashlocaldata_sourcecategories_data_source" "css_element"
+    And I click on "Course categories" "radio"
     And I configure the "New Dash" block
     And I set the following fields to these values:
       | Block title  | Course Categories    |
