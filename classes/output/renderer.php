@@ -134,6 +134,7 @@ class renderer extends \plugin_renderer_base {
      * @throws \coding_exception
      */
     public function render_data_source(abstract_data_source $datasource) {
+        // echo "<pre>"; print_r($datasource->export_for_template($this));exit;
         return $this->render_from_template($datasource->get_layout()->get_mustache_template_name(),
             $datasource->export_for_template($this));
     }

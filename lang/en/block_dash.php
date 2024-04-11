@@ -44,6 +44,9 @@ $string['badgecolorfield_help'] = 'Choose a field that returns colors to be used
 $string['blocktitle'] = 'Block title';
 $string['blocktitle_help'] = 'Title displayed in block heading. Enter a short and descriptive title for what this block displays to the user.';
 $string['blockwidth'] = 'Block width';
+$string['showheader'] = "Show header";
+$string['showheader_help'] = "Hide the block title if editing is turned off.";
+$string['hidden'] = "Hidden";
 $string['bodyfield'] = 'Body field';
 $string['bootstrapversion'] = 'Theme bootstrap version';
 $string['bootstrapversion_desc'] = 'Choose the version of Bootstrap your theme supports. Moodle is typically 4, and Totara is 3.';
@@ -780,12 +783,30 @@ $string['programs:view'] = 'View programs';
 $string['selfallocationwithkey'] = 'Sigup (Key required)';
 $string['viewprogram'] = 'View program';
 
-$string['createdate'] = 'Created date';
-$string['modifiedate'] = 'Last modified date';
+$string['createddate'] = 'Created date';
+$string['modifieddate'] = 'Last modified date';
 $string['duedate'] = 'Due date';
 $string['categoryurl'] = 'Category URL';
 $string['modulename'] = 'Module Name';
 $string['programbg'] = "Enrol Program image";
 $string['programbg_desc'] = "";
 
+// Course certificate datasource strings.
+$string['downloadcertificate'] = 'Download certificate';
+$string['certificatecodelinked'] = 'Code linked';
 
+// Category datasource.
+$string['categories'] = 'Categories';
+$string['categories_help'] = 'Categories datasource list the available categories.';
+$string['recentcoursename'] = 'Recent course';
+$string['categoryimagelink'] = 'Category link';
+$string['categoryimage'] = 'Category image';
+$string['categorycoursecount'] = 'Courses count';
+// ...Category image settings.
+$string['categoryimgheading'] = 'Category image';
+$string['categoryimgheadingsub'] = 'Categories images';
+$string['categoryimgdesc'] = 'Add images for the categories';
+$string['categoryimgcategory'] = 'Image for category {$a->category}';
+$string['categoryimgfallback'] = 'Category fallback image';
+$string['categoryimgfallbackdesc'] = 'Upload the image for the default fallback of categories. If new categories are created, the fallback image will be displayed until a new image is added for the category';
+$string['categoryimageurl'] = 'Category image url';
