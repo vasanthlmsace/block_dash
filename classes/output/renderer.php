@@ -104,7 +104,8 @@ class renderer extends \plugin_renderer_base {
                 // Don't allow the JavaScript helper to be executed from within another
                 // helper. If it's allowed it can be used by users to inject malicious
                 // JS into the page.
-                'blacklistednestedhelpers' => ['js']]);
+                'blacklistednestedhelpers' => ['js'],
+            ]);
 
         }
 
@@ -134,7 +135,6 @@ class renderer extends \plugin_renderer_base {
      * @throws \coding_exception
      */
     public function render_data_source(abstract_data_source $datasource) {
-        // echo "<pre>"; print_r($datasource->export_for_template($this));exit;
         return $this->render_from_template($datasource->get_layout()->get_mustache_template_name(),
             $datasource->export_for_template($this));
     }
