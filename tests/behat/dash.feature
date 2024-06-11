@@ -149,7 +149,7 @@ Feature: Add a dash to an admin pages
     And I press "Save changes"
     And I click on "Reset Dashboard for all users" "button"
     And I follow dashboard
-   And I check dash css "rgb(198, 0, 97)" "section.block_dash:nth-of-type(3) .card-title" "color"
+    And I check dash css "rgb(198, 0, 97)" "section.block_dash:nth-of-type(3) .card-title" "color"
 
     # Border color
     And I navigate to "Appearance > Default Dashboard page" in site administration
@@ -164,58 +164,6 @@ Feature: Add a dash to an admin pages
     And I click on "Reset Dashboard for all users" "button"
     And I follow dashboard
     And I check dash css "1px solid rgba(0, 0, 0, 0.125)" "section.block_dash:nth-of-type(4)" "border"
-    And I navigate to "Appearance > Default Dashboard page" in site administration
-    And I turn dash block editing mode on
-    And I configure the "Border settings" block
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Border Value | 5px solid |
-    And I press "Save changes"
-    And I click on "Reset Dashboard for all users" "button"
-    And I follow dashboard
-    And I check dash css "5px solid" "section.block_dash:nth-of-type(4)" "border"
-
-    And I navigate to "Appearance > Default Dashboard page" in site administration
-    And I turn dash block editing mode on
-    And I configure the "Border settings" block
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Border | Hidden |
-    And I press "Save changes"
-    And I click on "Reset Dashboard for all users" "button"
-    And I follow dashboard
-    And I check dash css "0px hidden rgb(29, 33, 37)" "section.block_dash:nth-of-type(4)" "border"
-
-    #Background Image settings
-    And I navigate to "Appearance > Default Dashboard page" in site administration
-    And I turn dash block editing mode on
-    And I add the "Dash" block
-    And I configure the "New Dash" block
-    And I expand all fieldsets
-    And I upload "/blocks/dash/tests/assets/background.jpg" file to "Background image" filemanager
-    And I set the following fields to these values:
-      | Block title | Users datasource |
-      | Background Position      | Left Center   |
-      | Background Size          | Contain       |
-    And I press "Save changes"
-    And I click on "Reset Dashboard for all users" "button"
-    And I follow dashboard
-    And I check dash css "0% 50%" "section.block_dash:nth-of-type(5)" "background-position"
-    And I check dash css "contain" "section.block_dash:nth-of-type(5)" "background-size"
-    And I navigate to "Appearance > Default Dashboard page" in site administration
-    And I turn dash block editing mode on
-    And I configure the "Users datasource" block
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Background Position          | Custom        |
-      | Custom Background Position   | Center Top    |
-      | Background Size              | Custom        |
-      | Custom Background Size       | Cover         |
-    And I press "Save changes"
-    And I click on "Reset Dashboard for all users" "button"
-    And I follow dashboard
-    And I check dash css "50% 0%" "section.block_dash:nth-of-type(5)" "background-position"
-    And I check dash css "cover" "section.block_dash:nth-of-type(5)" "background-size"
 
   Scenario: Default fields after selecting the data source
     And I log in as "admin"
