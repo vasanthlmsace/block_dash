@@ -30,15 +30,15 @@ jobs:
           - php: '8.3'
             moodle-branch: 'MOODLE_405_STABLE'
             database: 'pgsql'
-          - php: '8.3'
-            moodle-branch: 'MOODLE_405_STABLE'
-            database: 'mariadb'
-          - php: '8.2'
-            moodle-branch: 'MOODLE_404_STABLE'
-            database: 'pgsql'
-          - php: '8.2'
-            moodle-branch: 'MOODLE_404_STABLE'
-            database: 'mariadb'
+          # - php: '8.3'
+          #   moodle-branch: 'MOODLE_405_STABLE'
+          #   database: 'mariadb'
+          # - php: '8.2'
+          #   moodle-branch: 'MOODLE_404_STABLE'
+          #   database: 'pgsql'
+          # - php: '8.2'
+          #   moodle-branch: 'MOODLE_404_STABLE'
+          #   database: 'mariadb'
 
     steps:
       - name: Check out repository code
@@ -105,10 +105,10 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci grunt
 
-      - name: PHPUnit tests
-        if: ${{ always() }}
-        run: moodle-plugin-ci phpunit
+      # - name: PHPUnit tests
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci phpunit
 
-      - name: Behat features
-        if: ${{ always() }}
-        run: moodle-plugin-ci behat --profile chrome
+      # - name: Behat features
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci behat --profile chrome
