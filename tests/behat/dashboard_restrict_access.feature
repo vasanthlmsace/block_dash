@@ -122,9 +122,7 @@ Feature: Add a dash to an admin pages
     And I log in as "admin"
     And I navigate to "Users > Permissions > Define roles" in site administration
     And I click on "Add a new role" "button"
-    #And I wait until the page is ready
     And I click on "Continue" "button"
-    #And I wait until the page is ready
     #---Create new parent role---#
     And I set the following fields to these values:
       | Short name                              | Parent |
@@ -137,7 +135,6 @@ Feature: Add a dash to an admin pages
       | moodle/user:viewuseractivitiesreport    | 1      |
       | moodle/user:editprofile                 | 1      |
       | tool/policy:acceptbehalf                | 1      |
-      #| dashaddon/activity_completion:editgrade | 1      |
     And I click on "Create this role" "button"
     And I follow "Dashboard"
     #---Assign parent to child---#
@@ -215,33 +212,77 @@ Feature: Add a dash to an admin pages
     And ".block_dash" "css_element" should not exist
     And I log out
 
-  # Scenario: Dash block restrictions:restrict by course grade
-  #   When I am on the "Course 3" "course" page logged in as "admin"
-  #   And I turn dash block editing mode on
-  #   #---Course 3 page user block added---#
-  #   And I add the "Dash" block
-  #   And I click on "Users" "radio"
-  #   And I configure the "New Dash" block
-  #   #---Enable course grade restriction---#
-  #   And I set the following fields to these values:
-  #     | Block title              | Users |
-  #     | Restrict by course grade | 20    |
-  #   And I press "Save changes"
-  #   And I log out
-  #   #---Student3 login---#
-  #   And I am on the "Course 3" "course" page logged in as "student3"
-  #   #---Short answer attempt---#
-  #   And I click on "SA" "link"
-  #   And I press "Attempt quiz"
-  #   And I set the field "Answer" to "toad"
-  #   And I press "Finish attempt"
-  #   And I press "Submit all and finish"
-  #   And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
-  #   And I click on "Finish review" "link"
-  #   #---Course grade restrict role---#
-  #   And I am on "Course 3" course homepage
-  #   And ".block_dash" "css_element" should exist
-  #   And I log out
+  Scenario Outline: Dash block restrictions:restrict by course grade range
+    When I am on the "Course 3" "course" page logged in as "admin"
+    And I turn dash block editing mode on
+    #---Course 3 page user block added---#
+    And I add the "Dash" block
+    And I click on "Users" "radio"
+    And I configure the "New Dash" block
+    #---Enable course grade restriction---#
+    And I set the field "Block title" to "Users"
+    And I set the field "Restrict by course grade" to "<restrictby>"
+    #And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[@class='fcontainer']//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//div[@class='felement']//input[@name='config_restrict_grademin']" to "20"
+    And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//input[@name='config_restrict_grademin']" to "20"
+    And I press "Save changes"
+    And I log out
+    #---Student3 login---#
+    And I am on the "Course 3" "course" page logged in as "student3"
+    #---Short answer attempt---#
+    And I click on "SA" "link"
+    And I press "Attempt quiz"
+    And I set the field "Answer" to "toad"
+    And I press "Finish attempt"
+    And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
+    And I click on "Finish review" "link"
+    And I should see "16.00 out of 20.00"
+    #---Course grade restrict role---#
+    And I am on "Course 3" course homepage
+    And ".block_dash" "css_element" should <exist>
+    And I log out
+
+    Examples:
+      | restrictby | exist     |
+      | lowerthan  | exist     |
+      | higherthan | not exist |
+
+  Scenario Outline: Dash block restrictions:restrict by course grade-between
+    When I am on the "Course 3" "course" page logged in as "admin"
+    And I turn dash block editing mode on
+    #---Course 3 page user block added---#
+    And I add the "Dash" block
+    And I click on "Users" "radio"
+    And I configure the "New Dash" block
+    #---Enable course grade restriction---#
+    And I set the field "Block title" to "Users"
+    And I set the field "Restrict by course grade" to "between"
+    #And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[@class='fcontainer']//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//div[@class='felement']//input[@name='config_restrict_grademin']" to "<grademin>"
+    And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//input[@name='config_restrict_grademin']" to "<grademin>"
+    #And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[@class='fcontainer']//div[starts-with(@id,'fitem_id_config_restrict_grademax_')]//div[@class='felement']//input[@name='config_restrict_grademax']" to "<grademax>"
+    And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[starts-with(@id,'fitem_id_config_restrict_grademax_')]//input[@name='config_restrict_grademax']" to "<grademax>"
+    And I press "Save changes"
+    And I log out
+    #---Student3 login---#
+    And I am on the "Course 3" "course" page logged in as "student3"
+    #---Short answer attempt---#
+    And I click on "SA" "link"
+    And I press "Attempt quiz"
+    And I set the field "Answer" to "toad"
+    And I press "Finish attempt"
+    And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
+    And I click on "Finish review" "link"
+    And I should see "16.00 out of 20.00"
+    #---Course grade restrict role---#
+    And I am on "Course 3" course homepage
+    And ".block_dash" "css_element" should <exist>
+    And I log out
+
+    Examples:
+      | grademin | grademax | exist     |
+      | 14       | 20       | exist     |
+      | 10       | 15       | not exist |
 
   Scenario: Dash block restrictions:restrict by course completion status: completed, in-progress
     #---Admin login---#
@@ -401,7 +442,6 @@ Feature: Add a dash to an admin pages
      | Restrict by activity completion status | failed |
     And I press "Save changes"
     #---Enable passing grade---#
-    #And I am on the "SA" "quiz activity editing" page logged in as admin
     And I am on the "SA" "quiz activity editing" page
     And I expand all fieldsets
     And I set the field "Add requirements" to "1"
@@ -428,7 +468,7 @@ Feature: Add a dash to an admin pages
     And I set the field "Restrict by activity completion status" to "passed"
     And I press "Save changes"
     And I log out
-     #---Student 3 login course incompleted role---#
+    #---Student 3 login course incompleted role---#
     And I am on the "Course 3" "Course" page logged in as "student3"
     And I click on "SA" "link" in the "region-main" "region"
     And I press "Re-attempt quiz"
@@ -486,33 +526,48 @@ Feature: Add a dash to an admin pages
     And I should see "Users" in the ".block_dash" "css_element"
     And I log out
 
-    # Scenario Outline: Dash block restrictions:hide when empty
-    # When I log in as "admin"
-    # And I navigate to "Appearance > Default Dashboard page" in site administration
-    # And I turn dash block editing mode on
-    # And I create dash "Users" datasource
-    # Then I configure the "New Dash" block
-    # And I set the following fields to these values:
-    #     | Block title        | Users       |
-    #     | Hide when empty    | <hidevalue> |
-    #     | Restrict by cohort | Cohort 1    |
-    #     | Region             | content     |
-    # And I press "Save changes"
-    # And I open the "Users" block preference
-    # #---Block preference conditions cohort settings---#
-    # And I follow "Conditions"
-    # And I click on "Cohorts" "checkbox"
-    # And I set the field "config_preferences[filters][cohort][cohorts][]" to "Cohort 3"
-    # And I press "Save changes"
-    # And I click on "Reset Dashboard for all users" "button"
-    # And I press "Continue"
-    # And I log out
-    # #---Student Login---#
-    # And I log in as "student1"
-    # And ".block_dash" "css_element" should <exis>
-    # And I log out
+  Scenario: Empty state implementation
+    When I am on the "Course 1" "Course" page logged in as "admin"
+    And I turn dash block editing mode on
+    And I add the "Dash" block
+    And I click on "Users" "radio"
+    And I configure the "New Dash" block
+    #---Enable hide when empty and content added---#
+    And I set the following fields to these values:
+        | Block title        | Users   |
+        | Hide when empty    | 0       |
+        | Content            | Welcome |
+        | Restrict by role   | Teacher |
+    And I press "Save changes"
+    And I log out
+    #---Student Login---#
+    When I am on the "Course 1" "Course" page logged in as "student1"
+    And ".block_dash" "css_element" should exist
+    And I should see "Welcome" in the ".block_dash .card-body .card-text" "css_element"
+    And I log out
+    #---Teacher Login---#
+    When I am on the "Course 1" "Course" page logged in as "teacher1"
+    And ".block_dash" "css_element" should exist
+    And I should not see "Welcome" in the ".block_dash .card-body .card-text" "css_element"
+    And I should see "Users" in the ".block_dash" "css_element"
+    And I log out
+    #---Admin Login---#
+    When I am on the "Course 1" "Course" page logged in as "admin"
+    And I turn dash block editing mode on
+    And I configure the "Users" block
+    #---Enable hide when empty---#
+    And I set the following fields to these values:
+      | Hide when empty | 1 |
+    And I press "Save changes"
+    And I log out
+    #---Student Login---#
+    When I am on the "Course 1" "Course" page logged in as "student1"
+    And ".block_dash" "css_element" should not exist
+    And I log out
+    #---Teacher Login---#
+    When I am on the "Course 1" "Course" page logged in as "teacher1"
+    And ".block_dash" "css_element" should exist
+    And I should not see "Welcome" in the ".block_dash .card-body .card-text" "css_element"
+    And I should see "Users" in the ".block_dash" "css_element"
+    And I log out
 
-    # Examples:
-    # | hidevalue | exis      |
-    # | 0         | exist     |
-    # | 1         | not exist |

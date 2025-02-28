@@ -126,7 +126,11 @@ Feature: Dash program to show the list of cohort course
     #---Set User i manage in conditions---#
     And I open the "Users" block preference
     And I click on "Conditions" "link"
+    And I wait "5" seconds
+    #And I click on "Relations" "checkbox"
+    And I set the field "config_preferences[filters][current_course][enabled]" to "1"
     And I set the field "config_preferences[filters][parentrole][enabled]" to "1"
+    #And I set the field "#id_config_preferences_filters_parentrole_enabled" to "1"
     And I press "Save changes"
     And I press "Reset Dashboard for all users"
     And I log out
