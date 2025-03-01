@@ -226,7 +226,9 @@ Feature: Dash block restrictions:restrict by course group
     And I press "Save changes"
     And I log out
     #---Student3 login---#
-    And I am on the "Course 3" "course" page logged in as "student3"
+    Then I log in as "student3"
+    And I am on the "C3" "course" page
+
     #---Short answer attempt---#
     And I click on "SA" "link"
     And I press "Attempt quiz"
@@ -263,7 +265,8 @@ Feature: Dash block restrictions:restrict by course group
     And I press "Save changes"
     And I log out
     #---Student3 login---#
-    And I am on the "Course 3" "course" page logged in as "student3"
+    Then I log in as "student3"
+    And I am on the "C3" "course" page
     #---Short answer attempt---#
     And I click on "SA" "link"
     And I press "Attempt quiz"
