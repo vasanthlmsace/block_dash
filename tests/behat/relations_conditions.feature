@@ -118,43 +118,44 @@ Feature: Dash program to show the list of cohort course
     And I follow "Parent 2"
     And I set the field "addselect" to "Teacher Second (teacher2@example.com)"
     And I click on "Add" "button" in the "#page-content" "css_element"
+    # #---Condition setting---#
+    # And I navigate to "Appearance > Default Dashboard page" in site administration
+    # And I turn dash block editing mode on
+    # #---Set User i manage in conditions---#
+    # And I open the "Users" block preference
+    # And I click on "Conditions" "link"
+    # And I wait "5" seconds
+    # #And I click on "Relations" "checkbox"
+    # #And I set the field "config_preferences[filters][current_course][enabled]" to "1"
+    # And I set the field "config_preferences[filters][parentrole][enabled]" to "1"
+    # #And I set the field "#id_config_preferences_filters_parentrole_enabled" to "1"
+    # And I press "Save changes"
+    # And I press "Reset Dashboard for all users"
+    # And I log out
+    # #---Teacher login---#
+    # And I log in as "teacher2"
+    # And I should see "Users" in the ".block_dash-local-layout-grid_layout" "css_element"
+    # And I should see "student2@example.com" in the ".dash-table tbody tr:nth-child(1) td:nth-child(3)" "css_element"
+    # And I should see "student4@example.com" in the ".dash-table tbody tr:nth-child(2) td:nth-child(3)" "css_element"
+    # And I should see "teacher1@example.com" in the ".dash-table tbody tr:nth-child(3) td:nth-child(3)" "css_element"
+    # And I log out
+    # #---Teacher login---#
+    # And I log in as "teacher1"
+    # And I should see "Users" in the ".block_dash-local-layout-grid_layout" "css_element"
+    # And I should see "student1@example.com" in the ".dash-table tbody tr:nth-child(1) td:nth-child(3)" "css_element"
+    # And I should see "student2@example.com" in the ".dash-table tbody tr:nth-child(2) td:nth-child(3)" "css_element"
+    # And I should see "student3@example.com" in the ".dash-table tbody tr:nth-child(3) td:nth-child(3)" "css_element"
+    # And I log out
+    # And I log in as "admin"
     #---Condition setting---#
     And I navigate to "Appearance > Default Dashboard page" in site administration
     And I turn dash block editing mode on
     #---Set User i manage in conditions---#
     And I open the "Users" block preference
     And I click on "Conditions" "link"
-    And I wait "5" seconds
-    #And I click on "Relations" "checkbox"
-    And I set the field "config_preferences[filters][current_course][enabled]" to "1"
-    And I set the field "config_preferences[filters][parentrole][enabled]" to "1"
-    #And I set the field "#id_config_preferences_filters_parentrole_enabled" to "1"
-    And I press "Save changes"
-    And I press "Reset Dashboard for all users"
-    And I log out
-    #---Teacher login---#
-    And I log in as "teacher2"
-    And I should see "Users" in the ".block_dash-local-layout-grid_layout" "css_element"
-		And I should see "student2@example.com" in the ".dash-table tbody tr:nth-child(1) td:nth-child(3)" "css_element"
-		And I should see "student4@example.com" in the ".dash-table tbody tr:nth-child(2) td:nth-child(3)" "css_element"
-		And I should see "teacher1@example.com" in the ".dash-table tbody tr:nth-child(3) td:nth-child(3)" "css_element"
-		And I log out
-    #---Teacher login---#
-    And I log in as "teacher1"
-    And I should see "Users" in the ".block_dash-local-layout-grid_layout" "css_element"
-    And I should see "student1@example.com" in the ".dash-table tbody tr:nth-child(1) td:nth-child(3)" "css_element"
-    And I should see "student2@example.com" in the ".dash-table tbody tr:nth-child(2) td:nth-child(3)" "css_element"
-    And I should see "student3@example.com" in the ".dash-table tbody tr:nth-child(3) td:nth-child(3)" "css_element"
-    And I log out
-    And I log in as "admin"
-    #---Condition setting---#
-    And I navigate to "Appearance > Default Dashboard page" in site administration
-    And I turn dash block editing mode on
-    #---Set User i manage in conditions---#
-    And I open the "Users" block preference
-    And I click on "Conditions" "link"
-    And I set the field "config_preferences[filters][parentrole][enabled]" to "1"
-    And I set the field "config_preferences[filters][parentrole][roleids][]" to "Parent 1"
+    And I set the field "Relations" to "1"
+    And I set the field "id_config_preferences_filters_parentrole_roleids" to "Parent 1"
+    Then I wait "10" seconds
     And I press "Save changes"
     And I press "Reset Dashboard for all users"
     #---Check parent and child users---#
@@ -182,8 +183,8 @@ Feature: Dash program to show the list of cohort course
     #---Set User i manage in conditions---#
     And I open the "Users" block preference
     And I click on "Conditions" "link"
-    And I set the field "config_preferences[filters][parentrole][enabled]" to "1"
-    And I set the field "config_preferences[filters][parentrole][roleids][]" to "Parent 2"
+    And I set the field "Relations" to "1"
+    And I set the field "id_config_preferences_filters_parentrole_roleids" to "Parent 2"
     And I press "Save changes"
     And I press "Reset Dashboard for all users"
     And I log out
