@@ -732,6 +732,7 @@ class block_dash extends block_base {
     public function restriction_bycoursegrade() {
         global $USER, $CFG;
         require_once($CFG->dirroot . '/grade/querylib.php');
+        require_once($CFG->libdir . '/gradelib.php');
 
         if (isset($this->config->restrict_graderange) && !empty($this->config->restrict_graderange)) {
             $graderange = $this->config->restrict_graderange;
