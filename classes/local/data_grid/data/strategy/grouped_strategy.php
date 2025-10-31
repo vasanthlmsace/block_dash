@@ -24,6 +24,8 @@
 
 namespace block_dash\local\data_grid\data\strategy;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/blocks/dash/lib.php');
 
 use block_dash\local\data_grid\data\data_collection;
@@ -36,7 +38,6 @@ use block_dash\local\dash_framework\structure\field_interface;
  * @package block_dash
  */
 class grouped_strategy implements data_strategy_interface {
-
     /**
      * @var field_interface
      */
@@ -62,7 +63,7 @@ class grouped_strategy implements data_strategy_interface {
     /**
      * Convert records.
      *
-     * @param \stdClass[] $records
+     * @param \moodle_recordset $records
      * @param field_interface[] $fielddefinitions
      * @return data_collection_interface
      */
@@ -86,6 +87,12 @@ class grouped_strategy implements data_strategy_interface {
 
             foreach ($fielddefinitions as $fielddefinition) {
                 $alias = $fielddefinition->get_alias();
+
+                // Only process fields that exist in the record.
+                if (!property_exists($record, $alias)) {
+                    continue;
+                }
+
 
                 $row->add_data(new field($alias, $fielddefinition->transform_data($record->$alias, $fullrecord),
                     $fielddefinition->get_visibility(), $fielddefinition->get_title()));

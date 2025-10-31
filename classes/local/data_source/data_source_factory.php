@@ -32,7 +32,6 @@ use block_dash\local\data_custom\abstract_custom_type;
  * @package block_dash
  */
 class data_source_factory implements data_source_factory_interface {
-
     /**
      * Cache registered data sources so they are only retrieved once.
      *
@@ -151,9 +150,26 @@ class data_source_factory implements data_source_factory_interface {
      * @param string $type
      * @return array
      */
-    public static function get_data_source_form_options($type='') {
+    public static function get_data_source_form_options($type = '') {
         $options = [];
+        $disabledaddons = block_dash_disabled_addons_list();
+
         foreach (self::get_data_source_registry() as $identifier => $datasourceinfo) {
+            // Skip if the identifier or name matches any disabled addon.
+            $dsname = isset($datasourceinfo['name']) ? strtolower($datasourceinfo['name']) : '';
+            $skip = false;
+
+            foreach ($disabledaddons as $addon) {
+                if (strpos($identifier, $addon) !== false || $dsname === strtolower($addon)) {
+                    $skip = true;
+                    break;
+                }
+            }
+
+            if ($skip) {
+                continue;
+            }
+
             if ($type) {
                 if (isset($datasourceinfo['type']) && $datasourceinfo['type'] == $type) {
                     $options[$identifier] = [
@@ -173,5 +189,4 @@ class data_source_factory implements data_source_factory_interface {
 
         return $options;
     }
-
 }

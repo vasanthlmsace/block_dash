@@ -36,7 +36,6 @@ use core_message\tests\helper as testhelper;
  * @runTestsInSeparateProcesses
  */
 final class widgets_test extends \advanced_testcase {
-
     /**
      * Demo of test user.
      *
@@ -182,7 +181,7 @@ final class widgets_test extends \advanced_testcase {
         $completion->update_state($cmassign, COMPLETION_COMPLETE, $user->id);
         $completion->update_state($cmdata, COMPLETION_COMPLETE, $user->id);
 
-        $block = $this->create_user_block('My contacts', 'block_dash\local\widget\mylearning\mylearning_widget');
+        $block = $this->create_user_block('My learning', 'block_dash\local\widget\mylearning\mylearning_widget');
         $context1 = \context_course::instance($this->course1->id);
 
         $widget = new \block_dash\local\widget\mylearning\mylearning_widget($context1);

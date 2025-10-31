@@ -221,8 +221,6 @@ Feature: Dash block restrictions:restrict by course group
     #---Enable course grade restriction---#
     And I set the field "Block title" to "Users"
     And I set the field "Restrict by course grade" to "<restrictby>"
-    #And I set the field "Restrict by course grade" to "lowerthan"
-    #And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[@class='fcontainer']//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//div[@class='felement']//input[@name='config_restrict_grademin']" to "20"
     And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//input[@name='config_restrict_grademin']" to "20"
     And I press "Save changes"
     And I log out
@@ -242,7 +240,6 @@ Feature: Dash block restrictions:restrict by course group
     #---Course grade restrict role---#
     And I am on "Course 3" course homepage
     And ".block_dash" "css_element" should <exist>
-    #And ".block_dash" "css_element" should exist
     And I log out
 
     Examples:
@@ -260,9 +257,7 @@ Feature: Dash block restrictions:restrict by course group
     #---Enable course grade restriction---#
     And I set the field "Block title" to "Users"
     And I set the field "Restrict by course grade" to "between"
-    #And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[@class='fcontainer']//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//div[@class='felement']//input[@name='config_restrict_grademin']" to "<grademin>"
     And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[starts-with(@id,'fitem_id_config_restrict_grademin_')]//input[@name='config_restrict_grademin']" to "<grademin>"
-    #And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[@class='fcontainer']//div[starts-with(@id,'fitem_id_config_restrict_grademax_')]//div[@class='felement']//input[@name='config_restrict_grademax']" to "<grademax>"
     And I set the field with xpath "//div[@class='modal-content']//form[@class='mform']//fieldset[starts-with(@id,'id_restrictaccessheading_')]//div[starts-with(@id,'fitem_id_config_restrict_grademax_')]//input[@name='config_restrict_grademax']" to "<grademax>"
     And I press "Save changes"
     And I log out

@@ -15,30 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Transform data by renaming delimited group IDs to group names. Remove groups not in context.
+ * Configuration file for the dash plugin.
  *
  * @package    block_dash
- * @copyright  2020 bdecent gmbh <https://bdecent.de>
+ * @copyright  2025 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\local\data_grid\field\attribute;
+defined('MOODLE_INTERNAL') || die();
 
-use block_dash\local\data_grid\filter\group_filter;
-use coding_exception;
-/**
- * Transform data by renaming delimited group IDs to group names. Remove groups not in context.
- *
- * @package block_dash
- */
-class rename_group_ids_attribute extends rename_ids_attribute {
-    /**
-     * Check if group exists in context.
-     *
-     * @param int $id
-     * @return bool
-     */
-    public function check_id($id) {
-        return true;
-    }
-}
+// Add the short name of the addons you want to disable.
+// Example: 'activity_completion' will disable 'dashaddon_activity_completion'.
+// Block Dash widgets like 'contacts', 'groups', or 'mylearning' are part of this list.
+$CFG->dashdisabledaddons = [
+
+];
