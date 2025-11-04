@@ -24,9 +24,9 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode,
-Behat\Mink\Exception\DriverException as DriverException,
-Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Gherkin\Node\TableNode,
+Behat\Mink\Exception\DriverException,
+Behat\Mink\Exception\ExpectationException;
 
 /**
  * Custom behat step definitions.
@@ -118,8 +118,10 @@ class behat_block_dash extends behat_base {
     public function i_create_dash_datasource($datasource) {
         global $CFG;
 
-        $this->execute('behat_navigation::i_navigate_to_in_site_administration',
-            ['Appearance > Default Dashboard page']);
+        $this->execute(
+            'behat_navigation::i_navigate_to_in_site_administration',
+            ['Appearance > Default Dashboard page']
+        );
         $this->execute('behat_block_dash::i_turn_dash_block_editing_mode_on', []);
         $this->execute('behat_blocks::i_add_the_block', ["Dash"]);
         $this->execute('behat_general::i_click_on_in_the', [$datasource, 'text', 'New Dash', 'block']);
@@ -137,7 +139,8 @@ class behat_block_dash extends behat_base {
         // Note that since $blockname may be either block name or CSS class, we can not use the exact label of "Configure" link.
         $this->execute("behat_blocks::i_open_the_blocks_action_menu", $this->escape($blockname));
 
-        $this->execute('behat_general::i_click_on_in_the',
+        $this->execute(
+            'behat_general::i_click_on_in_the',
             ["Preferences", "link", $this->escape($blockname), "block"]
         );
     }

@@ -22,9 +22,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->dirroot . '/lib/blocklib.php');
 require_once($CFG->dirroot . '/blocks/dash/lib.php');
 require_once($CFG->dirroot . '/my/lib.php');
+
 
 /**
  * Block dash instance generator.
@@ -61,7 +64,7 @@ class block_dash_generator extends component_generator_base {
         // Ensure the block context is created.
         context_block::instance($data->id);
 
-        // If the new instance was created, allow it to do additional setup
+        // If the new instance was created, allow it to do additional setup.
         if ($block = block_instance($data->blockname, $data)) {
             $block->instance_create();
         }
@@ -76,9 +79,6 @@ class block_dash_generator extends component_generator_base {
     public function create_dash_block_default($data) {
         $page = new moodle_page();
 
-        // $page->set_context(context_system::instance());
-        // $page->set_url(new moodle_url('/my/indexsys.php'));
-        // $page->set_pagetype('my-index');
         $data['pagetypepattern'] = 'my-index';
         $data['parentcontextid'] = context_system::instance()->id;
         // Get current My Moodle page.

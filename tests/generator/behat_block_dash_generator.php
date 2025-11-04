@@ -77,21 +77,34 @@ class behat_block_dash_generator extends behat_generator_base {
         $datasource = data_source_factory::build_data_source($config->data_source_idnumber, $context);
         if ($datasource) {
             if (method_exists($datasource, 'set_default_preferences')) {
-                // $preferences = [];
                 $datasource->set_default_preferences($preferences);
             }
         }
 
-        if (isset($data['fields'])) {
+        if (isset($data['Fields'])) {
             // List of fields to enable.
-            $datafields = explode(',', $data['fields']);
+            $fields = explode(',', $data['Fields']);
+            $datafields = array_map('trim', $fields);
             $availablefields = [];
+
+            $fieldslookup = [];
             foreach ($datasource->get_available_fields() as $field) {
-                if ($data['fields'] == 'all' || in_array($field->get_name(), $datafields) || in_array($field->get_title()->out(), $datafields)) {
-                    $availablefields = array_merge($availablefields, [$field->get_alias() => ['visible' => 1]]);
-                }
+                $fieldslookup[$field->get_name()] = $field;
+                $fieldslookup[$field->get_title()->out()] = $field;
             }
 
+            if ($data['Fields'] == 'all') {
+                foreach ($datasource->get_available_fields() as $field) {
+                    $availablefields[$field->get_alias()] = ['visible' => 1];
+                }
+            } else {
+                foreach ($datafields as $requestedfield) {
+                    if (isset($fieldslookup[$requestedfield])) {
+                        $field = $fieldslookup[$requestedfield];
+                        $availablefields[$field->get_alias()] = ['visible' => 1];
+                    }
+                }
+            }
             // Available fields need to be merged.
             $preferences['config_preferences']['available_fields'] = $availablefields;
         }
@@ -102,9 +115,10 @@ class behat_block_dash_generator extends behat_generator_base {
             $filtercollection = $datasource->get_filter_collection();
             $filters = [];
             foreach ($filtercollection->get_filters() as $key => $filter) {
-
-                if ($data['filters'] == 'all' || in_array($filter->get_name(), $datafilters)
-                    || in_array(strtolower($filter->get_label()), $datafilters)) {
+                if (
+                    $data['filters'] == 'all' || in_array($filter->get_name(), $datafilters)
+                    || in_array(strtolower($filter->get_label()), $datafilters)
+                ) {
                     $filters[$filter->get_name()] = ['enabled' => 1];
                 }
             }

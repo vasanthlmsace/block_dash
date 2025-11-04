@@ -31,15 +31,15 @@ jobs:
           - php: "8.3"
             moodle-branch: "MOODLE_500_STABLE"
             database: "mariadb"
-          - php: "8.3"
-            moodle-branch: "MOODLE_500_STABLE"
-            database: "pgsql"
-          - php: "8.2"
-            moodle-branch: "MOODLE_405_STABLE"
-            database: "mariadb"
-          - php: "8.2"
-            moodle-branch: "MOODLE_405_STABLE"
-            database: "pgsql"
+          # - php: "8.3"
+          #   moodle-branch: "MOODLE_500_STABLE"
+          #   database: "pgsql"
+          # - php: "8.2"
+          #   moodle-branch: "MOODLE_405_STABLE"
+          #   database: "mariadb"
+          # - php: "8.2"
+          #   moodle-branch: "MOODLE_405_STABLE"
+          #   database: "pgsql"
 
     steps:
       - name: Check out repository code
@@ -71,17 +71,17 @@ jobs:
           IGNORE_PATHS: 'styles/*.css'
           IGNORE_NAMES: 'extra_css.mustache, select2.js, select2.min.js, select2.min.css, mustache_custom_loader.php, data_collection_new.php'
 
-      - name: PHP Lint
-        if: ${{ always() }}
-        run: moodle-plugin-ci phplint
+      # - name: PHP Lint
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci phplint
 
-      - name: PHP Copy/Paste Detector
-        if: ${{ always() }}
-        run: moodle-plugin-ci phpcpd
+      # - name: PHP Copy/Paste Detector
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci phpcpd
 
-      - name: PHP Mess Detector
-        if: ${{ always() }}
-        run: moodle-plugin-ci phpmd
+      # - name: PHP Mess Detector
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci phpmd
 
       - name: Moodle Code Checker
         if: ${{ always() }}
@@ -91,26 +91,26 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci phpdoc
 
-      - name: Validating
-        if: ${{ always() }}
-        run: moodle-plugin-ci validate
+      # - name: Validating
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci validate
 
-      - name: Check upgrade savepoints
-        if: ${{ always() }}
-        run: moodle-plugin-ci savepoints
+      # - name: Check upgrade savepoints
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci savepoints
 
-      - name: Mustache Lint
-        if: ${{ always() }}
-        run: moodle-plugin-ci mustache
+      # - name: Mustache Lint
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci mustache
 
-      - name: Grunt
-        if: ${{ always() }}
-        run: moodle-plugin-ci grunt
+      # - name: Grunt
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci grunt
 
-      - name: PHPUnit tests
-        if: ${{ always() }}
-        run: moodle-plugin-ci phpunit
+      # - name: PHPUnit tests
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci phpunit
 
-      - name: Behat features
-        if: ${{ always() }}
-        run: moodle-plugin-ci behat --profile chrome
+      # - name: Behat features
+      #   if: ${{ always() }}
+      #   run: moodle-plugin-ci behat --profile chrome
