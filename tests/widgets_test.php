@@ -149,7 +149,6 @@ final class widgets_test extends \advanced_testcase {
         $page->blocks->add_block_at_end_of_default_region('dash');
     }
 
-
     /**
      * Test for block_dash\local\widget\contacts\contacts_widget() to confirm the Contacts and converstions are loaded.
      *
@@ -164,7 +163,6 @@ final class widgets_test extends \advanced_testcase {
         $teacher = self::getDataGenerator()->create_and_enrol($this->course1, 'editingteacher');
         self::getDataGenerator()->enrol_user($user->id, $this->course2->id);
         self::getDataGenerator()->enrol_user($user->id, $this->course3->id);
-        //$this->setUser($user);
 
         $assign = $this->getDataGenerator()->create_module('assign', ['course' => $this->course1->id],
             ['completion' => 1]);
@@ -302,5 +300,6 @@ final class widgets_test extends \advanced_testcase {
 
         $this->assertEquals(0, $data['creategroup']);
         $this->assertEquals(0, $data['adduser']);
+
     }
 }

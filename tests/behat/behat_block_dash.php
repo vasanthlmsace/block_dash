@@ -33,6 +33,32 @@ Behat\Mink\Exception\ExpectationException as ExpectationException;
  */
 class behat_block_dash extends behat_base {
     /**
+     * Convert page names to URLs for steps like 'When I am on the "[page name]" page'.
+     *
+     * Recognised page names are:
+     * | default dashboard     | URL: /my/indexsys.php |
+     *
+     * @param string $page name of the page.
+     * @return moodle_url the corresponding URL.
+     */
+    protected function resolve_page_url(string $page): moodle_url {
+        $parts = explode('>', strtolower($page));
+        $section = trim($parts[0]);
+        if (count($parts) < 2) {
+            return match (trim($section)) {
+                'dashboard' => new moodle_url('/my/'),
+                'default dashboard' => new moodle_url('/my/indexsys.php'),
+                default => throw new Exception('Unrecognised dash page section "' . $section . '."'),
+            };
+        }
+
+        switch (strtolower($page)) {
+            default:
+                throw new Exception('Unrecognised quiz page type "' . $page . '."');
+        }
+    }
+
+    /**
      * Turns block editing mode on.
      *
      * @Given I turn dash block editing mode on
@@ -96,7 +122,7 @@ class behat_block_dash extends behat_base {
             ['Appearance > Default Dashboard page']);
         $this->execute('behat_block_dash::i_turn_dash_block_editing_mode_on', []);
         $this->execute('behat_blocks::i_add_the_block', ["Dash"]);
-        $this->execute('behat_general::i_click_on_in_the', [$datasource, 'text', 'section.block_dash.block', 'css_element']);
+        $this->execute('behat_general::i_click_on_in_the', [$datasource, 'text', 'New Dash', 'block']);
     }
 
     /**
@@ -112,7 +138,7 @@ class behat_block_dash extends behat_base {
         $this->execute("behat_blocks::i_open_the_blocks_action_menu", $this->escape($blockname));
 
         $this->execute('behat_general::i_click_on_in_the',
-            ["Preference", "link", $this->escape($blockname), "block"]
+            ["Preferences", "link", $this->escape($blockname), "block"]
         );
     }
 

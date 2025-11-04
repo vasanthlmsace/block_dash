@@ -125,7 +125,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return string
      * @throws coding_exception
      */
-    public static function get_name_from_class($fullclassname, $help=false) {
+    public static function get_name_from_class($fullclassname, $help = false) {
         $component = explode('\\', $fullclassname)[0];
         $class = array_reverse(explode('\\', $fullclassname))[0];
 
@@ -198,7 +198,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @param bool $count
      * @return builder
      */
-    final public function get_query($count=false): builder {
+    final public function get_query($count = false): builder {
         global $DB;
 
         if (is_null($this->query) || $count) {
@@ -261,6 +261,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             $concat = $DB->sql_concat_join("'-'", $identifierselects);
             if (count($identifierselects) > 1) {
+                // Quick FIX - DASH-1128
+                // In Some cases the still the same unique id is generated even with multiple identifiers.
+                // Add Distinct to ensure uniqueness. Still need to Include better way to generate unique ids.
+                // TO avoid the distinct for high volume data sets performance issues.
+                $concat = !$this->supports_ajax_pagination() ? 'DISTINCT ' . $concat : $concat;
                 $this->query->select($concat, 'unique_id');
             }
 

@@ -33,6 +33,7 @@ use block_dash\local\data_source\data_source_interface;
  * Moodleform to create group with course selector option.
  */
 class create_group extends moodleform {
+
     /**
      * Get the definition of the moodle form.
      *
@@ -68,27 +69,24 @@ class create_group extends moodleform {
  * Table class for download the dash block as csv or any other format.
  */
 class block_dash_download_table extends table_sql {
+
     /**
      * Dash block datasource.
-     * @var data_source_interface|null
      */
     public $datasource = null;
 
     /**
      * Raw sql from datasource query.
-     * @var string
      */
     public $sql;
 
     /**
      * Raw sql params from datasource query.
-     * @var array
      */
     public $params;
 
     /**
      * Set the datasource for the table.
-     * @param data_source_interface $datasource
      */
     public function set_datasource(data_source_interface $datasource) {
         $this->datasource = $datasource;
@@ -103,7 +101,7 @@ class block_dash_download_table extends table_sql {
     public function set_data($sql, $params) {
         global $DB;
         $this->sql = $sql;
-        $this->params = $params;
+        $this->params = $params; //
     }
 
     /**
@@ -124,12 +122,13 @@ class block_dash_download_table extends table_sql {
      * @return array
      *
      */
-    public function format_row($record) {
+    public  function format_row($record) {
+
         if (is_array($record)) {
             $record = (object) $record;
         }
 
-        $formattedrow = [];
+        $formattedrow = array();
 
         foreach ($this->datasource->get_sorted_fields() as $fielddefinition) {
 

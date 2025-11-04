@@ -27,13 +27,14 @@ namespace block_dash\local\dash_framework\query_builder;
 use coding_exception;
 use dml_exception;
 
+use function GuzzleHttp\debug_resource;
+
 /**
  * Builds a query.
  *
  * @package block_dash
  */
 class builder {
-
     /**
      * @var string
      */
@@ -384,6 +385,14 @@ class builder {
      */
     protected function build_select(): string {
         $selects = [];
+
+        // Move the unique id to the first position.
+        if (array_key_exists('unique_id', $this->selects)) {
+            $uniqueid = $this->selects['unique_id'];
+            unset($this->selects['unique_id']);
+            $this->selects = array_merge(['unique_id' => $uniqueid], $this->selects);
+        }
+
         foreach ($this->selects as $alias => $select) {
             $selects[] = $select . ' AS ' . $alias;
         }
@@ -489,7 +498,6 @@ class builder {
 
         [$sql, $params] = $this->get_sql_and_params();
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
-
     }
 
     /**
@@ -507,9 +515,7 @@ class builder {
 
         if ($isunique) {
 
-            $builder->set_selects([
-                'count' => 'COUNT(*)']
-            );
+            $builder->set_selects(['count' => 'COUNT(*)']);
 
         } else {
             $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
@@ -530,7 +536,9 @@ class builder {
 
         self::$lastcountcachekey = $countcachekey;
 
-        $count = $DB->count_records_sql($sql, $params);
+        // Instead of count_records_sql we use get_field_sql to avoid non negative count exception due do the groupby in the datasource.
+        $count = $DB->get_field_sql($sql, $params);
+        $count = $count ?: 0;
 
         self::$lastcount = $count;
 
