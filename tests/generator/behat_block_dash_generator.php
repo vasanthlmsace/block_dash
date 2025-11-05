@@ -81,23 +81,37 @@ class behat_block_dash_generator extends behat_generator_base {
             }
         }
 
-        if (isset($data['Fields'])) {
+        if (isset($data['fields'])) {
             // List of fields to enable.
-            $fields = explode(',', $data['Fields']);
+            $fields = explode(',', $data['fields']);
             $datafields = array_map('trim', $fields);
             $availablefields = [];
 
-            $fieldslookup = [];
-            foreach ($datasource->get_available_fields() as $field) {
-                $fieldslookup[$field->get_name()] = $field;
-                $fieldslookup[$field->get_title()->out()] = $field;
-            }
+            $disabledfields = explode(',', $data['disablefields'] ?? '');
+            $disabledfields = array_map('trim', $disabledfields);
 
-            if ($data['Fields'] == 'all') {
+            if ($data['fields'] == 'all') {
                 foreach ($datasource->get_available_fields() as $field) {
+                    $isdisabled = in_array($field->get_name(), $disabledfields)
+                        || in_array($field->get_title()->out(), $disabledfields) || in_array($field->get_alias(), $disabledfields);
+                    if ($isdisabled) {
+                        continue;
+                    }
                     $availablefields[$field->get_alias()] = ['visible' => 1];
                 }
             } else {
+                $fieldslookup = [];
+                foreach ($datasource->get_available_fields() as $field) {
+                    if (
+                        in_array($field->get_name(), $disabledfields) ||
+                        in_array($field->get_title()->out(), $disabledfields) ||
+                        in_array($field->get_alias(), $disabledfields)
+                    ) {
+                        continue;
+                    }
+                    $fieldslookup[$field->get_name()] = $field;
+                    $fieldslookup[$field->get_title()->out()] = $field;
+                }
                 foreach ($datafields as $requestedfield) {
                     if (isset($fieldslookup[$requestedfield])) {
                         $field = $fieldslookup[$requestedfield];
