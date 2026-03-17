@@ -109,9 +109,12 @@ class behat_block_dash_generator extends behat_generator_base {
                     ) {
                         continue;
                     }
+
                     $fieldslookup[$field->get_name()] = $field;
                     $fieldslookup[$field->get_title()->out()] = $field;
+                    $fieldslookup[$field->get_alias()] = $field;
                 }
+
                 foreach ($datafields as $requestedfield) {
                     if (isset($fieldslookup[$requestedfield])) {
                         $field = $fieldslookup[$requestedfield];
@@ -137,6 +140,10 @@ class behat_block_dash_generator extends behat_generator_base {
                 }
             }
             $preferences['config_preferences']['filters'] = $filters;
+        }
+
+        if (isset($data['perpage'])) {
+            $preferences['config_preferences']['perpage'] = (int)$data['perpage'];
         }
 
         $config->preferences = $preferences['config_preferences'] ?? [];

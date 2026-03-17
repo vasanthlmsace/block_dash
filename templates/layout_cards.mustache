@@ -1,0 +1,601 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_dash/layout_cards
+
+    Example context (json):
+    {
+        "sitefullname": "Moodle - 311",
+		"courseurl": "https://localhost/moodle/course/view.php?id=2"
+    }
+}}
+{{< block_dash/layout }}
+
+    {{$body}}
+        <div class="container-fluid p-0">
+            {{#bootstrap3}}
+                <div class="bootstrap3">
+                    <div class="row flex">
+                        {{^data.rows}}
+                            {{#noresult}}{{{noresult}}}{{/noresult}}
+                        {{/data.rows}}
+                        {{#data.rows}}
+                            <div class="col-12 col-sm-{{preferences.columns}} pb-4 flex {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}} >
+                                <div class="panel panel-default h-100">
+
+                                    {{#imageoverlay}}
+                                        <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                    {{/imageoverlay}}
+                                    {{#imageurl}}
+                                        {{{imageurl}}}
+                                    {{/imageurl}}
+                                    <div class="panel-body">
+                                        {{#subheading}}
+                                            <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                        {{/subheading}}
+                                        <h4 class="panel-title">{{{heading}}}</h4>
+                                        <p>
+                                            <div class="card-body-1">{{{body}}}</div>
+                                            <div class="card-body-2">{{{body2}}}</div>
+                                            <div class="card-body-3">{{{body3}}}</div>
+                                        </p>
+                                        <div class="footer-card">
+                                            {{#footerright}}
+                                                <small class="text-muted float-right card-footer-right">{{{footerright}}}</small>
+                                            {{/footerright}}
+                                            {{#footer}}
+                                                <small class="text-muted float-left card-footer-left">{{{footer}}}</small>
+                                            {{/footer}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/data.rows}}
+                    </div>
+                </div>
+            {{/bootstrap3}}
+            {{#bootstrap4}}
+                <!-- <div class="row">-->
+                    {{#preferences.layout_default}}
+                        <div class="row layout_base card-layout-{{uniqueid}} card-layout-default card-layout-row{{#preferences.columnsclass}} {{preferences.columnsclass}}{{/preferences.columnsclass}}{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
+                        {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
+                        {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}}">
+                            {{^data.rows}}
+                                {{#noresult}}{{{noresult}}}{{/noresult}}
+                            {{/data.rows}}
+                            {{#data.rows}}
+                                <div class="col-12 col-sm-{{preferences.columns}} card-block-parent card-block default {{stylingoptions}}">
+                                    <div class="card-info" data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                        data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
+                                        data-customcontent="{{customcontent}}">
+                                    </div>
+                                    <div class="card {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                        {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}}>
+                                        {{#imageoverlay}}
+                                            <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                        {{/imageoverlay}}
+                                        {{#imageurl}}
+                                            {{{imageurl}}}
+                                        {{/imageurl}}
+                                        <div class="card-body">
+                                            {{#subheading}}
+                                                <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                            {{/subheading}}
+                                            <h4 class="card-title">{{{heading}}}</h4>
+                                            <div class="card-text">
+                                                <div class="card-body-1">{{{body}}}</div>
+                                                <div class="card-body-2">{{{body2}}}</div>
+                                                <div class="card-body-3">{{{body3}}}</div>
+                                            </div>
+                                            <div class="card-text card-footer">
+                                                {{#footerright}}
+                                                    <small class="float-right card-footer-right {{layoutmode}}">{{{footerright}}}</small>
+                                                {{/footerright}}
+                                                {{#footer}}
+                                                    <small class="float-left card-footer-left">{{{footer}}}</small>
+                                                {{/footer}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{#preferences.showdetailsarea}}
+                                        {{#preferences.fitcarddetailsarea}}
+                                            {{> block_dash/layouts_cards_detailarea}}
+                                        {{/preferences.fitcarddetailsarea}}
+                                    {{/preferences.showdetailsarea}}
+                                </div>
+                                {{#preferences.showdetailsarea}}
+                                    {{#preferences.fitcontentdetailsarea}}
+                                        {{> block_dash/layouts_cards_detailarea}}
+                                    {{/preferences.fitcontentdetailsarea}}
+                                {{/preferences.showdetailsarea}}
+                            {{/data.rows}}
+                        </div>
+                    {{/preferences.layout_default}}
+
+                    {{#preferences.layout_slider}}
+                        <div class="layout_base card-layout-{{uniqueid}} card_layout_slider slider-{{uniqueid}} card-layout-row{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
+                        {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
+                        {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}} {{preferences.sliderclass}}">
+                            {{^data.rows}}
+                                {{#noresult}}{{{noresult}}}{{/noresult}}
+                            {{/data.rows}}
+                            {{#data.rows}}
+                                <div class="card-block slider {{stylingoptions}}">
+                                    <div class="card-info"
+                                        data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                        data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
+                                        data-customcontent="{{customcontent}}">
+                                    </div>
+                                    <div class="slider-card">
+                                        <div class="card {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                            {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}}>
+                                            {{#imageoverlay}}
+                                                <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                            {{/imageoverlay}}
+                                            {{#imageurl}}
+                                                {{{imageurl}}}
+                                            {{/imageurl}}
+                                            <div class="card-body">
+                                                {{#subheading}}
+                                                    <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                                {{/subheading}}
+                                                <h4 class="card-title">{{{heading}}}</h4>
+                                                <div class="card-text">
+                                                    <div class="card-body-1">{{{body}}}</div>
+                                                    <div class="card-body-2">{{{body2}}}</div>
+                                                    <div class="card-body-3">{{{body3}}}</div>
+                                                </div>
+                                                <div class="card-text footer-card">
+                                                    {{#footerright}}
+                                                        <small class="float-right card-footer-right {{layoutmode}}">{{{footerright}}}</small>
+                                                    {{/footerright}}
+                                                    {{#footer}}
+                                                        <small class="float-left card-footer-left">{{{footer}}}</small>
+                                                    {{/footer}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{#preferences.showdetailsarea}}
+                                            {{#preferences.fitcarddetailsarea}}
+                                                {{> block_dash/layouts_cards_detailarea}}
+                                            {{/preferences.fitcarddetailsarea}}
+                                        {{/preferences.showdetailsarea}}
+                                    </div>
+                                    {{#preferences.showdetailsarea}}
+                                        {{#preferences.fitcontentdetailsarea}}
+                                            {{> block_dash/layouts_cards_detailarea}}
+                                        {{/preferences.fitcontentdetailsarea}}
+                                    {{/preferences.showdetailsarea}}
+                                </div>
+                            {{/data.rows}}
+                        </div>
+                    {{/preferences.layout_slider}}
+
+                    {{#preferences.layout_masonry}}
+                        {{#preferences.masonrysearch}}
+                        <div class="masonry-searchbox">
+                            <input type="text" name="masonry-searchbox" class="masonry-quicksearch-{{uniqueid}} form-control" size="40" placeholder="Search"/>
+                        </div>
+                        {{/preferences.masonrysearch}}
+
+                        {{#preferences.masonrysort}}
+                            <div id="masonry-sorter" class="btn-group masonry-sorter-{{uniqueid}}">
+                                <button class="btn btn-primary asc active" data-sort-value="number" data-sort-direction="asc"> {{#str}} strasc, block_dash{{/str}}</button>
+                                <button class="btn btn-primary desc" data-sort-value="number" data-sort-direction="desc"> {{#str}} strdesc, block_dash {{/str}}</button>
+                            </div>
+                        {{/preferences.masonrysort}}
+                        {{^data.rows}}
+                            {{#noresult}}{{{noresult}}}{{/noresult}}
+                        {{/data.rows}}
+                        <div class="layout_base card-layout-{{uniqueid}} card_layout_masonry card-layout-row{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
+                        {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
+                        {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}}">
+                            {{#data.rows}}
+                                <div class="card-block masonry filtr-item {{stylingoptions}}"
+                                data-recordid="{{tablesort}}">
+                                <div class="card-info" data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                    data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
+                                    data-customcontent="{{customcontent}}">
+                                </div>
+                                    <div class="card {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                        {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}}>
+                                        {{#imageoverlay}}
+                                            <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                        {{/imageoverlay}}
+                                        {{#imageurl}}
+                                            {{{imageurl}}}
+                                        {{/imageurl}}
+                                        <div class="card-body">
+                                            {{#subheading}}
+                                                <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                            {{/subheading}}
+                                            <h4 class="card-title">{{{heading}}}</h4>
+                                            <div class="card-text">
+                                                <div class="card-body-1">{{{body}}}</div>
+                                                <div class="card-body-2">{{{body2}}}</div>
+                                                <div class="card-body-3">{{{body3}}}</div>
+                                            </div>
+                                            <div class="card-text footer-card">
+                                                {{#footerright}}
+                                                    <small class="text-muted float-right card-footer-right {{layoutmode}}">{{{footerright}}}</small>
+                                                {{/footerright}}
+                                                {{#footer}}
+                                                    <small class="text-muted float-left card-footer-left">{{{footer}}}</small>
+                                                {{/footer}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{#preferences.showdetailsarea}}
+                                        {{> block_dash/layouts_cards_detailarea}}
+                                    {{/preferences.showdetailsarea}}
+                                </div>
+                            {{/data.rows}}
+                        </div>
+                    {{/preferences.layout_masonry}}
+
+                <!-- </div> -->
+            {{/bootstrap4}}
+        </div>
+    {{/body}}
+{{/ block_dash/layout }}
+
+{{#preferences.layout_masonry}}
+<script src="{{config.wwwroot}}/blocks/dash/js/isotope.js"></script>
+<script>
+    var qsRegex;
+    var grid = document.querySelector( '.card-layout-{{uniqueid}}' + '.card_layout_masonry');
+    var iso_{{uniqueid}} = new Isotope( grid, {
+        itemSelector: '.filtr-item',
+        masonry: {
+            columnWidth: 10
+        },
+        filter: function(element) {
+            if (element == 0 || element == null) {
+                element = this;
+            }
+            var text = element.textContent || element.innerText;
+            return (qsRegex && text != undefined) ? text.match(qsRegex) : true;
+        },
+        getSortData: {
+            number: '[data-recordid]',
+        }
+    });
+
+    var buttons = document.querySelectorAll('.masonry-sorter-{{uniqueid}} button');
+    var val = grid.closest(".masonry-sorter-{{uniqueid}} button");
+    var ascButton = document.querySelectorAll(".masonry-sorter-{{uniqueid}} button.asc")[0];
+    var descButton = document.querySelectorAll(".masonry-sorter-{{uniqueid}} button.desc")[0];
+    buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            ascButton.classList.remove('active');
+            descButton.classList.remove('active');
+            //button.previousElementSibling.classList.remove
+            button.classList.add('active');
+            / Get the element name to sort /
+            var sortValue = button.getAttribute('data-sort-value');
+
+            / Get the sorting direction: asc||desc /
+            var sortDirection = button.getAttribute('data-sort-direction');
+
+            / convert it to a boolean /
+            sortDirection = sortDirection == 'asc';
+
+            / pass it to isotope /
+            iso_{{uniqueid}}.arrange({ sortBy: sortValue, sortAscending: sortDirection });
+        });
+    });
+
+    // use value of search field to filter
+    var quicksearch = document.querySelector('.masonry-quicksearch-{{uniqueid}}');
+    if (quicksearch) {
+        // use value of search field to filter
+        quicksearch.addEventListener('keyup', debounce(function() {
+        qsRegex = new RegExp(quicksearch.value, 'gi');
+            iso_{{uniqueid}}.arrange();
+        }, 200));
+    }
+
+    var masonryMore = grid.querySelectorAll(".filtr-item .masonry-more");
+    if (masonryMore) {
+        masonryMore.forEach(function(moreItem) {
+            moreItem.addEventListener('click', function() {
+                iso_{{uniqueid}}.arrange();
+            });
+        });
+    }
+
+    // debounce so filtering doesn't happen every millisecond
+    function debounce(fn, threshold) {
+        var timeout;
+        threshold = threshold || 100;
+        return function debounced() {
+            clearTimeout(timeout);
+            var args = arguments;
+            var _this = this;
+            function delayed() {
+            fn.apply(_this, args);
+            }
+            timeout = setTimeout(delayed, threshold);
+        };
+    }
+
+</script>
+
+{{/preferences.layout_masonry}}
+
+
+{{#js}}
+require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events', 'core/templates', 'core/str',
+    'core/notification', 'block_dash/grid'],
+    function($, slick, Modal, ModalEvents, Templates, Str, Notification, Grid) {
+    {{#preferences.layout_default}}
+        {{#preferences.detailareaexpand}}
+            {{#preferences.fitcarddetailsarea}}
+                Grid.init("{{uniqueid}}", "{{preferences.columns}}");
+            {{/preferences.fitcarddetailsarea}}
+        {{/preferences.detailareaexpand}}
+    {{/preferences.layout_default}}
+
+
+    $(document).ready(function() {
+        {{#preferences.detailareafloating}}
+            var floatingHandler = ".dash-block-content .card-layout-row.card-layout-{{uniqueid}} > div.card-block";
+            var floationHandlerEnabled = false;
+            $(floatingHandler).on('mouseenter', function() {
+                floationHandlerEnabled = true;
+            });
+
+            $(floatingHandler).hover(function(e) {
+                if (floationHandlerEnabled) {
+                    if ($(this).hasClass('slider')) {
+                        $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($(this)).removeClass("floating-details");
+                        if (!$(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('floating-details')) {
+                            $(this).closest('.layout_base').addClass("floating-card");
+                        } else {
+                            $(this).closest('.layout_base').removeClass("floating-card");
+                        }
+                    } else {
+                        $(".card-layout-{{uniqueid}} > div.card-block").not($(this)).removeClass("floating-details");
+                        if (!$(floatingHandler).hasClass('floating-details')) {
+                            $(this).closest('.layout_base').addClass("floating-card");
+                        } else {
+                            $(this).closest('.layout_base').removeClass("floating-card");
+                        }
+                    }
+
+                    if ($(this).closest('.layout_base').hasClass('fit-card')) {
+                        $(this).toggleClass('floating-details');
+                        if ($(this).hasClass('slider')) {
+                            $(this).parents(".slick-slide").toggleClass("float-slider-column");
+                            $(this).parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-float');
+                        } else {
+                            $(".card-layout-{{uniqueid}} > div.card-block").not($(this).prevAll()).removeClass("block-n-float");
+                            $(this).prevAll().toggleClass('block-n-float');
+                        }
+                        $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
+                        $(this).find(".card.details-area-block").toggleClass('show-detail');
+                    } else {
+                        $(this).toggleClass('floating-details');
+                        if ($(this).hasClass('slider')) {
+                            $(".card-layout-row.floating-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
+                            $(this).find(".card.details-area-block").toggleClass('show-detail');
+                        } else {
+                            {{#preferences.layout_default}}
+                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($(this).next(".details-area-block")).removeClass("show-detail");
+                                $(this).next(".card.details-area-block").toggleClass('show-detail');
+                            {{/preferences.layout_default}}
+                        }
+
+                        if ($(this).hasClass('masonry')) {
+                            {{#preferences.layout_masonry}}
+                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
+                                $(this).find(".card.details-area-block").toggleClass('show-detail');
+                            {{/preferences.layout_masonry}}
+                        }
+
+                    }
+                }
+            });
+        {{/preferences.detailareafloating}}
+        var layoutClickHandler = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row > div.card-block";
+        $(layoutClickHandler).click(function(e) {
+            {{#preferences.detailareaexpand}}
+                if ($(this).hasClass('slider')) {
+                    if ($(this).parents(".slick-slide").find(".card-block.slider").length > 1) {
+                        // Check the slick div inside more then one slider.
+                        if ($(this).parents(".slick-slide").find(".card-block.slider").hasClass('expand-details') && !$(this).hasClass('expand-details')) {
+                            $(this).parents(".slick-slide").removeClass("expand-slider-column");
+                        }
+                    } else {
+                        $(".card-layout-{{uniqueid}} .slick-slide").not($(this).parents(".slick-slide")).removeClass("expand-slider-column");
+                    }
+                    $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($(this)).removeClass("expand-details");
+                    if (!$(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('expand-details')) {
+                        $(this).closest('.layout_base').addClass("expand-card");
+                    } else {
+                        $(this).closest('.layout_base').removeClass("expand-card");
+                    }
+                } else {
+                    $(".card-layout-{{uniqueid}} > div.card-block").not($(this)).removeClass("expand-details");
+                    if (!$(layoutClickHandler).hasClass('expand-details')) {
+                        $(this).closest('.layout_base').addClass("expand-card");
+                    } else {
+                        $(this).closest('.layout_base').removeClass("expand-card");
+                    }
+                }
+                // Check the fit-card or not.
+                if ($(this).closest('.layout_base').hasClass('fit-card')) {
+                    $(this).toggleClass('expand-details');
+                    if ($(this).hasClass('slider')) {
+                        $(this).parents(".slick-slide").toggleClass("expand-slider-column");
+                        if ($(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('expand-details')) {
+                            $(".card-layout-{{uniqueid}} .slick-slide.slick-active").removeClass("slider-n-expand");
+                        }
+                        $(this).parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-expand');
+                    } else {
+                        if ($(layoutClickHandler).hasClass('expand-details')) {
+                            $(".card-layout-{{uniqueid}} > div.card-block").removeClass("block-n-expand");
+                        }
+                        $(this).prevAll().toggleClass('block-n-expand');
+                    }
+                    $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
+                    $(this).find(".card.details-area-block").toggleClass('show-detail');
+                } else {
+                    $(this).toggleClass('expand-details');
+                    if ($(this).hasClass('slider')) {
+                        $(this).parents(".slick-slide").toggleClass("expand-slider-column");
+                        $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
+                        $(this).find(".card.details-area-block").toggleClass('show-detail');
+                    }  else {
+                        {{#preferences.layout_default}}
+                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).next(".details-area-block")).removeClass("show-detail");
+                            $(this).next(".card.details-area-block").toggleClass('show-detail');
+                        {{/preferences.layout_default}}
+                    }
+
+                    if ($(this).hasClass('masonry')) {
+                        {{#preferences.layout_masonry}}
+                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
+                            $(this).find(".card.details-area-block").toggleClass('show-detail');
+                        {{/preferences.layout_masonry}}
+                    }
+                }
+
+                {{#preferences.layout_masonry}}
+                if (iso_{{uniqueid}}) {
+                    setTimeout(function() {
+                        iso_{{uniqueid}}.arrange();
+                    }, 150);
+                    setTimeout(function() {
+                        iso_{{uniqueid}}.arrange();
+                    }, 300);
+                    setTimeout(function() {
+                        iso_{{uniqueid}}.arrange();
+                    }, 500);
+                }
+                {{/preferences.layout_masonry}}
+            {{/preferences.detailareaexpand}}
+
+
+            {{#preferences.detailareamodal}}
+                var templatecontext = {
+                    detailheader: $(this).find(".card-info").attr('data-detailheader'),
+                    detailheading: $(this).find(".card-info").attr('data-detailheading'),
+                    detailbody: $(this).find(".card-info").attr('data-detailbody'),
+                    detailbody2: $(this).find(".card-info").attr('data-detailbody2'),
+                    detailbody3: $(this).find(".card-info").attr('data-detailbody3'),
+                    detailfooter: $(this).find(".card-info").attr('data-detailfooter'),
+                    detailfooterright: $(this).find(".card-info").attr('data-detailfooterright'),
+                    customcontent: $(this).find(".card-info").attr('data-customcontent') || '',
+                    details_bg_color: "{{preferences.details_bg_color}}",
+                    details_text_color: "{{preferences.details_text_color}}",
+                    detailmodal: "true"
+                };
+                Modal.create({
+                    title: Str.get_string('strinfo', 'block_dash'),
+                    type: Modal.types.CANCEL,
+                    body: Templates.render('block_dash/layouts_cards_detailarea', templatecontext),
+                    large: true,
+                }).then(modal => {
+                    modal.show();
+                    modal.getRoot().on(ModalEvents.hidden, function() {
+                        modal.destroy();
+                    }).catch(Notification.exception);
+                    return modal;
+                });
+            {{/preferences.detailareamodal}}
+
+            // Update URL hash to the detail-id so the URL is shareable.
+            {{#preferences.showdetailsarea}}
+                var $detailTrigger = $(this).find('[data-detail-id]').first();
+                if ($detailTrigger.length && window.history && window.history.replaceState) {
+                    window.history.replaceState(null, '', '#' + $detailTrigger.attr('data-detail-id'));
+                }
+            {{/preferences.showdetailsarea}}
+        });
+
+
+        {{#preferences.layout_slider}}
+            var sliderClass = ".card_layout_slider.slider-{{uniqueid}}";
+            $(sliderClass).slick(
+                {
+                    infinite: true,
+                    slidesToShow: {{preferences.slidesToShow}},
+                    slidesToScroll: {{preferences.slidesToScroll}},
+                    autoplay: {{preferences.autoplay}},
+                    autoplaySpeed: {{preferences.autoplaySpeed}},
+                    arrows: {{preferences.arrows}},
+                    prevArrow: '<button class="slick-prev" type="button" aria-label="{{#str}}previous, core{{/str}}">{{#str}}previous, core{{/str}}</button>',
+                    nextArrow: '<button class="slick-next" type="button" aria-label="{{#str}}next, core{{/str}}">{{#str}}next, core{{/str}}</button>',
+                    centerMode: {{preferences.centerMode}},
+                    centerPadding: '{{preferences.centerPadding}}px',
+                    dots: {{preferences.dots}},
+                    draggable: {{preferences.draggable}},
+                    fade: {{preferences.fade}},
+                    infinite: {{preferences.infinite}},
+                    rows: {{preferences.rows}},
+                    slidesPerRow: {{preferences.slidesPerRow}},
+                    speed: {{preferences.speed}},
+                    swipeToSlide: {{preferences.swipeToSlide}},
+                    variableWidth: {{preferences.variableWidth}},
+                    vertical: {{preferences.vertical}},
+                    verticalSwiping: {{preferences.verticalSwiping}},
+                    responsive: [
+                        {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 3,
+                            infinite: true,
+                            dots: true
+                        }
+                        },
+                        {
+                        breakpoint: 600,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 2
+                        }
+                        },
+                        {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                        }
+                    ]
+                }
+            );
+        {{/preferences.layout_slider}}
+
+        {{#preferences.layout_masonry}}
+            $('.card_layout_masonry .card-block .masonry-more a').click(function(){
+                $(this).closest('.card-block').toggleClass('show-content');
+            });
+        {{/preferences.layout_masonry}}
+    });
+
+    {{#preferences.showdetailsarea}}
+        // Initialise hash-based auto-open so shared URLs with #dash-detail-... fragments work.
+        require(['block_dash/details_area'], function(DetailsArea) {
+            DetailsArea.hashInit();
+        });
+    {{/preferences.showdetailsarea}}
+});
+{{/js}}

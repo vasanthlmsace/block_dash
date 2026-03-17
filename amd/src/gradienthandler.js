@@ -1,6 +1,6 @@
 define([], function () {
     return {
-        init: function() {
+        init: function () {
             alert('demo');
         }
     };

@@ -234,25 +234,17 @@ class external extends external_api {
                     ->get_paginator()->export_for_template($OUTPUT))];
             }
 
-            if (
-                get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
-                    && $datasource->supports_currentscript()
-            ) {
-                // Cloned from moodle lib\external\externalib.php 422.
-                // Hack alert: Set a default URL to stop the annoying debug.
-                $PAGE->set_url('/');
-                // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
-                $OUTPUT->header();
+            // Cloned from moodle lib\external\externalib.php 422.
+            // Hack alert: Set a default URL to stop the annoying debug.
+            $PAGE->set_url('/');
+            // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
+            $OUTPUT->header();
 
-                $PAGE->start_collecting_javascript_requirements();
+            $PAGE->start_collecting_javascript_requirements();
 
-                $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
+            $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
 
-                $javascript = $PAGE->requires->get_end_code();
-            } else {
-                $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
-                $javascript = '';
-            }
+            $javascript = $PAGE->requires->get_end_code();
             return ['html' => $datarendered, 'scripts' => $javascript];
         }
 
