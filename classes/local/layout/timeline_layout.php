@@ -213,6 +213,8 @@ class timeline_layout extends abstract_layout {
      * data source and data grid.
      */
     public function before_data() {
+        parent::before_data();
+
         if (!$perpage = $this->get_data_source()->get_preferences('perpage')) {
             $perpage = paginator::PER_PAGE_DEFAULT;
         }

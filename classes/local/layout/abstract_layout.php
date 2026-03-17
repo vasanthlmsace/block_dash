@@ -115,6 +115,30 @@ abstract class abstract_layout implements layout_interface, \templatable {
      * data source and data grid.
      */
     public function before_data() {
+        // Propagate the block-level "details_custom_content" preference to the
+        // smart_course_button and enrollment_options field attributes so they
+        $customcontentkey = $this->get_data_source()->get_preferences('details_custom_content');
+        $hascustomcontent = (!empty($customcontentkey) && $customcontentkey !== 'none');
+
+        $blockinstanceid = 0;
+        $bi = $this->get_data_source()->get_block_instance();
+        if ($bi && isset($bi->instance->id)) {
+            $blockinstanceid = (int) $bi->instance->id;
+        }
+
+        $targetclasses = [
+            'local_dash\\data_grid\\field\\attribute\\smart_course_button_attribute',
+            'local_dash\\data_grid\\field\\attribute\\enrollment_options_attribute',
+        ];
+
+        foreach ($this->get_data_source()->get_available_fields() as $field) {
+            foreach ($field->get_attributes() as $attribute) {
+                if (in_array(get_class($attribute), $targetclasses)) {
+                    $attribute->set_option('has_details_custom_content', $hascustomcontent);
+                    $attribute->set_option('blockinstanceid', $blockinstanceid);
+                }
+            }
+        }
     }
 
     /**
