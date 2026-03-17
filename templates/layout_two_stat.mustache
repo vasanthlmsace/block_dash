@@ -25,10 +25,31 @@
 }}
 {{< block_dash/layout }}
     {{$body}}
-        {{#data.first_child}}
-            {{#first_data}}
-                <h3 class="text-center">{{{stat}}} / {{{other_stat}}} <small style="font-size:0.5em">{{preferences.stat_field_label}}</small></h3>
-            {{/first_data}}
-        {{/data.first_child}}
+        <div id="dash-stat-{{uniqueid}}">
+            {{#data.first_child}}
+                {{#first_data}}
+                    <div data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
+                        data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                        data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
+                        data-detailfooterright="{{detailfooterright}}"
+                        data-customcontent="{{customcontent}}">
+                        <h3 class="text-center">{{{stat}}} / {{{other_stat}}} <small style="font-size:0.5em">{{preferences.stat_field_label}}</small></h3>
+                    </div>
+                {{/first_data}}
+            {{/data.first_child}}
+        </div>
+        {{#preferences.showdetailsarea}}
+            {{#js}}
+                require(['block_dash/details_area'], function(DetailsArea) {
+                    DetailsArea.init('#dash-stat-{{uniqueid}}', {
+                        detailsBgColor: '{{preferences.details_bg_color}}',
+                        detailsTextColor: '{{preferences.details_text_color}}',
+                        rowSelector: '[data-detailheader]',
+                        mode: '{{preferences.details_area_mode}}',
+                        detailsAreaSize: '{{preferences.details_area_size}}'
+                    });
+                });
+            {{/js}}
+        {{/preferences.showdetailsarea}}
     {{/body}}
 {{/ block_dash/layout }}
