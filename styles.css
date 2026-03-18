@@ -1264,6 +1264,15 @@ tr.dash-details-expanded {
 .dash-details-enabled.dash-details-size-fit-content .dash-details-expand-li {
     clear: both;
 }
+.dash-details-enabled.dash-details-size-like-item:not(table) {
+    display: flex;
+}
+.dash-details-enabled.dash-details-size-like-item > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /* =======================================================
  * Layout styles (moved from local_dash)
@@ -1308,6 +1317,8 @@ tr.dash-details-expanded {
 .dash-block-content .timeline {
     list-style: none;
     padding: 20px 0 20px;
+    display: flex;
+    flex-wrap: wrap;
     position: relative;
 }
 .dash-block-content .timeline .dash-details-expanded .timeline-badge {
@@ -1325,8 +1336,21 @@ tr.dash-details-expanded {
     margin-left: -1.5px;
 }
 .dash-block-content .timeline > li {
+    width: 50%;
     margin-bottom: 20px;
     position: relative;
+}
+.dash-block-content .timeline:not(:has(.dash-details-expanded)) > li,
+.dash-block-content .timeline > li.dash-details-size-like-item ~ li {
+    width: 100%;
+}
+.dash-block-content .timeline > li.dash-details-expanded {
+    width: 50%;
+    padding-left: 30px;
+    margin-left: 29px;
+}
+.dash-block-content .timeline > li.dash-details-expanded > .timeline-panel {
+    width: 100%;
 }
 .dash-block-content .timeline > li:before,
 .dash-block-content .timeline > li:after {
@@ -1839,14 +1863,14 @@ tr.dash-details-expanded {
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default > .card-block,
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout_masonry > .card-block {
-    width: 100%;
+    /* width: 100%; */
     border-radius: 7px;
     padding: 0 5px;
     margin-bottom: 10px;
     display: flex;
     flex-direction: column;
 }
-.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.expand-block.fit-content > .card-block {
+.block_dash .dash-container .dash-block-content .card-layout-row:not.card-layout-default.fit-content > .card-block {
     max-width: none;
     width: 100%;
 }
