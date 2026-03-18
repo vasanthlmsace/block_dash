@@ -584,6 +584,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 ? format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]) : $noresulttxt,
             'datatoggle' => ($CFG->branch >= 500) ? 'data-bs-toggle' : 'data-toggle',
             'datatarget' => ($CFG->branch >= 500) ? 'data-bs-target' : 'data-target',
+            'dataparent' => ($CFG->branch >= 500) ? 'data-bs-parent' : 'data-parent',
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {

@@ -30,13 +30,13 @@
                 <div class="card">
                     <div class="card-header" id="heading-{{uniqueid}}-{{groupby}}">
                         <a href="javascript:void(0);">
-                            <h5 class="mb-0" data-toggle="collapse" data-target="#collapse-{{uniqueid}}-{{groupby}}" aria-expanded="true" aria-controls="collapse-{{uniqueid}}-{{groupby}}">
+                            <h5 class="mb-0" {{datatoggle}}="collapse" {{datatarget}}="#collapse-{{uniqueid}}-{{groupby}}" aria-expanded="true" aria-controls="collapse-{{uniqueid}}-{{groupby}}">
                                 {{{label}}}
                             </h5>
                         </a>
                     </div>
 
-                    <div id="collapse-{{uniqueid}}-{{groupby}}" class="collapse" aria-labelledby="heading-{{uniqueid}}-{{groupby}}" data-parent="#accordion-{{uniqueid}}">
+                    <div id="collapse-{{uniqueid}}-{{groupby}}" class="collapse" aria-labelledby="heading-{{uniqueid}}-{{groupby}}" {{dataparent}}="#accordion-{{uniqueid}}">
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table dash-table">

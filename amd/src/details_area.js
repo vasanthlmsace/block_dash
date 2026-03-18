@@ -44,7 +44,7 @@ define([
      *
      * @param {jQuery}  $element The row / container element.
      * @param {Object}  options  Init options.
-     * @returns {Object} Template context for local_dash/layouts_cards_detailarea.
+     * @returns {Object} Template context for block_dash/layouts_cards_detailarea.
      */
     var getDetailContext = function($element, options) {
         // For non-cards layouts the data attrs sit directly on the row element (tr, li, .card).
