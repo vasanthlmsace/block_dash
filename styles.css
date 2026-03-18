@@ -1264,6 +1264,15 @@ tr.dash-details-expanded {
 .dash-details-enabled.dash-details-size-fit-content .dash-details-expand-li {
     clear: both;
 }
+.dash-details-enabled.dash-details-size-like-item:not(table) {
+    display: flex;
+}
+.dash-details-enabled.dash-details-size-like-item > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /* =======================================================
  * Layout styles (moved from local_dash)
@@ -1861,7 +1870,7 @@ tr.dash-details-expanded {
     display: flex;
     flex-direction: column;
 }
-.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.expand-block.fit-content > .card-block {
+.block_dash .dash-container .dash-block-content .card-layout-row:not.card-layout-default.fit-content > .card-block {
     max-width: none;
     width: 100%;
 }
