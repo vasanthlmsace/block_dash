@@ -57,7 +57,7 @@
                 </div>
                 {{/detailbody3}}
                 {{#customcontent}}
-                <div class="details-custom-content">
+                <div class="details-custom-content" style="{{#preferences.details_custom_content_height}}min-height: {{preferences.details_custom_content_height}};{{/preferences.details_custom_content_height}}{{#customcontentheight}}min-height: {{customcontentheight}};{{/customcontentheight}}">
                     {{{customcontent}}}
                 </div>
                 {{/customcontent}}

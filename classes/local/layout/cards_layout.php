@@ -291,6 +291,14 @@ class cards_layout extends abstract_layout {
      * @param \MoodleQuickForm $mform
      */
     protected function build_tab_general(\moodleform $form, \MoodleQuickForm $mform) {
+        // Search box.
+        $mform->addElement('advcheckbox', 'config_preferences[masonrysearch]', get_string('strmasonrysearch', 'block_dash'));
+        $mform->setType('config_preferences[masonrysearch]', PARAM_BOOL);
+        $mform->setDefault('config_preferences[masonrysearch]', false);
+        // Sort.
+        $mform->addElement('advcheckbox', 'config_preferences[masonrysort]', get_string('strmasonrysort', 'block_dash'));
+        $mform->setType('config_preferences[masonrysort]', PARAM_BOOL);
+        $mform->setDefault('config_preferences[masonrysort]', false);
         // Columns (number of items per row).
         $mform->addElement('select', 'config_preferences[columns]', get_string('columns', 'block_dash'), [
             12 => 1, 6 => 2, 4 => 3, 3 => 4, 25 => 5, 2 => 6, 1 => 12,

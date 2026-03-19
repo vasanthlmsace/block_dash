@@ -534,6 +534,13 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $preferences['fitcarddetailsarea'] = true;
             }
         }
+        // Normalize custom content height: append 'px' if the value is a plain number.
+        if (!empty($preferences['details_custom_content_height'])) {
+            $height = trim($preferences['details_custom_content_height']);
+            if (is_numeric($height)) {
+                $preferences['details_custom_content_height'] = $height . 'px';
+            }
+        }
         return $preferences;
     }
 

@@ -56,6 +56,15 @@ class cards_slider_layout extends cards_layout {
      * @param \MoodleQuickForm $mform
      */
     protected function build_tab_general(\moodleform $form, \MoodleQuickForm $mform) {
+        // Search.
+        $mform->addElement('advcheckbox', 'config_preferences[masonrysearch]', get_string('strmasonrysearch', 'block_dash'));
+        $mform->setType('config_preferences[masonrysearch]', PARAM_BOOL);
+        $mform->setDefault('config_preferences[masonrysearch]', false);
+        
+        // Sort.
+        $mform->addElement('advcheckbox', 'config_preferences[masonrysort]', get_string('strmasonrysort', 'block_dash'));
+        $mform->setType('config_preferences[masonrysort]', PARAM_BOOL);
+        $mform->setDefault('config_preferences[masonrysort]', false);
         // ---- Slider options ----
         $mform->addElement('advcheckbox', 'config_preferences[autoplay]', get_string('autoplay', 'block_dash'));
         $mform->setType('config_preferences[autoplay]', PARAM_BOOL);
