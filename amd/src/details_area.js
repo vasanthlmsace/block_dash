@@ -68,6 +68,7 @@ define([
             customcontent: $info.attr('data-customcontent') || '',
             details_bg_color: options.detailsBgColor || '',
             details_text_color: options.detailsTextColor || '',
+            customcontentheight: options.customContentHeight || '',
             detailmodal: options.mode === 'modal' ? 'true' : ''
         };
 
@@ -341,9 +342,9 @@ define([
                     '</td></tr>');
             } else if (tagName === 'li') {
                 // Timeline layout: wrap in <li> so it stays valid inside <ul>.
-                $panel = $('<li class="dash-details-expand-li ' + sizeClass + '">' +
+                $panel = $('<ul><li class="dash-details-expand-li ' + sizeClass + '">' +
                     '<div class="dash-details-expand-content">' + html + '</div>' +
-                    '</li>');
+                    '</li></ul>');
             } else {
                 // Accordion2 (.card / .panel) and any custom layout: wrap in <div>.
                 $panel = $('<div class="dash-details-expand-panel ' + sizeClass + '">' + html + '</div>');
