@@ -1203,6 +1203,9 @@ tr.dash-details-expanded {
 .dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content {
     width: 100%;
 }
+tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content {
+    border-radius: 5px;
+}
 
 /* -- Table/Grid expanding: like_item -- */
 .dash-details-expand-row.dash-details-size-like-item .dash-details-expand-content {
@@ -1266,6 +1269,19 @@ tr.dash-details-expanded {
 }
 .dash-details-enabled.dash-details-size-like-item:not(table) {
     display: flex;
+}
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout {
+    flex-direction: column;
+}
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card-header {
+    width: 100%;
+}
+td .dash-details-open-link.stretched-link::after {
+    z-index: -1;
+}
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .collapse,
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .collapsing {
+    max-width: 750px;
 }
 .dash-details-enabled.dash-details-size-like-item > div {
     width: 100%;
