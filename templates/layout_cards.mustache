@@ -72,6 +72,24 @@
             {{#bootstrap4}}
                 <!-- <div class="row">-->
                     {{#preferences.layout_default}}
+{{#preferences.masonrysearch}}
+    <div class="grid-searchbox mb-3">
+        <input type="text"
+               class="form-control grid-quicksearch-{{uniqueid}}"
+               placeholder="Search">
+    </div>
+{{/preferences.masonrysearch}}
+
+{{#preferences.masonrysort}}
+    <div class="btn-group grid-sorter-{{uniqueid}} mb-3" role="group">
+        <button type="button" class="btn btn-primary asc active">
+            {{#str}} strasc, block_dash{{/str}}
+        </button>
+        <button type="button" class="btn btn-primary desc">
+            {{#str}} strdesc, block_dash{{/str}}
+        </button>
+    </div>
+{{/preferences.masonrysort}}
                         <div class="row layout_base card-layout-{{uniqueid}} card-layout-default card-layout-row{{#preferences.columnsclass}} {{preferences.columnsclass}}{{/preferences.columnsclass}}{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
                         {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
                         {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}}">
@@ -79,7 +97,7 @@
                                 {{#noresult}}{{{noresult}}}{{/noresult}}
                             {{/data.rows}}
                             {{#data.rows}}
-                                <div class="col-12 col-sm-{{preferences.columns}} card-block-parent card-block default {{stylingoptions}}">
+                                <div class="col-12 col-sm-{{preferences.columns}} card-block-parent card-block default {{stylingoptions}}" data-recordid="{{tablesort}}">
                                     <div class="card-info" data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
                                         data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
                                         data-customcontent="{{customcontent}}">
@@ -126,8 +144,26 @@
                             {{/data.rows}}
                         </div>
                     {{/preferences.layout_default}}
-
                     {{#preferences.layout_slider}}
+                    
+                        {{#preferences.masonrysearch}}
+                            <div class="slider-searchbox mb-3">
+                                <input type="text"
+                                       class="form-control slider-quicksearch-{{uniqueid}}"
+                                       placeholder="Search">
+                            </div>
+                        {{/preferences.masonrysearch}}
+                    
+                        {{#preferences.masonrysort}}
+                            <div class="btn-group slider-sorter-{{uniqueid}} mb-3" role="group">
+                                <button type="button" class="btn btn-primary asc active">
+                                    {{#str}} strasc, block_dash{{/str}}
+                                </button>
+                                <button type="button" class="btn btn-primary desc">
+                                    {{#str}} strdesc, block_dash{{/str}}
+                                </button>
+                            </div>
+                        {{/preferences.masonrysort}}
                         <div class="layout_base card-layout-{{uniqueid}} card_layout_slider slider-{{uniqueid}} card-layout-row{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
                         {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
                         {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}} {{preferences.sliderclass}}">
@@ -135,7 +171,7 @@
                                 {{#noresult}}{{{noresult}}}{{/noresult}}
                             {{/data.rows}}
                             {{#data.rows}}
-                                <div class="card-block slider {{stylingoptions}}">
+                                <div class="card-block slider {{stylingoptions}}" data-recordid="{{tablesort}}">
                                     <div class="card-info"
                                         data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
                                         data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
@@ -582,6 +618,18 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                     ]
                 }
             );
+        {{/preferences.layout_slider}}
+
+        {{#preferences.layout_default}}
+            require(['block_dash/cards_filter_sort'], function(CardsFilterSort) {
+                CardsFilterSort.init('{{uniqueid}}');
+            });
+        {{/preferences.layout_default}}
+
+        {{#preferences.layout_slider}}
+            require(['block_dash/cards_filter_sort'], function(CardsFilterSort) {
+                CardsFilterSort.init('{{uniqueid}}');
+            });
         {{/preferences.layout_slider}}
 
         {{#preferences.layout_masonry}}
