@@ -442,16 +442,16 @@ define([
                 var winW = $(window).width();
                 var top = offset.top + rowH + 4;
                 var left = offset.left;
-                var panelW = Math.min(400, winW - 40);
+                // var panelW = Math.min(400, winW - 40);
 
-                if (left + panelW > winW) {
-                    left = winW - panelW - 20;
-                }
+                // if (left + panelW > winW) {
+                //     left = winW - panelW - 20;
+                // }
                 if (left < 10) {
                     left = 10;
                 }
 
-                $panel.css({top: top, left: left, maxWidth: panelW});
+                $panel.css({top: top, left: left});
                 $panel.addClass('show');
                 return;
             }).catch(Notification.exception);
