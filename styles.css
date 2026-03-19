@@ -1280,6 +1280,16 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
     padding: 0;
     margin-bottom: 10px;
 }
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card .card-body > div {
+    margin-bottom: 15px;
+    align-items: center;
+    gap: 15px;
+}
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card .card-body .icons-no-margin {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 .dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card-header a h5 {
     padding: 10px 25px;
     display: flex;
@@ -1304,6 +1314,7 @@ td .dash-details-open-link.stretched-link::after {
 .dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .collapse,
 .dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .collapsing {
     max-width: 750px;
+    width: 100%;
 }
 .dash-details-enabled.dash-details-size-like-item > div {
     width: 100%;
