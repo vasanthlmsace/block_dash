@@ -391,56 +391,58 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
     $(document).ready(function() {
         {{#preferences.detailareafloating}}
             var floatingHandler = ".dash-block-content .card-layout-row.card-layout-{{uniqueid}} > div.card-block";
+            var floatingParent = ".dash-block-content .card-layout-row.card-layout-{{uniqueid}}";
             var floationHandlerEnabled = false;
-            $(floatingHandler).on('mouseenter', function() {
+            $(floatingParent).on('mouseenter', '[data-action="open-details-modal"]', function() {
                 floationHandlerEnabled = true;
             });
 
-            $(floatingHandler).hover(function(e) {
+            $(floatingParent).on('mouseenter mouseleave', '[data-action="open-details-modal"]', function(e) {
+                var $cardBlock = $(this).closest('.card-block');
                 if (floationHandlerEnabled) {
-                    if ($(this).hasClass('slider')) {
-                        $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($(this)).removeClass("floating-details");
+                    if ($cardBlock.hasClass('slider')) {
+                        $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($cardBlock).removeClass("floating-details");
                         if (!$(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('floating-details')) {
-                            $(this).closest('.layout_base').addClass("floating-card");
+                            $cardBlock.closest('.layout_base').addClass("floating-card");
                         } else {
-                            $(this).closest('.layout_base').removeClass("floating-card");
+                            $cardBlock.closest('.layout_base').removeClass("floating-card");
                         }
                     } else {
-                        $(".card-layout-{{uniqueid}} > div.card-block").not($(this)).removeClass("floating-details");
+                        $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock).removeClass("floating-details");
                         if (!$(floatingHandler).hasClass('floating-details')) {
-                            $(this).closest('.layout_base').addClass("floating-card");
+                            $cardBlock.closest('.layout_base').addClass("floating-card");
                         } else {
-                            $(this).closest('.layout_base').removeClass("floating-card");
+                            $cardBlock.closest('.layout_base').removeClass("floating-card");
                         }
                     }
 
-                    if ($(this).closest('.layout_base').hasClass('fit-card')) {
-                        $(this).toggleClass('floating-details');
-                        if ($(this).hasClass('slider')) {
-                            $(this).parents(".slick-slide").toggleClass("float-slider-column");
-                            $(this).parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-float');
+                    if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
+                        $cardBlock.toggleClass('floating-details');
+                        if ($cardBlock.hasClass('slider')) {
+                            $cardBlock.parents(".slick-slide").toggleClass("float-slider-column");
+                            $cardBlock.parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-float');
                         } else {
-                            $(".card-layout-{{uniqueid}} > div.card-block").not($(this).prevAll()).removeClass("block-n-float");
-                            $(this).prevAll().toggleClass('block-n-float');
+                            $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock.prevAll()).removeClass("block-n-float");
+                            $cardBlock.prevAll().toggleClass('block-n-float');
                         }
-                        $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
-                        $(this).find(".card.details-area-block").toggleClass('show-detail');
+                        $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                        $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
                     } else {
-                        $(this).toggleClass('floating-details');
-                        if ($(this).hasClass('slider')) {
-                            $(".card-layout-row.floating-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
-                            $(this).find(".card.details-area-block").toggleClass('show-detail');
+                        $cardBlock.toggleClass('floating-details');
+                        if ($cardBlock.hasClass('slider')) {
+                            $(".card-layout-row.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                            $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
                         } else {
                             {{#preferences.layout_default}}
-                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($(this).next(".details-area-block")).removeClass("show-detail");
-                                $(this).next(".card.details-area-block").toggleClass('show-detail');
+                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.next(".details-area-block")).removeClass("show-detail");
+                                $cardBlock.next(".card.details-area-block").toggleClass('show-detail');
                             {{/preferences.layout_default}}
                         }
 
-                        if ($(this).hasClass('masonry')) {
+                        if ($cardBlock.hasClass('masonry')) {
                             {{#preferences.layout_masonry}}
-                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
-                                $(this).find(".card.details-area-block").toggleClass('show-detail');
+                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                                $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
                             {{/preferences.layout_masonry}}
                         }
 
@@ -449,65 +451,69 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
             });
         {{/preferences.detailareafloating}}
         var layoutClickHandler = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row > div.card-block";
-        $(layoutClickHandler).click(function(e) {
+        var layoutClickParent = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row";
+        $(layoutClickParent).on('click', '[data-action="open-details-modal"]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $cardBlock = $(this).closest('.card-block');
             {{#preferences.detailareaexpand}}
-                if ($(this).hasClass('slider')) {
-                    if ($(this).parents(".slick-slide").find(".card-block.slider").length > 1) {
+                if ($cardBlock.hasClass('slider')) {
+                    if ($cardBlock.parents(".slick-slide").find(".card-block.slider").length > 1) {
                         // Check the slick div inside more then one slider.
-                        if ($(this).parents(".slick-slide").find(".card-block.slider").hasClass('expand-details') && !$(this).hasClass('expand-details')) {
-                            $(this).parents(".slick-slide").removeClass("expand-slider-column");
+                        if ($cardBlock.parents(".slick-slide").find(".card-block.slider").hasClass('expand-details') && !$cardBlock.hasClass('expand-details')) {
+                            $cardBlock.parents(".slick-slide").removeClass("expand-slider-column");
                         }
                     } else {
-                        $(".card-layout-{{uniqueid}} .slick-slide").not($(this).parents(".slick-slide")).removeClass("expand-slider-column");
+                        $(".card-layout-{{uniqueid}} .slick-slide").not($cardBlock.parents(".slick-slide")).removeClass("expand-slider-column");
                     }
-                    $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($(this)).removeClass("expand-details");
+                    $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($cardBlock).removeClass("expand-details");
                     if (!$(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('expand-details')) {
-                        $(this).closest('.layout_base').addClass("expand-card");
+                        $cardBlock.closest('.layout_base').addClass("expand-card");
                     } else {
-                        $(this).closest('.layout_base').removeClass("expand-card");
+                        $cardBlock.closest('.layout_base').removeClass("expand-card");
                     }
                 } else {
-                    $(".card-layout-{{uniqueid}} > div.card-block").not($(this)).removeClass("expand-details");
+                    $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock).removeClass("expand-details");
                     if (!$(layoutClickHandler).hasClass('expand-details')) {
-                        $(this).closest('.layout_base').addClass("expand-card");
+                        $cardBlock.closest('.layout_base').addClass("expand-card");
                     } else {
-                        $(this).closest('.layout_base').removeClass("expand-card");
+                        $cardBlock.closest('.layout_base').removeClass("expand-card");
                     }
                 }
                 // Check the fit-card or not.
-                if ($(this).closest('.layout_base').hasClass('fit-card')) {
-                    $(this).toggleClass('expand-details');
-                    if ($(this).hasClass('slider')) {
-                        $(this).parents(".slick-slide").toggleClass("expand-slider-column");
+                if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
+                    $cardBlock.toggleClass('expand-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.parents(".slick-slide").toggleClass("expand-slider-column");
                         if ($(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('expand-details')) {
                             $(".card-layout-{{uniqueid}} .slick-slide.slick-active").removeClass("slider-n-expand");
                         }
-                        $(this).parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-expand');
+                        $cardBlock.parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-expand');
                     } else {
                         if ($(layoutClickHandler).hasClass('expand-details')) {
                             $(".card-layout-{{uniqueid}} > div.card-block").removeClass("block-n-expand");
                         }
-                        $(this).prevAll().toggleClass('block-n-expand');
+                        $cardBlock.prevAll().toggleClass('block-n-expand');
                     }
-                    $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
-                    $(this).find(".card.details-area-block").toggleClass('show-detail');
+                    $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                    $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
                 } else {
-                    $(this).toggleClass('expand-details');
-                    if ($(this).hasClass('slider')) {
-                        $(this).parents(".slick-slide").toggleClass("expand-slider-column");
-                        $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
-                        $(this).find(".card.details-area-block").toggleClass('show-detail');
+                    $cardBlock.toggleClass('expand-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.parents(".slick-slide").toggleClass("expand-slider-column");
+                        $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                        $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
                     }  else {
                         {{#preferences.layout_default}}
-                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).next(".details-area-block")).removeClass("show-detail");
-                            $(this).next(".card.details-area-block").toggleClass('show-detail');
+                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.next(".details-area-block")).removeClass("show-detail");
+                            $cardBlock.next(".card.details-area-block").toggleClass('show-detail');
                         {{/preferences.layout_default}}
                     }
 
-                    if ($(this).hasClass('masonry')) {
+                    if ($cardBlock.hasClass('masonry')) {
                         {{#preferences.layout_masonry}}
-                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($(this).find(".details-area-block")).removeClass("show-detail");
-                            $(this).find(".card.details-area-block").toggleClass('show-detail');
+                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                            $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
                         {{/preferences.layout_masonry}}
                     }
                 }
@@ -530,14 +536,14 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
 
             {{#preferences.detailareamodal}}
                 var templatecontext = {
-                    detailheader: $(this).find(".card-info").attr('data-detailheader'),
-                    detailheading: $(this).find(".card-info").attr('data-detailheading'),
-                    detailbody: $(this).find(".card-info").attr('data-detailbody'),
-                    detailbody2: $(this).find(".card-info").attr('data-detailbody2'),
-                    detailbody3: $(this).find(".card-info").attr('data-detailbody3'),
-                    detailfooter: $(this).find(".card-info").attr('data-detailfooter'),
-                    detailfooterright: $(this).find(".card-info").attr('data-detailfooterright'),
-                    customcontent: $(this).find(".card-info").attr('data-customcontent') || '',
+                    detailheader: $cardBlock.find(".card-info").attr('data-detailheader'),
+                    detailheading: $cardBlock.find(".card-info").attr('data-detailheading'),
+                    detailbody: $cardBlock.find(".card-info").attr('data-detailbody'),
+                    detailbody2: $cardBlock.find(".card-info").attr('data-detailbody2'),
+                    detailbody3: $cardBlock.find(".card-info").attr('data-detailbody3'),
+                    detailfooter: $cardBlock.find(".card-info").attr('data-detailfooter'),
+                    detailfooterright: $cardBlock.find(".card-info").attr('data-detailfooterright'),
+                    customcontent: $cardBlock.find(".card-info").attr('data-customcontent') || '',
                     details_bg_color: "{{preferences.details_bg_color}}",
                     details_text_color: "{{preferences.details_text_color}}",
                     detailmodal: "true"
@@ -558,9 +564,9 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
 
             // Update URL hash to the detail-id so the URL is shareable.
             {{#preferences.showdetailsarea}}
-                var $detailTrigger = $(this).find('[data-detail-id]').first();
-                if ($detailTrigger.length && window.history && window.history.replaceState) {
-                    window.history.replaceState(null, '', '#' + $detailTrigger.attr('data-detail-id'));
+                var detailId = $(this).attr('data-detail-id');
+                if (detailId && window.history && window.history.replaceState) {
+                    window.history.replaceState(null, '', '#' + detailId);
                 }
             {{/preferences.showdetailsarea}}
         });
