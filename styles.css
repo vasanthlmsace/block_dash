@@ -1247,13 +1247,18 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
 /* -- Floating: fit_content → wider panel -- */
 .dash-details-floating-panel.dash-details-size-fit-content {
     min-width: 400px;
-    max-width: 680px;
+    max-width: 750px;
+    width: 100%;
+}
+
+.details-area-block .desc-block img {
+    max-width: 150px;
 }
 
 /* -- Floating: like_item → default narrow panel -- */
 .dash-details-floating-panel.dash-details-size-like-item {
     min-width: 280px;
-    max-width: 420px;
+    max-width: 330px;
 }
 
 /* -- Container-level hooks -- */
@@ -1270,57 +1275,67 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
 .dash-details-enabled.dash-details-size-like-item:not(table) {
     display: flex;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout {
+.dash-details-enabled.accordion-table-layout {
     flex-direction: column;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card-header {
+.dash-details-enabled.accordion-table-layout .card .card-header {
     width: 100%;
     border-bottom: 0;
     border-radius: 5px;
     padding: 0;
     margin-bottom: 10px;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card .card-body > div {
+.dash-details-enabled.accordion-table-layout .card .card .card-body > div {
     margin-bottom: 15px;
     align-items: center;
     gap: 15px;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card .card-body .icons-no-margin {
+.dash-details-enabled.accordion-table-layout .card .card .card-body .icons-no-margin {
     display: flex;
     align-items: center;
     gap: 15px;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card-header a h5 {
+.dash-details-enabled.accordion-table-layout .card .card-header a h5 {
     padding: 10px 25px;
     display: flex;
     justify-content: space-between;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card-header a:hover {
+.dash-details-enabled.accordion-table-layout .card .card-header a:hover {
     text-decoration: none;
     /* color: var(--white);
     background-color: var(--primary); */
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card-header a h5:after {
+.dash-details-enabled.accordion-table-layout .card .card-header a h5:after {
     content: '\f078';
     font-family: var(--fa-style-family, "Font Awesome 6 Free", fontawesome);
     font-weight: var(--fa-style, 900);
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .card-header a h5.collapsed:after {
+.dash-details-enabled.accordion-table-layout .card .card-header a h5.collapsed:after {
     content: '\f054';
 }
 td .dash-details-open-link.stretched-link::after {
     z-index: -1;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .collapse,
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .card .collapsing {
+.dash-details-enabled.accordion-table-layout .card .collapse,
+.dash-details-enabled.accordion-table-layout .card .collapsing {
     max-width: 750px;
     width: 100%;
+}
+.dash-details-enabled.accordion-table-layout .collapse > .card-body,
+.dash-details-enabled.accordion-table-layout .collapsing > .card-body {
+    padding-left: 0;
 }
 .dash-details-enabled.dash-details-size-like-item > div {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout > .card .collapse > .card-body {
+    display: flex;
+}
+.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel {
+    width: 100%;
 }
 
 /* =======================================================
@@ -1596,6 +1611,7 @@ td .dash-details-open-link.stretched-link::after {
     border-top-right-radius: 5px;
 }
 .block_dash .dash-container .dash-block-content .card img {
+    max-width: 150px;
     height: 100%;
     object-fit: cover;
     border-radius: 7px;
@@ -1710,7 +1726,8 @@ td .dash-details-open-link.stretched-link::after {
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.floating-block.fit-card.floating-card
 .card-block.floating-details {
-    display: grid;
+    /* display: grid; */
+    flex-direction: row;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.floating-block.fit-card.one-column-block
 .card-block.floating-details {
@@ -2066,6 +2083,9 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash.block .card-body > .singlebutton {
     margin-bottom: 10px;
 }
+.block_dash.block .card-body .dash-table tbody tr .dash-details-expand-content .card-body img {
+    max-width: 150px;
+}
 .block_dash .dash-block-content .card_layout_slider:not(.slick-slider) .card-block .slider-card {
     display: none;
 }
@@ -2208,7 +2228,7 @@ form fieldset .fitem.fitem_f .felement {
 }
 .block_dash .dash-block-content .card_layout_slider.floating-card .slick-list .slick-slide
 .card-block.floating-details .slider-card {
-    flex-direction: column;
+    /* flex-direction: column; */
 }
 .block_dash .dash-block-content .card_layout_slider.floating-card .slick-list .slick-slide .card-block .slider-card {
     height: auto;
@@ -2248,7 +2268,7 @@ form fieldset .fitem.fitem_f .felement {
     width: 100%;
     height: 100%;
     border: 0;
-    border-radius: 0;
+    /* border-radius: 0; */
 }
 .block_dash .dash-block-content .card_layout_slider.expand-card .slick-list .slick-slide .card-block .card,
 .block_dash .dash-block-content .card_layout_slider.floating-card .slick-list .slick-slide .card-block .card {
@@ -2260,6 +2280,43 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash .dash-block-content .card_layout_slider.floating-card .slick-list
 .slick-slide .card-block .card:not(.details-area-block) {
     min-height: 200px;
+}
+.block_dash .dash-block-content .card_layout_slider.fit-card.expand-card .slick-list
+.slick-slide .card-block .card:not(.details-area-block),
+.block_dash .dash-block-content .card_layout_slider-card.fit-card.floating-card .slick-list
+.slick-slide .card-block .card:not(.details-area-block) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.block_dash .dash-block-content .card_layout_slider.fit-content.expand-card .slick-list
+.slick-slide .card-block .card:not(.details-area-block),
+.block_dash .dash-block-content .card_layout_slider-card.fit-content.floating-card .slick-list
+.slick-slide .card-block .card:not(.details-area-block) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide
+.card-block.expand-details .card.details-area-block,
+.block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide
+.card-block.floating-details .card.details-area-block {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.block_dash .dash-container .dash-block-content .card_layout_slider.fit-card.floating-block .slick-list
+.slick-slide.float-slider-column .card-block .card.card-background {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.block_dash .dash-container .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide
+.floating-details .slider-card .card.card-background {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.block_dash .dash-container .dash-block-content .card_layout_slider.fit-card.floating-block .slick-list
+.slick-slide.float-slider-column .card-block .card.details-area-block {
+    border-radius: 5px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 .block_dash .dash-block-content .card_layout_slider.expand-block:not(.fit-content) .slick-list
 .slick-slide.expand-slider-column .card-block.slider.expand-details .slider-card,
@@ -2402,6 +2459,9 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash .dash-block-content .card_layout_masonry .card-block.filtr-item:not(.Square):not(.Tall):not(.Wide) {
     width: 32%;
 }
+.block_dash .dash-block-content .card_layout_masonry .card-block.filtr-item.floating-details:not(.Square):not(.Tall):not(.Wide) {
+    width: 64%;
+}
 .block_dash .dash-block-content .card_layout_masonry.fit-card
 .card-block.filtr-item.expand-details:not(.Square):not(.Tall):not(.Wide) {
     width: 64%;
@@ -2492,12 +2552,12 @@ form fieldset .fitem.fitem_f .felement {
 /*End of Slider*/
 
 .block_dash .dash-container .dash-block-content
-.card-layout-row.card_layout_masonry.fit-card > .card-block.filtr-item.floating-details {
+.card-layout-row.floating-block.card_layout_masonry.fit-card > .card-block.filtr-item.floating-details {
     display: flex;
     flex-direction: row;
 }
 .block_dash .dash-container .dash-block-content
-.card-layout-row.floating-block.card_layout_masonry > .card-block.filtr-item.floating-details {
+.card-layout-row.floating-block.card_layout_masonry:not > .card-block.filtr-item.floating-details {
     border-radius: 10px;
     overflow: hidden;
     flex-direction: column;
