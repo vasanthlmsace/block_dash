@@ -13,7 +13,11 @@
  *
  * Trigger paths (all three modes):
  *  1. Explicit — click on [data-action="open-details-modal"] (details button / details link)
- *  2. Fallback — click (expanding/modal) or hover (floating) on the row when rowSelector is given
+ *  2. For floating mode, hover on [data-action="open-details-modal"] also shows the panel
+ *
+ * The details area requires a "Details button" or "Details link" field to be
+ * enabled in the Fields tab.  Row-level click/hover fallbacks have been removed
+ * so that only the dedicated field triggers can open the details area.
  *
  * @module     block_dash/details_area
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
@@ -250,22 +254,6 @@ define([
             }
         });
 
-        // Row-level fallback clicks.
-        if (options.rowSelector) {
-            $container.on('click', options.rowSelector, function(e) {
-                if (isInteractiveChild(e)) {
-                    return;
-                }
-                e.preventDefault();
-                var $row = validateRowTarget($(this), $container, options, e);
-                handler($row);
-                // Try to find a detail-id trigger inside the row.
-                var $trigger = $row.find('[data-detail-id]').first();
-                if ($trigger.length) {
-                    updateHash($trigger);
-                }
-            });
-        }
     };
 
     // -------------------------------------------------------------------------
@@ -384,20 +372,6 @@ define([
             }
         });
 
-        // Row-level fallback clicks.
-        if (options.rowSelector) {
-            $container.on('click', options.rowSelector, function(e) {
-                if (isInteractiveChild(e)) {
-                    return;
-                }
-                var $row = validateRowTarget($(this), $container, options, e);
-                handler($row);
-                var $trigger = $row.find('[data-detail-id]').first();
-                if ($trigger.length) {
-                    updateHash($trigger);
-                }
-            });
-        }
     };
 
     // -------------------------------------------------------------------------
@@ -472,14 +446,17 @@ define([
         $panel.on('mouseenter', cancelHide);
         $panel.on('mouseleave', hide);
 
-        var rowSelector = options.rowSelector || '[data-detailheader]';
-
-        // Hover triggers.
-        $container.on('mouseenter', rowSelector, function() {
+        // Hover on explicit details triggers.
+        // For details-link (stretched-link), the ::after covers the row, so
+        // mouseenter/mouseleave fires when entering/leaving the row area.
+        $container.on('mouseenter', '[data-action="open-details-modal"]', function() {
             cancelHide();
-            show($(this));
+            var $row = findRow($(this), $container);
+            if ($row.length) {
+                show($row);
+            }
         });
-        $container.on('mouseleave', rowSelector, hide);
+        $container.on('mouseleave', '[data-action="open-details-modal"]', hide);
 
         // Explicit button / link clicks also show the panel.
         $container.on('click', '[data-action="open-details-modal"]', function(e) {
@@ -498,21 +475,6 @@ define([
             }
         });
 
-        // Row clicks also show the panel (for touch devices).
-        if (options.rowSelector) {
-            $container.on('click', options.rowSelector, function(e) {
-                if (isInteractiveChild(e)) {
-                    return;
-                }
-                cancelHide();
-                var $row = validateRowTarget($(this), $container, options, e);
-                show($row);
-                var $trigger = $row.find('[data-detail-id]').first();
-                if ($trigger.length) {
-                    updateHash($trigger);
-                }
-            });
-        }
     };
 
     // -------------------------------------------------------------------------
