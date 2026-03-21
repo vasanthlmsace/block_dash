@@ -126,9 +126,19 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $blockinstanceid = (int) $bi->instance->id;
         }
 
+        // Calculate showdetailsarea flag from the details_area preference.
+        $detailsarea = $this->get_data_source()->get_preferences('details_area');
+        $showdetailsarea = !empty($detailsarea) && ($detailsarea !== 'disabled');
+
         $targetclasses = [
             'local_dash\\data_grid\\field\\attribute\\smart_course_button_attribute',
             'local_dash\\data_grid\\field\\attribute\\enrollment_options_attribute',
+        ];
+
+        // Propagate showdetailsarea to details button and link attributes.
+        $detailsattributeclasses = [
+            'block_dash\\local\\data_grid\\field\\attribute\\details_button_attribute',
+            'block_dash\\local\\data_grid\\field\\attribute\\details_link_attribute',
         ];
 
         foreach ($this->get_data_source()->get_available_fields() as $field) {
@@ -136,6 +146,9 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 if (in_array(get_class($attribute), $targetclasses)) {
                     $attribute->set_option('has_details_custom_content', $hascustomcontent);
                     $attribute->set_option('blockinstanceid', $blockinstanceid);
+                }
+                if (in_array(get_class($attribute), $detailsattributeclasses)) {
+                    $attribute->set_option('showdetailsarea', $showdetailsarea);
                 }
             }
         }
@@ -519,6 +532,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
         // Details area boolean flags – available for ALL layouts.
         $preferences['showdetailsarea'] = isset($preferences['details_area']) &&
             ($preferences['details_area'] != 'disabled') ? true : false;
+        
         $preferences['detailareaexpand'] = isset($preferences['details_area']) &&
             ($preferences['details_area'] == 'expanding') ? true : false;
         $preferences['detailareafloating'] = isset($preferences['details_area']) &&
