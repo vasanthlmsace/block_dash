@@ -136,57 +136,6 @@ define([
         return $row;
     };
 
-    /**
-     * Verify that the jQuery-delegated row target actually contains the click point.
-     * If not (e.g. due to CSS ::after overlays), find the correct row by coordinates.
-     *
-     * @param {jQuery}  $row       The row returned by jQuery delegation ($(this)).
-     * @param {jQuery}  $container The layout container.
-     * @param {Object}  options    Init options (needs rowSelector).
-     * @param {Event}   e          The original DOM event.
-     * @returns {jQuery} The validated (possibly corrected) row element.
-     */
-    var validateRowTarget = function($row, $container, options, e) {
-        if (!$row.length || !e || typeof e.clientX !== 'number') {
-            return $row;
-        }
-        var rect = $row[0].getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right &&
-            e.clientY >= rect.top && e.clientY <= rect.bottom) {
-            return $row;
-        }
-        // The matched row does not contain the click — find the correct one.
-        var selector = options.rowSelector || '[data-detailheader]';
-        var $correct = $();
-        $container.find(selector).each(function() {
-            var r = this.getBoundingClientRect();
-            if (e.clientX >= r.left && e.clientX <= r.right &&
-                e.clientY >= r.top && e.clientY <= r.bottom) {
-                $correct = $(this);
-                return false; // break
-            }
-        });
-        return $correct.length ? $correct : $row;
-    };
-
-    /**
-     * Check if click originated from an interactive child that should NOT trigger details.
-     *
-     * @param {Event} e Original DOM event.
-     * @returns {boolean}
-     */
-    var isInteractiveChild = function(e) {
-        var $t = $(e.target);
-        if ($t.closest('[data-action="open-details-modal"]').length) {
-            return true;
-        }
-        // Ignore links that are details-area triggers (their href starts with #dash-detail-).
-        if ($t.closest('a[href]:not([href^="#dash-detail-"]):not([href="javascript:void(0)"]), ' +
-            'button:not([data-action="open-details-modal"])').length) {
-            return true;
-        }
-        return false;
-    };
 
     /**
      * Update the URL hash to the detail-id of the clicked trigger, so the URL
@@ -355,7 +304,6 @@ define([
         var handler = function($row) {
             handleExpand($row, $container, options);
         };
-
         // Explicit button / link clicks.
         $container.on('click', '[data-action="open-details-modal"]', function(e) {
             // Let the browser handle modifier clicks so the real URL can be followed.
@@ -366,6 +314,7 @@ define([
             e.stopImmediatePropagation();
             var $clicked = $(this);
             var $row = findRow($clicked, $container, e);
+            console.log('clicked row:', $row);
             if ($row.length) {
                 handler($row);
                 updateHash($clicked);
@@ -537,6 +486,12 @@ define([
             if (e.ctrlKey || e.metaKey || e.shiftKey || e.which === 2) {
                 return;
             }
+            // Check if details area is disabled on this element or a parent.
+            var $el = $(this);
+            var status = $el.data('status') || $el.closest('[data-status]').data('status');
+            if (status === 'disabled') {
+                return;
+            }
             updateHash($(this));
         });
 
@@ -583,12 +538,16 @@ define([
 
             // Apply CSS marker classes for mode and size on the container
             // so that CSS can style the layout appropriately.
-            var sizeClass = (options.detailsAreaSize === 'fit_content')
-                ? 'dash-details-size-fit-content'
-                : 'dash-details-size-like-item';
             $container.addClass('dash-details-enabled');
             $container.addClass('dash-details-mode-' + mode);
-            $container.addClass(sizeClass);
+
+            if (mode !== 'modal') {
+                var sizeClass = (options.detailsAreaSize === 'fit_content')
+                    ? 'dash-details-size-fit-content'
+                    : 'dash-details-size-like-item';
+            
+                $container.addClass(sizeClass);
+            }
 
             switch (mode) {
                 case 'expanding':

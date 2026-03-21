@@ -54,6 +54,7 @@ class details_button_attribute extends abstract_field_attribute {
                     'class' => 'btn btn-secondary dash-details-open-btn',
                     'data-action' => 'open-details-modal',
                     'data-detail-id' => $detailid,
+                    'data-status' => $this->get_option('showdetailsarea') ? 'enabled' : 'disabled',
                 ]
             );
         }
