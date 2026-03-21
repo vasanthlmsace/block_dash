@@ -1090,10 +1090,10 @@ h5:before,
 [data-detailheader] {
     cursor: pointer;
 }
-.dash-details-enabled [data-detailheader] {
+.accordion-table-layout [data-detailheader] {
     transition: background-color 0.15s ease;
 }
-/* .dash-details-enabled [data-detailheader]:hover {
+/* .accordion-table-layout [data-detailheader]:hover {
     background-color: rgba(0, 0, 0, 0.04);
 } */
 
@@ -1111,6 +1111,11 @@ tr.dash-details-expanded {
 /* --- TABLE / GRID layout (tr → tr+td) --- */
 .dash-details-expand-row > td {
     background: transparent;
+}
+.dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel .card-body a,
+.block_dash .dash-container .dash-block-content .card-layout-row .card-block .card-body a,
+.dash-details-expand-row .dash-details-expand-content .details-area-block .card-body a {
+    color: var(--bs-heading-color);
 }
 .dash-details-expand-row .dash-details-expand-content .details-area-block {
     margin: 0;
@@ -1147,8 +1152,8 @@ tr.dash-details-expanded {
     border-radius: 4px;
 }
 
-.dash-details-expand-li.dash-details-size-like-item .dash-details-expand-content {
-
+.dash-details-expand-li.dash-details-size-like-item .dash-details-expand-content .details-area-block .card-body a {
+    color: var(--bs-heading-color);
 }
 /* Keep timeline visual flow intact */
 .timeline .dash-details-expand-li {
@@ -1238,7 +1243,9 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
 .dash-details-expand-li.dash-details-size-fit-content .dash-details-expand-content {
     width: 100%;
 }
-
+.dash-details-expand-li.dash-details-size-fit-content .dash-details-expand-content .details-area-block .card-body a {
+    color: var(--bs-heading-color);
+}
 /* -- Timeline (li) expanding: like_item -- */
 .dash-details-expand-li.dash-details-size-like-item {
     max-width: 100%;
@@ -1260,82 +1267,94 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
     min-width: 280px;
     max-width: 330px;
 }
+.dash-details-floating-panel.dash-details-size-like-item .details-area-block .card-body a,
+.dash-details-floating-panel.dash-details-size-fit-content .details-area-block .card-body a {
+    color: var(--bs-heading-color);
+}
 
 /* -- Container-level hooks -- */
-.dash-details-enabled.dash-details-mode-expanding {
+.accordion-table-layout.dash-details-mode-expanding {
     position: relative;
 }
-.dash-details-enabled.dash-details-mode-floating [data-detailheader] {
+.accordion-table-layout.dash-details-mode-floating [data-detailheader] {
     position: relative;
 }
-.dash-details-enabled.dash-details-size-fit-content .dash-details-expand-panel,
-.dash-details-enabled.dash-details-size-fit-content .dash-details-expand-li {
+.accordion-table-layout.dash-details-size-fit-content .dash-details-expand-panel,
+.accordion-table-layout.dash-details-size-fit-content .dash-details-expand-li {
     clear: both;
 }
-.dash-details-enabled.dash-details-size-like-item:not(table) {
+.accordion-table-layout.dash-details-size-fit-content .dash-details-expand-panel .details-area-block .card-body a {
+    color: var(--bs-heading-color);
+}
+.accordion-table-layout.dash-details-size-like-item:not(table) {
     display: flex;
 }
-.dash-details-enabled.accordion-table-layout {
+.accordion-table-layout {
     flex-direction: column;
 }
-.dash-details-enabled.accordion-table-layout .card .card-header {
+.accordion-table-layout .card .card-header {
     width: 100%;
     border-bottom: 0;
     border-radius: 5px;
     padding: 0;
     margin-bottom: 10px;
 }
-.dash-details-enabled.accordion-table-layout .card .card .card-body > div {
+.accordion-table-layout .card .card .card-body > div {
     margin-bottom: 15px;
     align-items: center;
     gap: 15px;
 }
-.dash-details-enabled.accordion-table-layout .card .card .card-body .icons-no-margin {
+.accordion-table-layout .card .card .card-body .icons-no-margin {
     display: flex;
     align-items: center;
     gap: 15px;
 }
-.dash-details-enabled.accordion-table-layout .card .card-header a h5 {
+.accordion-table-layout .card .card-header a h5 {
     padding: 10px 25px;
     display: flex;
     justify-content: space-between;
 }
-.dash-details-enabled.accordion-table-layout .card .card-header a:hover {
+.accordion-table-layout .card .card-header a:hover {
     text-decoration: none;
     /* color: var(--white);
     background-color: var(--primary); */
 }
-.dash-details-enabled.accordion-table-layout .card .card-header a h5:after {
+.accordion-table-layout .card .card-header a h5:after {
     content: '\f078';
     font-family: var(--fa-style-family, "Font Awesome 6 Free", fontawesome);
     font-weight: var(--fa-style, 900);
 }
-.dash-details-enabled.accordion-table-layout .card .card-header a h5.collapsed:after {
+.accordion-table-layout .card .card-header a h5.collapsed:after {
     content: '\f054';
 }
 td .dash-details-open-link.stretched-link::after {
     z-index: -1;
 }
-.dash-details-enabled.accordion-table-layout .card .collapse,
-.dash-details-enabled.accordion-table-layout .card .collapsing {
+.accordion-table-layout .card .collapse,
+.accordion-table-layout .card .collapsing {
     max-width: 750px;
     width: 100%;
 }
-.dash-details-enabled.accordion-table-layout .collapse > .card-body,
-.dash-details-enabled.accordion-table-layout .collapsing > .card-body {
+.accordion-table-layout .collapse > .card-body,
+.accordion-table-layout .collapsing > .card-body {
     padding-left: 0;
 }
-.dash-details-enabled.dash-details-size-like-item > div {
+.accordion-table-layout.dash-details-size-like-item > div {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout > .card .collapse > .card-body {
+.accordion-table-layout.dash-details-size-like-item > .dash-details-expand-panel .details-area-block .card-body a {
+    color: var(--bs-heading-color);
+}
+.dash-details-size-like-item.accordion-table-layout > .card .collapse > .card-body {
     display: flex;
 }
-.dash-details-enabled.dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel {
+.dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel {
     width: 100%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 /* =======================================================
@@ -1762,6 +1781,22 @@ td .dash-details-open-link.stretched-link::after {
 .card-block.floating-details .card img {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+}
+.block_dash .dash-container .dash-block-content .card-layout-row.floating-block:not(.fit-content)
+.card-block.floating-details > .card:not(.details-area-block) {
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 5px;
+}
+.block_dash .dash-container .dash-block-content .card-layout-row.floating-block:not(.fit-content)
+.card-block.floating-details .details-area-block.show-detail {
+    border-top-left-radius: 0;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 0;
+}
+.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content.floating-block
+.details-area-block.show-detail {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.floating-block.floating-card
 .card-block.float-details .card.details-area-block {
@@ -2408,7 +2443,8 @@ form fieldset .fitem.fitem_f .felement {
 }
 .card.details-area-block .card-block .card-footer .footer-left img,
 .card.details-area-block .card-block .card-footer .footer-right img {
-    max-width: 200px;
+    max-width: 150px;
+    width: 100%;
 }
 .card.details-area-block .card-block .card-footer .footer-right img {
     margin-left: auto;
@@ -2447,6 +2483,9 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash .dash-block-content .card_layout_masonry .card-block .card {
     height: auto;
     border-radius: 10px;
+}
+.block_dash .dash-block-content .card_layout_masonry .card-block .card .badge a {
+    color: #fff;
 }
 .block_dash .dash-block-content .card_layout_slider.floating-card .slick-list .slick-slide
 .card-block:not(.floating-details) .slider-card {
