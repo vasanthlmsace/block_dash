@@ -538,12 +538,17 @@ define([
 
             // Apply CSS marker classes for mode and size on the container
             // so that CSS can style the layout appropriately.
-            var sizeClass = (options.detailsAreaSize === 'fit_content')
-                ? 'dash-details-size-fit-content'
-                : 'dash-details-size-like-item';
             $container.addClass('dash-details-enabled');
             $container.addClass('dash-details-mode-' + mode);
-            $container.addClass(sizeClass);
+
+            if (mode !== 'modal') {
+                var sizeClass = (options.detailsAreaSize === 'fit_content')
+                    ? 'dash-details-size-fit-content'
+                    : 'dash-details-size-like-item';
+            
+                $container.addClass(sizeClass);
+            }
+
             switch (mode) {
                 case 'expanding':
                     initExpanding($container, options);
