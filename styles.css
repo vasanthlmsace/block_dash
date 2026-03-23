@@ -1165,8 +1165,6 @@ tr.dash-details-expanded {
 
 /* --- Floating mode (all layouts share this) --- */
 .dash-details-floating-panel {
-    position: absolute;
-    z-index: 1040;
     min-width: 280px;
     max-width: 420px;
     display: none;
@@ -1175,11 +1173,17 @@ tr.dash-details-expanded {
     border-radius: 8px;
     overflow: hidden;
     pointer-events: auto;
+    /* position: absolute;
+    z-index: 1040; */
 }
 .dash-details-floating-panel.show {
     display: block;
     animation: dashFloatIn 0.2s ease-out;
 }
+.dash-details-enabled.dash-details-mode-floating {
+    display: flex;
+}
+
 @keyframes dashFloatIn {
     from {
         opacity: 0;
@@ -1264,9 +1268,12 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
 
 /* -- Floating: like_item → default narrow panel -- */
 .dash-details-floating-panel.dash-details-size-like-item {
+    width: 100%;
+}
+/* .dash-details-floating-panel.dash-details-size-like-item {
     min-width: 280px;
     max-width: 330px;
-}
+} */
 .dash-details-floating-panel.dash-details-size-like-item .details-area-block .card-body a,
 .dash-details-floating-panel.dash-details-size-fit-content .details-area-block .card-body a {
     color: var(--bs-heading-color);
@@ -1350,6 +1357,7 @@ td .dash-details-open-link.stretched-link::after {
 }
 .dash-details-size-like-item.accordion-table-layout > .card .collapse > .card-body {
     display: flex;
+    gap: 20px;
 }
 .dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel {
     width: 100%;
@@ -1622,6 +1630,9 @@ td .dash-details-open-link.stretched-link::after {
 .block_dash .dash-container .dash-block-content .card .badge {
     white-space: pre-wrap;
 }
+.block_dash .dash-container .dash-block-content .card .badge a {
+    color: #fff;
+}
 .block_dash .dash-container .dash-block-content .card .badge + .card-body {
     margin-top: 20px;
 }
@@ -1651,13 +1662,13 @@ td .dash-details-open-link.stretched-link::after {
     width: 100%;
     margin-bottom: 0;
 }
-.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content
+.block_dash .dash-container .dash-block-content .card-layout-row.fit-content:not(.card-layout-default)
 .card.details-area-block.show-detail {
     width: 98.6%;
     margin: 0 auto;
 }
 .block_dash .dash-container .dash-block-content
-.card-layout-row.card-layout-default.floating-card.fit-content:not(.one-column-block) .card.details-area-block.show-detail {
+.card-layout-row.floating-card.fit-content:not(.one-column-block):not(.card-layout-default) .card.details-area-block.show-detail {
     width: 96.2%;
     margin-top: 0;
 }
@@ -1847,13 +1858,13 @@ td .dash-details-open-link.stretched-link::after {
     transition: all .5s ease;
 }
 .block_dash .dash-container .dash-block-content
-.card-layout-row.floating-block > .card-block.floating-details .card.card-background {
+.card-layout-row.floating-block:not(.card-layout-default) > .card-block.floating-details .card.card-background {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.floating-block > .card-block.floating-details,
 .block_dash .dash-container .dash-block-content
-.card-layout-row.floating-block > .card-block.floating-details + .details-area-block {
+.card-layout-row.floating-block:not(.card-layout-default) > .card-block.floating-details + .details-area-block {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     transform: scale(1.03);
@@ -1904,7 +1915,7 @@ td .dash-details-open-link.stretched-link::after {
     gap: .5rem 0;
     grid-auto-flow: dense;
     grid-template-columns: repeat(auto-fit, 100%);
-    justify-content: center;
+    /* justify-content: center; */
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content.expand-block:not(.expand-card) {
     display: flex;
@@ -2427,6 +2438,7 @@ form fieldset .fitem.fitem_f .felement {
 .card.details-area-block .card-block .card-footer {
     border: 0;
     background: none;
+    padding: 0.5rem 1rem 1rem;
     display: flex;
     align-items: center;
 }
