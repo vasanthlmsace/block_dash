@@ -1622,6 +1622,9 @@ td .dash-details-open-link.stretched-link::after {
 .block_dash .dash-container .dash-block-content .card .badge {
     white-space: pre-wrap;
 }
+.block_dash .dash-container .dash-block-content .card .badge a {
+    color: #fff;
+}
 .block_dash .dash-container .dash-block-content .card .badge + .card-body {
     margin-top: 20px;
 }
@@ -1651,13 +1654,13 @@ td .dash-details-open-link.stretched-link::after {
     width: 100%;
     margin-bottom: 0;
 }
-.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content
+.block_dash .dash-container .dash-block-content .card-layout-row.fit-content:not(.card-layout-default)
 .card.details-area-block.show-detail {
     width: 98.6%;
     margin: 0 auto;
 }
 .block_dash .dash-container .dash-block-content
-.card-layout-row.card-layout-default.floating-card.fit-content:not(.one-column-block) .card.details-area-block.show-detail {
+.card-layout-row.floating-card.fit-content:not(.one-column-block):not(.card-layout-default) .card.details-area-block.show-detail {
     width: 96.2%;
     margin-top: 0;
 }
@@ -1847,13 +1850,13 @@ td .dash-details-open-link.stretched-link::after {
     transition: all .5s ease;
 }
 .block_dash .dash-container .dash-block-content
-.card-layout-row.floating-block > .card-block.floating-details .card.card-background {
+.card-layout-row.floating-block:not(.card-layout-default) > .card-block.floating-details .card.card-background {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.floating-block > .card-block.floating-details,
 .block_dash .dash-container .dash-block-content
-.card-layout-row.floating-block > .card-block.floating-details + .details-area-block {
+.card-layout-row.floating-block:not(.card-layout-default) > .card-block.floating-details + .details-area-block {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     transform: scale(1.03);
@@ -1904,7 +1907,7 @@ td .dash-details-open-link.stretched-link::after {
     gap: .5rem 0;
     grid-auto-flow: dense;
     grid-template-columns: repeat(auto-fit, 100%);
-    justify-content: center;
+    /* justify-content: center; */
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content.expand-block:not(.expand-card) {
     display: flex;
