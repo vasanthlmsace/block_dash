@@ -1233,6 +1233,13 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
     max-width: 100%;
     border-radius: .5rem;
 }
+.dash-table .dash-details-expand-row.dash-details-size-like-item,
+.dash-table .dash-details-floating-panel.dash-details-size-like-item {
+    margin-top: 5px;
+}
+.dash-table .dash-details-expand-row.dash-details-size-like-item .dash-details-expand-content {
+    min-width: 300px;
+}
 .dash-details-expand-row.dash-details-size-like-item td:has(.dash-details-expand-content) {
     border: 0;
     padding: 0;
@@ -2143,6 +2150,12 @@ form fieldset .fitem.fitem_f .felement {
 }
 .block_dash.block .card-body .dash-table tbody tr .dash-details-expand-content .card-body img {
     max-width: 150px;
+}
+.block_dash.block .card-body .dash-table-block:has(.dash-table) {
+    overflow-y: visible;
+}
+.block_dash.block .card-body .dash-table-block .table-responsive:has(.dash-table) {
+    overflow-y: hidden;
 }
 .block_dash .dash-block-content .card_layout_slider:not(.slick-slider) .card-block .slider-card {
     display: none;
