@@ -374,12 +374,20 @@ define([
 
                 // Create the new panel element.
                 $currentPanel = $('<div class="dash-details-floating-panel ' + sizeClass + '">' + html + '</div>');
-
                 // Find the appropriate injection point within the row.
                 // For cards layout: inject after .card-body inside the .card container.
-                var $card = $row.hasClass('card') ? $row : $row.find('.card').first();
+                var $card = $row.hasClass('floating-details-show') ? $row : $row.find('.floating-details-show');
                 if (!$card.length) {
-                    $card = $row.closest('.card');
+                    // Table tr:
+                    if ($row.hasClass('card-table')) {
+                        if (options.detailsAreaSize === 'fit_content') {
+                            $card = $row.closest('.card-table');
+                        } else {
+                            $card = $row.find('.dash-details-open-btn');
+                        }
+                    } else {
+                        $card = $row.closest('.card');
+                    }
                 }
 
                 if ($card.length) {

@@ -30,7 +30,7 @@
                 <div class="card">
                     <div class="card-header" id="heading-{{uniqueid}}-{{groupby}}">
                         <a href="javascript:void(0);">
-                            <h5 class="mb-0" {{datatoggle}}="collapse" {{datatarget}}="#collapse-{{uniqueid}}-{{groupby}}" aria-expanded="true" aria-controls="collapse-{{uniqueid}}-{{groupby}}">
+                            <h5 class="mb-0 collapsed" {{datatoggle}}="collapse" {{datatarget}}="#collapse-{{uniqueid}}-{{groupby}}" aria-expanded="true" aria-controls="collapse-{{uniqueid}}-{{groupby}}">
                                 {{{label}}}
                             </h5>
                         </a>
@@ -49,7 +49,7 @@
                                     </thead>
                                     <tbody>
                                     {{#rows}}
-                                        <tr data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
+                                        <tr class="card-table" data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
                                             data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
                                             data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
                                             data-detailfooterright="{{detailfooterright}}"

@@ -1418,40 +1418,40 @@ td .dash-details-open-link.stretched-link::after {
     left: 50%;
     margin-left: -1.5px;
 }
-.dash-block-content .timeline > li {
+.dash-block-content .timeline li {
     width: 50%;
     margin-bottom: 20px;
     position: relative;
 }
-.dash-block-content .timeline:not(:has(.dash-details-expanded)) > li,
-.dash-block-content .timeline > li.dash-details-size-like-item ~ li {
+.dash-block-content .timeline:not(:has(.dash-details-expanded)) li,
+.dash-block-content .timeline li.dash-details-size-like-item ~ li {
     width: 100%;
 }
-.dash-block-content .timeline > li.dash-details-expanded {
+.dash-block-content .timeline li.dash-details-expanded {
     width: 50%;
     padding-left: 30px;
     margin-left: 29px;
 }
-.dash-block-content .timeline > li.dash-details-expanded > .timeline-panel {
+.dash-block-content .timeline li.dash-details-expanded > .timeline-panel {
     width: 100%;
 }
-.dash-block-content .timeline > li:before,
-.dash-block-content .timeline > li:after {
+.dash-block-content .timeline li:before,
+.dash-block-content .timeline li:after {
     content: " ";
     display: table;
 }
-.dash-block-content .timeline > li:after {
+.dash-block-content .timeline li:after {
     clear: both;
 }
-.dash-block-content .timeline > li:before,
-.dash-block-content .timeline > li:after {
+.dash-block-content .timeline li:before,
+.dash-block-content .timeline li:after {
     content: " ";
     display: table;
 }
-.dash-block-content .timeline > li:after {
+.dash-block-content .timeline li:after {
     clear: both;
 }
-.dash-block-content .timeline > li > .timeline-panel {
+.dash-block-content .timeline li .timeline-panel {
     width: 46%;
     min-height: 70px;
     float: left;
@@ -1462,7 +1462,7 @@ td .dash-details-open-link.stretched-link::after {
     -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
 }
-.dash-block-content .timeline > li > .timeline-panel:before {
+.dash-block-content .timeline li .timeline-panel:before {
     position: absolute;
     top: 26px;
     right: -15px;
@@ -1473,7 +1473,7 @@ td .dash-details-open-link.stretched-link::after {
     border-bottom: 15px solid transparent;
     content: " ";
 }
-.dash-block-content .timeline > li > .timeline-panel:after {
+.dash-block-content .timeline li .timeline-panel:after {
     content: " ";
     position: absolute;
     top: 27px;
@@ -1484,7 +1484,7 @@ td .dash-details-open-link.stretched-link::after {
     border-right: 0 solid #fff;
     border-bottom: 14px solid transparent;
 }
-.dash-block-content .timeline > li > .timeline-badge {
+.dash-block-content .timeline li .timeline-badge {
     color: #fff;
     width: 50px;
     height: 50px;
@@ -1505,20 +1505,20 @@ td .dash-details-open-link.stretched-link::after {
     left: 50%;
     z-index: 100;
 }
-.dash-block-content .timeline > li > .timeline-badge img.img-responsive {
+.dash-block-content .timeline li .timeline-badge img.img-responsive {
     max-height: 20px;
     width: auto;
 }
-.dash-block-content .timeline > li.timeline-inverted > .timeline-panel {
+.dash-block-content .timeline li.timeline-inverted .timeline-panel {
     float: right;
 }
-.dash-block-content .timeline > li.timeline-inverted > .timeline-panel:before {
+.dash-block-content .timeline li.timeline-inverted .timeline-panel:before {
     border-left-width: 0;
     border-right-width: 15px;
     left: -15px;
     right: auto;
 }
-.dash-block-content .timeline > li.timeline-inverted > .timeline-panel:after {
+.dash-block-content .timeline li.timeline-inverted .timeline-panel:after {
     border-left-width: 0;
     border-right-width: 14px;
     left: -14px;
@@ -1543,11 +1543,11 @@ td .dash-details-open-link.stretched-link::after {
     margin-top: 10px;
     color: inherit;
 }
-.dash-block-content .timeline  .timeline-body > p,
-.dash-block-content .timeline  .timeline-body > ul {
+.dash-block-content .timeline .timeline-body > p,
+.dash-block-content .timeline .timeline-body > ul {
     margin-bottom: 0;
 }
-.dash-block-content .timeline  .timeline-body > p + p {
+.dash-block-content .timeline .timeline-body > p + p {
     margin-top: 5px;
 }
 .dash-block-content .timeline .timeline-badge i {
@@ -1571,30 +1571,30 @@ td .dash-details-open-link.stretched-link::after {
     .dash-block-content  ul.timeline:before {
         left: 40px;
     }
-    .dash-block-content ul.timeline > li > .timeline-panel {
+    .dash-block-content ul.timeline li .timeline-panel {
         width: calc(100% - 90px);
     }
-    .dash-block-content ul.timeline > li > .timeline-panel {
+    .dash-block-content ul.timeline li .timeline-panel {
         width: -moz-calc(100% - 90px);
     }
-    .dash-block-content ul.timeline > li > .timeline-panel {
+    .dash-block-content ul.timeline li .timeline-panel {
         width: -webkit-calc(100% - 90px);
     }
-    .dash-block-content ul.timeline > li > .timeline-badge {
+    .dash-block-content ul.timeline li .timeline-badge {
         left: 15px;
         margin-left: 0;
         top: 16px;
     }
-    .dash-block-content ul.timeline > li > .timeline-panel {
+    .dash-block-content ul.timeline li .timeline-panel {
         float: right;
     }
-    .dash-block-content ul.timeline > li > .timeline-panel:before {
+    .dash-block-content ul.timeline li .timeline-panel:before {
         border-left-width: 0;
         border-right-width: 15px;
         left: -15px;
         right: auto;
     }
-    .dash-block-content ul.timeline > li > .timeline-panel:after {
+    .dash-block-content ul.timeline li .timeline-panel:after {
         border-left-width: 0;
         border-right-width: 14px;
         left: -14px;
