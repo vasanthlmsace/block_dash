@@ -26,17 +26,19 @@
 {{< block_dash/layout }}
     {{$body}}
         <div id="dash-stat-{{uniqueid}}">
-            {{#data.first_child}}
-                {{#first_data}}
-                    <div data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
-                        data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
-                        data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
-                        data-detailfooterright="{{detailfooterright}}"
-                        data-customcontent="{{customcontent}}">
-                        <h3 class="text-center">{{{stat}}} <small style="font-size:0.5em">{{preferences.stat_field_label}}</small></h3>
-                    </div>
-                {{/first_data}}
-            {{/data.first_child}}
+            <div class="card">
+                {{#data.first_child}}
+                    {{#first_data}}
+                        <div data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
+                            data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                            data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
+                            data-detailfooterright="{{detailfooterright}}"
+                            data-customcontent="{{customcontent}}">
+                            <h3 class="text-center">{{{stat}}} <small style="font-size:0.5em">{{preferences.stat_field_label}}</small></h3>
+                        </div>
+                    {{/first_data}}
+                {{/data.first_child}}
+            </div>
         </div>
         {{#preferences.showdetailsarea}}
             {{#js}}

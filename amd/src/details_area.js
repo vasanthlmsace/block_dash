@@ -337,12 +337,23 @@ define([
         var sizeClass = (options.detailsAreaSize === 'fit_content')
             ? 'dash-details-size-fit-content'
             : 'dash-details-size-like-item';
-        var $panel = $('<div class="dash-details-floating-panel ' + sizeClass + '"></div>').appendTo('body');
         var hideTimeout = null;
         var currentRow = null;
+        var $currentPanel = null;
 
         /**
-         * Show the floating panel near the given row.
+         * Remove the floating panel from its current location.
+         */
+        var removePanel = function() {
+            if ($currentPanel && $currentPanel.length) {
+                $currentPanel.remove();
+                $currentPanel = null;
+            }
+        };
+
+        /**
+         * Show the floating panel inside the row's card structure.
+         * Injects the panel after the .card-body element within the .card container.
          * Always reads fresh data attributes from the DOM.
          *
          * @param {jQuery} $row
@@ -357,43 +368,61 @@ define([
                 if (currentRow !== $row[0]) {
                     return;
                 }
-                $panel.html(html);
 
-                // Position below the row, clamped to viewport.
-                var offset = $row.offset();
-                var rowH = $row.outerHeight();
-                var winW = $(window).width();
-                var top = offset.top + rowH + 4;
-                var left = offset.left;
-                // var panelW = Math.min(400, winW - 40);
+                // Remove any existing panel first.
+                removePanel();
 
-                // if (left + panelW > winW) {
-                //     left = winW - panelW - 20;
-                // }
-                if (left < 10) {
-                    left = 10;
+                // Create the new panel element.
+                $currentPanel = $('<div class="dash-details-floating-panel ' + sizeClass + '">' + html + '</div>');
+
+                // Find the appropriate injection point within the row.
+                // For cards layout: inject after .card-body inside the .card container.
+                var $card = $row.hasClass('card') ? $row : $row.find('.card').first();
+                if (!$card.length) {
+                    $card = $row.closest('.card');
                 }
 
-                $panel.css({top: top, left: left});
-                $panel.addClass('show');
+                if ($card.length) {
+                    var $cardBody = $card.find('.card').first();
+                    if ($cardBody.length) {
+                        // Inject after the card-body element.
+                        $cardBody.after($currentPanel);
+                    } else {
+                        // Fallback: append inside the card.
+                        $card.after($currentPanel);
+                    }
+                } else {
+                    // Fallback for non-card layouts: inject after the row element.
+                    $row.after($currentPanel);
+                }
+
+                // Bind mouseenter/mouseleave on the panel to keep it visible.
+                $currentPanel.on('mouseenter', cancelHide);
+                $currentPanel.on('mouseleave', hide);
+
+                $currentPanel.addClass('show');
                 return;
             }).catch(Notification.exception);
         };
 
         var hide = function() {
             hideTimeout = setTimeout(function() {
-                $panel.removeClass('show');
-                currentRow = null;
+                if ($currentPanel) {
+                    $currentPanel.removeClass('show');
+                }
+                // Delay removal slightly so CSS transitions can complete.
+                setTimeout(function() {
+                    if (!$currentPanel || !$currentPanel.hasClass('show')) {
+                        removePanel();
+                        currentRow = null;
+                    }
+                }, 300);
             }, 300);
         };
 
         var cancelHide = function() {
             clearTimeout(hideTimeout);
         };
-
-        // Keep panel visible while mouse is over it.
-        $panel.on('mouseenter', cancelHide);
-        $panel.on('mouseleave', hide);
 
         // Hover on explicit details triggers.
         // For details-link (stretched-link), the ::after covers the row, so
@@ -545,7 +574,6 @@ define([
                 var sizeClass = (options.detailsAreaSize === 'fit_content')
                     ? 'dash-details-size-fit-content'
                     : 'dash-details-size-like-item';
-            
                 $container.addClass(sizeClass);
             }
 
