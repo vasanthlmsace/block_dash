@@ -212,15 +212,22 @@ define([
     /**
      * Remove any existing expand panel owned by a row and clean up its state.
      *
-     * @param {jQuery} $row
+     * @param {jQuery}  $row
+     * @param {boolean} [animate=false] When true, slide the panel up before removing.
      */
-    var removeExpandPanel = function($row) {
+    var removeExpandPanel = function($row, animate) {
         var $panel = $row.data('dash-detail-panel');
-        if ($panel && $panel.length) {
-            $panel.remove();
-        }
         $row.removeData('dash-detail-panel');
         $row.removeClass('dash-details-expanded');
+        if ($panel && $panel.length) {
+            if (animate) {
+                $panel.slideUp(250, function() {
+                    $panel.remove();
+                });
+            } else {
+                $panel.remove();
+            }
+        }
     };
 
     /**
@@ -251,10 +258,12 @@ define([
      * @param {Object} options   Init options.
      */
     var handleExpand = function($row, $container, options) {
+        // Keep reference to the original row for storing panel data.
+        var $originalRow = $row;
+
         // If this row already has a visible panel, toggle it OFF.
-        var $existing = $row.data('dash-detail-panel');
-        if ($existing && $existing.length && $existing.is(':visible')) {
-            removeExpandPanel($row);
+        if ($originalRow.hasClass('dash-details-expanded')) {
+            removeExpandPanel($originalRow, true);
             return;
         }
 
@@ -262,41 +271,43 @@ define([
         collapseAll($container);
 
         // Always read fresh context from DOM attributes.
-        var context = getDetailContext($row, options);
+        var context = getDetailContext($originalRow, options);
         var sizeClass = (options.detailsAreaSize === 'fit_content')
             ? 'dash-details-size-fit-content'
             : 'dash-details-size-like-item';
         renderDetailArea(context).then(function(html) {
             var $panel;
-            var tagName = ($row[0].tagName || '').toLowerCase();
+            var $insertPoint = $originalRow; // Separate variable for insertion point.
+            var tagName = ($originalRow[0].tagName || '').toLowerCase();
             if (tagName === 'tr') {
                 // Table layouts (grid, accordion-with-tables): wrap in <tr><td colspan>.
                 if (options.detailsAreaSize === 'fit_content') {
-                    var colCount = $row.find('td').length || $row.closest('table').find('thead th').length || 1;
+                    var colCount = $originalRow.find('td').length || $originalRow.closest('table').find('thead th').length || 1;
                     $panel = $('<tr class="dash-details-expand-row ' + sizeClass + '">' +
                         '<td colspan="' + colCount + '">' +
                         '<div class="dash-details-expand-content">' + html + '</div>' +
                         '</td></tr>');
-                    } else {
-                        $row = $row.find('.dash-details-open-btn').closest('td');
-                        $panel = $('<td><div class="dash-details-expand-row ' + sizeClass + '">' +
-                            '<div class="dash-details-expand-content">' + html + '</div>' +
-                            '</div></td>');
-                    }
+                } else {
+                    $insertPoint = $originalRow.find('.dash-details-open-btn');
+                    $panel = $('<div class="dash-details-expand-row ' + sizeClass + '">' +
+                        '<div class="dash-details-expand-content">' + html + '</div>' +
+                        '</div>');
+                }
             } else if (tagName === 'li') {
-                $row = $row.find('.timeline-info').first();
-                // Timeline layout: wrap in <li> so it stays valid inside <ul>.
-                $panel = $('<li class="dash-details-expand-li ' + sizeClass + '">' +
+                $insertPoint = $originalRow.find('.timeline-info').first();
+                // Timeline layout: wrap in <div> so it stays valid inside <ul>.
+                $panel = $('<div class="dash-details-expand-li ' + sizeClass + '">' +
                     '<div class="dash-details-expand-content">' + html + '</div>' +
-                    '</li>');
+                    '</div>');
             } else {
-                $row = $row.closest('.floating-details-show').first();
+                $insertPoint = $originalRow.closest('.floating-details-show').first();
                 // Accordion2 (.card / .panel) and any custom layout: wrap in <div>.
                 $panel = $('<div class="dash-details-expand-panel ' + sizeClass + '">' + html + '</div>');
             }
-            $row.after($panel);
-            $row.data('dash-detail-panel', $panel);
-            $row.addClass('dash-details-expanded');
+            $insertPoint.after($panel);
+            // Store panel reference on the ORIGINAL row so toggle-off works correctly.
+            $originalRow.data('dash-detail-panel', $panel);
+            $originalRow.addClass('dash-details-expanded');
             $panel.hide().slideDown(250);
             return;
         }).catch(Notification.exception);
