@@ -1165,8 +1165,6 @@ tr.dash-details-expanded {
 
 /* --- Floating mode (all layouts share this) --- */
 .dash-details-floating-panel {
-    position: absolute;
-    z-index: 1040;
     min-width: 280px;
     max-width: 420px;
     display: none;
@@ -1175,11 +1173,17 @@ tr.dash-details-expanded {
     border-radius: 8px;
     overflow: hidden;
     pointer-events: auto;
+    /* position: absolute;
+    z-index: 1040; */
 }
 .dash-details-floating-panel.show {
     display: block;
     animation: dashFloatIn 0.2s ease-out;
 }
+.dash-details-enabled.dash-details-mode-floating {
+    display: flex;
+}
+
 @keyframes dashFloatIn {
     from {
         opacity: 0;
@@ -1264,9 +1268,12 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
 
 /* -- Floating: like_item → default narrow panel -- */
 .dash-details-floating-panel.dash-details-size-like-item {
+    width: 100%;
+}
+/* .dash-details-floating-panel.dash-details-size-like-item {
     min-width: 280px;
     max-width: 330px;
-}
+} */
 .dash-details-floating-panel.dash-details-size-like-item .details-area-block .card-body a,
 .dash-details-floating-panel.dash-details-size-fit-content .details-area-block .card-body a {
     color: var(--bs-heading-color);
@@ -1350,6 +1357,7 @@ td .dash-details-open-link.stretched-link::after {
 }
 .dash-details-size-like-item.accordion-table-layout > .card .collapse > .card-body {
     display: flex;
+    gap: 20px;
 }
 .dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel {
     width: 100%;
@@ -2430,6 +2438,7 @@ form fieldset .fitem.fitem_f .felement {
 .card.details-area-block .card-block .card-footer {
     border: 0;
     background: none;
+    padding: 0.5rem 1rem 1rem;
     display: flex;
     align-items: center;
 }
