@@ -269,20 +269,28 @@ define([
         renderDetailArea(context).then(function(html) {
             var $panel;
             var tagName = ($row[0].tagName || '').toLowerCase();
-
             if (tagName === 'tr') {
                 // Table layouts (grid, accordion-with-tables): wrap in <tr><td colspan>.
-                var colCount = $row.find('td').length || $row.closest('table').find('thead th').length || 1;
-                $panel = $('<tr class="dash-details-expand-row ' + sizeClass + '">' +
-                    '<td colspan="' + colCount + '">' +
-                    '<div class="dash-details-expand-content">' + html + '</div>' +
-                    '</td></tr>');
+                if (options.detailsAreaSize === 'fit_content') {
+                    var colCount = $row.find('td').length || $row.closest('table').find('thead th').length || 1;
+                    $panel = $('<tr class="dash-details-expand-row ' + sizeClass + '">' +
+                        '<td colspan="' + colCount + '">' +
+                        '<div class="dash-details-expand-content">' + html + '</div>' +
+                        '</td></tr>');
+                    } else {
+                        $row = $row.find('.dash-details-open-btn').closest('td');
+                        $panel = $('<td><div class="dash-details-expand-row ' + sizeClass + '">' +
+                            '<div class="dash-details-expand-content">' + html + '</div>' +
+                            '</div></td>');
+                    }
             } else if (tagName === 'li') {
+                $row = $row.find('.timeline-info').first();
                 // Timeline layout: wrap in <li> so it stays valid inside <ul>.
-                $panel = $('<ul><li class="dash-details-expand-li ' + sizeClass + '">' +
+                $panel = $('<li class="dash-details-expand-li ' + sizeClass + '">' +
                     '<div class="dash-details-expand-content">' + html + '</div>' +
-                    '</li></ul>');
+                    '</li>');
             } else {
+                $row = $row.closest('.floating-details-show').first();
                 // Accordion2 (.card / .panel) and any custom layout: wrap in <div>.
                 $panel = $('<div class="dash-details-expand-panel ' + sizeClass + '">' + html + '</div>');
             }
@@ -314,7 +322,6 @@ define([
             e.stopImmediatePropagation();
             var $clicked = $(this);
             var $row = findRow($clicked, $container, e);
-            console.log('clicked row:', $row);
             if ($row.length) {
                 handler($row);
                 updateHash($clicked);
@@ -377,6 +384,7 @@ define([
                 // Find the appropriate injection point within the row.
                 // For cards layout: inject after .card-body inside the .card container.
                 var $card = $row.hasClass('floating-details-show') ? $row : $row.find('.floating-details-show');
+
                 if (!$card.length) {
                     // Table tr:
                     if ($row.hasClass('card-table')) {
@@ -386,7 +394,7 @@ define([
                             $card = $row.find('.dash-details-open-btn');
                         }
                     } else {
-                        $card = $row.closest('.card');
+                        $card = $row.closest('.floating-details-show');
                     }
                 }
 
