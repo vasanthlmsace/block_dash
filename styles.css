@@ -1180,8 +1180,17 @@ tr.dash-details-expanded {
     display: block;
     animation: dashFloatIn 0.2s ease-out;
 }
-.dash-details-enabled.dash-details-mode-floating {
+/* .dash-details-enabled.dash-details-mode-floating:not(.dash-table) {
     display: flex;
+} */
+.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show {
+    display: flex;
+}
+.block_dash-local-layout-one_stat_layout .dash-details-enabled .floating-details-show .details-area-block .card-body a {
+    color: var(--bs-heading-color);
+}
+.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show > div {
+    width: 100%;
 }
 
 @keyframes dashFloatIn {
