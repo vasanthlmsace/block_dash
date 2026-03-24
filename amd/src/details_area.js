@@ -258,8 +258,9 @@ define([
      * @param {jQuery} $row      The clicked row element.
      * @param {jQuery} $container The layout container.
      * @param {Object} options   Init options.
+     * @param {jQuery} $trigger  The clicked element (button or link).
      */
-    var handleExpand = function($row, $container, options) {
+    var handleExpand = function($row, $container, options, $trigger) {
         // Keep reference to the original row for storing panel data.
         var $originalRow = $row;
 
@@ -290,7 +291,13 @@ define([
                         '<div class="dash-details-expand-content">' + html + '</div>' +
                         '</td></tr>');
                 } else {
-                    $insertPoint = $originalRow.find('.dash-details-open-btn, .dash-details-open-link').first();
+                    // Use the trigger element (button or link) that was clicked.
+                    if ($trigger && $trigger.length &&
+                        ($trigger.hasClass('dash-details-open-link') || $trigger.hasClass('dash-details-open-btn'))) {
+                        $insertPoint = $trigger;
+                    } else {
+                        $insertPoint = $originalRow.find('.dash-details-open-btn, .dash-details-open-link').first();
+                    }
                     if (!$insertPoint.length) {
                         $insertPoint = $originalRow;
                     }
@@ -338,8 +345,8 @@ define([
      * @param {Object} options
      */
     var initExpanding = function($container, options) {
-        var handler = function($row) {
-            handleExpand($row, $container, options);
+        var handler = function($row, $trigger) {
+            handleExpand($row, $container, options, $trigger);
         };
         // Explicit button / link clicks.
         $container.on('click', '[data-action="open-details-modal"]', function(e) {
@@ -352,7 +359,7 @@ define([
             var $clicked = $(this);
             var $row = findRow($clicked, $container, e);
             if ($row.length) {
-                handler($row);
+                handler($row, $clicked);
                 updateHash($clicked);
             }
         });

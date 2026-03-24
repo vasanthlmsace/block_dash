@@ -245,7 +245,16 @@ class external extends external_api {
             $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
 
             $javascript = $PAGE->requires->get_end_code();
-            return ['html' => $datarendered, 'scripts' => $javascript];
+            $layout = '';
+            if (!empty($block->config->preferences['layout'])) {
+                $layout = str_replace('\\', '-', $block->config->preferences['layout']);
+            }
+
+            return [
+                'html' => $datarendered,
+                'scripts' => $javascript,
+                'layoutclass' => $layout
+            ];
         }
 
         return ['html' => 'Error', 'scripts' => ''];
@@ -260,10 +269,11 @@ class external extends external_api {
         return new \external_single_structure([
             'html' => new \external_value(PARAM_RAW),
             'scripts' => new \external_value(PARAM_RAW),
+            'layoutclass' => new \external_value(PARAM_TEXT, 'Layout class')
         ]);
     }
 
-    // Endregion.
+// Endregion.
 
     // Region submit_preferences_form.
 
