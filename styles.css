@@ -1720,7 +1720,7 @@ a.stretched-link::after {
 }
 .block_dash .dash-container .dash-block-content
 .card-layout-row.floating-card.fit-content:not(.one-column-block):not(.card-layout-default) .card.details-area-block.show-detail {
-    width: 96.2%;
+    width: 100%;
     margin-top: 0;
 }
 .block_dash .dash-container .dash-block-content
@@ -2024,14 +2024,25 @@ a.stretched-link::after {
 .block_dash .dash-container .dash-block-content .card-layout-row.fit-card:not(.card_layout_slider) > .card-block {
     flex-direction: row;
 }
+.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content > .card-block,
+.block_dash .dash-container .dash-block-content .card-layout-row.card-layout_masonry.fit-content > .card-block {
+    width: 100%;
+}
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default > .card-block,
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout_masonry > .card-block {
-    width: 100%;
     border-radius: 7px;
     padding: 0 5px;
     margin-bottom: 10px;
     display: flex;
     flex-direction: column;
+}
+.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default > .card-block .card .card-body .card-footer {
+    padding-left: 0;
+    padding-right: 0;
+}
+.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default > .card-block.floating-details {
+    width: 100%;
+    flex: 1;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row:not.card-layout-default.fit-content > .card-block {
     max-width: none;
@@ -2313,6 +2324,9 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide .card-block.floating-details .slider-card {
     margin-bottom: 0;
 }
+.block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide .card-block.expand-details .details-area-block {
+    width: 100%;
+}
 .block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide
 .card-block.expand-details .card.details-area-block,
 .block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide
@@ -2552,6 +2566,9 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash .dash-block-content .card_layout_masonry .card-block .card {
     height: auto;
     border-radius: 10px;
+}
+.block_dash .dash-block-content .card_layout_masonry .card-block .card.details-area-block {
+    margin: 0;
 }
 .block_dash .dash-block-content .card_layout_masonry .card-block .card .badge a {
     color: #fff;
