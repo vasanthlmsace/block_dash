@@ -1183,23 +1183,28 @@ tr.dash-details-expanded {
 /* .dash-details-enabled.dash-details-mode-floating:not(.dash-table) {
     display: flex;
 } */
- .dash-details-enabled .details-area-block .card-body a {
+.dash-details-enabled .details-area-block .card-body a {
     color: var(--bs-heading-color);
- }
- .block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item {
-     display: flex;
- }
-.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show {
+}
+.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item,
+.block_dash-local-layout-two_stat_layout .dash-details-enabled.dash-details-size-like-item {
+    display: flex;
+}
+.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show,
+.block_dash-local-layout-two_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show {
     width: 100%;
     display: flex;
 }
-.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .dash-details-expand-panel {
+.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .dash-details-expand-panel,
+.block_dash-local-layout-two_stat_layout .dash-details-enabled.dash-details-size-like-item .dash-details-expand-panel {
     width: 100%;
 }
-.block_dash-local-layout-one_stat_layout .dash-details-enabled .details-area-block .card-body a {
+.block_dash-local-layout-one_stat_layout .dash-details-enabled .details-area-block .card-body a,
+.block_dash-local-layout-two_stat_layout .dash-details-enabled .details-area-block .card-body a {
     color: var(--bs-heading-color);
 }
-.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show > div {
+.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show > div,
+.block_dash-local-layout-two_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show > div {
     width: 100%;
 }
 
@@ -1306,6 +1311,10 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
 }
 
 /* -- Container-level hooks -- */
+.accordion-table-layout .card .collapse > .card-body,
+.accordion-table-layout .card .collapsing > .card-body {
+    padding-right: 0;
+}
 .accordion-table-layout.dash-details-mode-expanding {
     position: relative;
 }
@@ -1360,7 +1369,7 @@ tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-co
 .accordion-table-layout .card .card-header a h5.collapsed:after {
     content: '\f054';
 }
-td .dash-details-open-link.stretched-link::after {
+a.stretched-link::after {
     z-index: -1;
 }
 .accordion-table-layout .card .collapse,
@@ -1449,7 +1458,7 @@ td .dash-details-open-link.stretched-link::after {
     content: " ";
     width: 3px;
     background-color: #eee;
-    top: 15px;
+    top: 16px;
     left: 50%;
     margin-left: -1.5px;
 }
@@ -1503,6 +1512,7 @@ td .dash-details-open-link.stretched-link::after {
 }
 .dash-block-content .timeline li.timeline-inverted .timeline-info {
     width: 45%;
+    margin-bottom: 10px;
     float: right;
     position: relative;
 }
@@ -1958,9 +1968,9 @@ td .dash-details-open-link.stretched-link::after {
     grid-template-columns: repeat(auto-fit, 100%);
     /* justify-content: center; */
 }
-.block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content.expand-block:not(.expand-card) {
+/* .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content.expand-block:not(.expand-card) {
     display: flex;
-}
+} */
 .block_dash .dash-container .dash-block-content
 .card-layout-row.card-layout-default.floating-block.fit-content:not(.floating-card) .card.details-area-block:hover {
     margin-bottom: 0;
@@ -2016,7 +2026,7 @@ td .dash-details-open-link.stretched-link::after {
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default > .card-block,
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout_masonry > .card-block {
-    /* width: 100%; */
+    width: 100%;
     border-radius: 7px;
     padding: 0 5px;
     margin-bottom: 10px;
