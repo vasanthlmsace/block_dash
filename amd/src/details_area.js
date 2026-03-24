@@ -393,8 +393,9 @@ define([
          * Always reads fresh data attributes from the DOM.
          *
          * @param {jQuery} $row
+         * @param {jQuery} $trigger The clicked/hovered element (button or link).
          */
-        var show = function($row) {
+        var show = function($row, $trigger) {
             currentRow = $row[0];
             clearTimeout(hideTimeout);
 
@@ -433,7 +434,14 @@ define([
                         if (options.detailsAreaSize === 'fit_content') {
                             $card = $row.closest('.card-table');
                         } else {
-                            $card = $row.find('.dash-details-open-btn');
+                            // Use the trigger element (button or link) that was clicked/hovered.
+                            if ($trigger && $trigger.length && $trigger.hasClass('dash-details-open-link')) {
+                                $card = $trigger;
+                            } else if ($trigger && $trigger.length && $trigger.hasClass('dash-details-open-btn')) {
+                                $card = $trigger;
+                            } else {
+                                $card = $row.find('.dash-details-open-btn, .dash-details-open-link').first();
+                            }
                         }
                     } else {
                         $card = $row.closest('.floating-details-show');
@@ -487,9 +495,10 @@ define([
         // mouseenter/mouseleave fires when entering/leaving the row area.
         $container.on('mouseenter', '[data-action="open-details-modal"]', function() {
             cancelHide();
-            var $row = findRow($(this), $container);
+            var $trigger = $(this);
+            var $row = findRow($trigger, $container);
             if ($row.length) {
-                show($row);
+                show($row, $trigger);
             }
         });
         $container.on('mouseleave', '[data-action="open-details-modal"]', hide);
@@ -506,7 +515,7 @@ define([
             var $row = findRow($clicked, $container, e);
             if ($row.length) {
                 cancelHide();
-                show($row);
+                show($row, $clicked);
                 updateHash($clicked);
             }
         });
