@@ -221,7 +221,9 @@ define([
         $row.removeClass('dash-details-expanded');
         if ($panel && $panel.length) {
             if (animate) {
-                $panel.slideUp(250, function() {
+                // For <tr> panels, animate the inner content div (see handleExpand).
+                var $target = $panel.is('tr') ? $panel.find('.dash-details-expand-content') : $panel;
+                $target.slideUp(250, function() {
                     $panel.remove();
                 });
             } else {
@@ -280,7 +282,7 @@ define([
             var $insertPoint = $originalRow; // Separate variable for insertion point.
             var tagName = ($originalRow[0].tagName || '').toLowerCase();
             if (tagName === 'tr') {
-                // Table layouts (grid, accordion-with-tables): wrap in <tr><td colspan>.
+                // Table layouts (grid, accordion-with-tables, custom tables).
                 if (options.detailsAreaSize === 'fit_content') {
                     var colCount = $originalRow.find('td').length || $originalRow.closest('table').find('thead th').length || 1;
                     $panel = $('<tr class="dash-details-expand-row ' + sizeClass + '">' +
@@ -288,7 +290,10 @@ define([
                         '<div class="dash-details-expand-content">' + html + '</div>' +
                         '</td></tr>');
                 } else {
-                    $insertPoint = $originalRow.find('.dash-details-open-btn');
+                    $insertPoint = $originalRow.find('.dash-details-open-btn, .dash-details-open-link').first();
+                    if (!$insertPoint.length) {
+                        $insertPoint = $originalRow;
+                    }
                     $panel = $('<div class="dash-details-expand-row ' + sizeClass + '">' +
                         '<div class="dash-details-expand-content">' + html + '</div>' +
                         '</div>');
@@ -300,7 +305,11 @@ define([
                     '<div class="dash-details-expand-content">' + html + '</div>' +
                     '</div>');
             } else {
-                $insertPoint = $originalRow.closest('.floating-details-show').first();
+                // Accordion2 has .floating-details-show; custom layouts may not.
+                var $floating = $originalRow.closest('.floating-details-show').first();
+                if ($floating.length) {
+                    $insertPoint = $floating;
+                }
                 // Accordion2 (.card / .panel) and any custom layout: wrap in <div>.
                 $panel = $('<div class="dash-details-expand-panel ' + sizeClass + '">' + html + '</div>');
             }
@@ -308,7 +317,16 @@ define([
             // Store panel reference on the ORIGINAL row so toggle-off works correctly.
             $originalRow.data('dash-detail-panel', $panel);
             $originalRow.addClass('dash-details-expanded');
-            $panel.hide().slideDown(250);
+            // For <tr> panels (fit_content table layout), animate the inner
+            // content div instead of the <tr> itself.  jQuery's slideDown on
+            // <tr> elements is unreliable because display:table-row does not
+            // support height animation or overflow:hidden the way block
+            // elements do, which can leave the row hidden.
+            if ($panel.is('tr')) {
+                $panel.find('.dash-details-expand-content').hide().slideDown(250);
+            } else {
+                $panel.hide().slideDown(250);
+            }
             return;
         }).catch(Notification.exception);
     };
@@ -395,6 +413,19 @@ define([
                 // Find the appropriate injection point within the row.
                 // For cards layout: inject after .card-body inside the .card container.
                 var $card = $row.hasClass('floating-details-show') ? $row : $row.find('.floating-details-show');
+
+               /* if (!$card.length) {
+                    // Table tr (grid layout has .card-table; custom layouts may not).
+                    if ($row.hasClass('card-table') || $row.is('tr')) {
+                        if (options.detailsAreaSize === 'fit_content') {
+                            $card = $row.closest('.card-table');
+                        } else {
+                            $card = $row.find('.dash-details-open-btn, .dash-details-open-link').first();
+                        }
+                    } else {
+                        $card = $row.closest('.floating-details-show');
+                    }
+                } */
 
                 if (!$card.length) {
                     // Table tr:
