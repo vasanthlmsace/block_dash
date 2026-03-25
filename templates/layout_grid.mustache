@@ -20,7 +20,7 @@
     Example context (json):
     {
         "sitefullname": "Moodle - 311",
-		"courseurl": "https://localhost/moodle/course/view.php?id=2"
+        "courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
 {{< block_dash/layout }}
@@ -28,7 +28,7 @@
         {{^data.rows}}
             {{#noresult}}{{{noresult}}}{{/noresult}}
         {{/data.rows}}
-        <div class="table-responsive{{#preferences.hidetable}} d-none{{/preferences.hidetable}}">
+        <div class="table-responsive{{#preferences.hidetable}} d-none{{/preferences.hidetable}} table-layout">
             <table class="table dash-table{{#preferences.showdetailsarea}} dash-details-enabled{{/preferences.showdetailsarea}}" id="dash-grid-{{uniqueid}}">
                 <thead>
                     <tr>

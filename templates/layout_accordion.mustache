@@ -20,12 +20,12 @@
     Example context (json):
     {
         "sitefullname": "Moodle - 311",
-		"courseurl": "https://localhost/moodle/course/view.php?id=2"
+        "courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
 {{< block_dash/layout }}
     {{$body}}
-        <div id="accordion-{{uniqueid}}" class="accordion-table-layout">
+        <div id="accordion-{{uniqueid}}" class="accordion-layout accordion-table-layout">
             {{#data.sections}}
                 <div class="card">
                     <div class="card-header" id="heading-{{uniqueid}}-{{groupby}}">
