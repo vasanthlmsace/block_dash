@@ -381,8 +381,17 @@ define([
             ? 'dash-details-size-fit-content'
             : 'dash-details-size-like-item';
         var hideTimeout = null;
+        var showTimeout = null;
         var currentRow = null;
+        var pendingRow = null;
         var $currentPanel = null;
+        var $currentTrigger = null;
+        var $pendingTrigger = null;
+        var isRendering = false;
+
+        // Timing configuration (in milliseconds).
+        var SHOW_DELAY = 150; // Delay before showing (prevents accidental triggers).
+        var HIDE_DELAY = 400; // Delay before hiding (allows mouse to move to panel).
 
         /**
          * Remove the floating panel from its current location.
@@ -392,22 +401,113 @@ define([
                 $currentPanel.remove();
                 $currentPanel = null;
             }
+            $currentTrigger = null;
         };
 
         /**
-         * Show the floating panel inside the row's card structure.
-         * Injects the panel after the .card-body element within the .card container.
-         * Always reads fresh data attributes from the DOM.
-         *
-         * @param {jQuery} $row
-         * @param {jQuery} $trigger The clicked/hovered element (button or link).
+         * Hide panel with transition, then remove.
          */
-        var show = function($row, $trigger) {
-            currentRow = $row[0];
+        var hidePanel = function() {
+            if ($currentPanel && $currentPanel.length) {
+                $currentPanel.removeClass('show');
+                var $panelToRemove = $currentPanel;
+                setTimeout(function() {
+                    if ($panelToRemove === $currentPanel) {
+                        removePanel();
+                        currentRow = null;
+                    }
+                }, 300);
+            } else {
+                currentRow = null;
+            }
+        };
+
+        /**
+         * Cancel all pending timeouts.
+         */
+        var cancelAllTimeouts = function() {
             clearTimeout(hideTimeout);
+            clearTimeout(showTimeout);
+            pendingRow = null;
+            $pendingTrigger = null;
+        };
+
+        /**
+         * Schedule hiding the panel after a delay.
+         */
+        var scheduleHide = function() {
+            // Cancel any pending show.
+            clearTimeout(showTimeout);
+            pendingRow = null;
+            $pendingTrigger = null;
+
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(function() {
+                hidePanel();
+            }, HIDE_DELAY);
+        };
+
+        /**
+         * Check if element is part of the current floating (trigger or panel).
+         *
+         * @param {Element} element The element to check.
+         * @returns {boolean} True if element is part of current floating.
+         */
+        var isPartOfCurrentFloating = function(element) {
+            if (!element) {
+                return false;
+            }
+            // Check against current panel.
+            if ($currentPanel && $currentPanel.length) {
+                if ($currentPanel[0] === element || $.contains($currentPanel[0], element)) {
+                    return true;
+                }
+            }
+            // Check against current trigger.
+            if ($currentTrigger && $currentTrigger.length) {
+                if ($currentTrigger[0] === element || $.contains($currentTrigger[0], element)) {
+                    return true;
+                }
+            }
+            // Check against pending trigger.
+            if ($pendingTrigger && $pendingTrigger.length) {
+                if ($pendingTrigger[0] === element || $.contains($pendingTrigger[0], element)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        /**
+         * Actually render and show the panel.
+         *
+         * @param {jQuery} $row The row element.
+         * @param {jQuery} $trigger The trigger element.
+         */
+        var doShow = function($row, $trigger) {
+            // If already showing for this row, just ensure it stays visible.
+            if (currentRow === $row[0] && $currentPanel && $currentPanel.length) {
+                cancelAllTimeouts();
+                if (!$currentPanel.hasClass('show')) {
+                    $currentPanel.addClass('show');
+                }
+                return;
+            }
+
+            // Prevent concurrent renders.
+            if (isRendering) {
+                return;
+            }
+            isRendering = true;
+
+            currentRow = $row[0];
+            $currentTrigger = $trigger;
+            cancelAllTimeouts();
 
             var context = getDetailContext($row, options);
             renderDetailArea(context).then(function(html) {
+                isRendering = false;
+
                 // Guard: user may have moved away while render was in flight.
                 if (currentRow !== $row[0]) {
                     return;
@@ -416,32 +516,19 @@ define([
                 // Remove any existing panel first.
                 removePanel();
 
-                // Create the new panel element.
-                $currentPanel = $('<div class="dash-details-floating-panel ' + sizeClass + '">' + html + '</div>');
+                // Create the new panel element with a hover bridge.
+                $currentPanel = $('<div class="dash-details-floating-panel ' + sizeClass + '">' +
+                    '<div class="dash-floating-hover-bridge"></div>' +
+                    html + '</div>');
+
                 // Find the appropriate injection point within the row.
-                // For cards layout: inject after .card-body inside the .card container.
                 var $card = $row.hasClass('floating-details-show') ? $row : $row.find('.floating-details-show');
 
-               /* if (!$card.length) {
-                    // Table tr (grid layout has .card-table; custom layouts may not).
-                    if ($row.hasClass('card-table') || $row.is('tr')) {
-                        if (options.detailsAreaSize === 'fit_content') {
-                            $card = $row.closest('.card-table');
-                        } else {
-                            $card = $row.find('.dash-details-open-btn, .dash-details-open-link').first();
-                        }
-                    } else {
-                        $card = $row.closest('.floating-details-show');
-                    }
-                } */
-
                 if (!$card.length) {
-                    // Table tr:
                     if ($row.hasClass('card-table')) {
                         if (options.detailsAreaSize === 'fit_content') {
                             $card = $row.closest('.card-table');
                         } else {
-                            // Use the trigger element (button or link) that was clicked/hovered.
                             if ($trigger && $trigger.length && $trigger.hasClass('dash-details-open-link')) {
                                 $card = $trigger;
                             } else if ($trigger && $trigger.length && $trigger.hasClass('dash-details-open-btn')) {
@@ -458,61 +545,88 @@ define([
                 if ($card.length) {
                     var $cardBody = $card.find('.card').first();
                     if ($cardBody.length) {
-                        // Inject after the card-body element.
                         $cardBody.after($currentPanel);
                     } else {
-                        // Fallback: append inside the card.
                         $card.after($currentPanel);
                     }
                 } else {
-                    // Fallback for non-card layouts: inject after the row element.
                     $row.after($currentPanel);
                 }
 
-                // Bind mouseenter/mouseleave on the panel to keep it visible.
-                $currentPanel.on('mouseenter', cancelHide);
-                $currentPanel.on('mouseleave', hide);
+                // Bind hover events on the panel.
+                $currentPanel.on('mouseenter', function() {
+                    cancelAllTimeouts();
+                });
+                $currentPanel.on('mouseleave', function(e) {
+                    if (isPartOfCurrentFloating(e.relatedTarget)) {
+                        return;
+                    }
+                    scheduleHide();
+                });
 
+                // Force reflow before adding show class for CSS transition.
+                void $currentPanel[0].offsetHeight;
                 $currentPanel.addClass('show');
                 return;
-            }).catch(Notification.exception);
+            }).catch(function(err) {
+                isRendering = false;
+                Notification.exception(err);
+            });
         };
 
-        var hide = function() {
-            hideTimeout = setTimeout(function() {
-                if ($currentPanel) {
-                    $currentPanel.removeClass('show');
-                }
-                // Delay removal slightly so CSS transitions can complete.
-                setTimeout(function() {
-                    if (!$currentPanel || !$currentPanel.hasClass('show')) {
-                        removePanel();
-                        currentRow = null;
-                    }
-                }, 300);
-            }, 300);
-        };
-
-        var cancelHide = function() {
+        /**
+         * Schedule showing the panel with a delay.
+         *
+         * @param {jQuery} $row The row element.
+         * @param {jQuery} $trigger The trigger element.
+         */
+        var scheduleShow = function($row, $trigger) {
+            // Cancel any pending hide.
             clearTimeout(hideTimeout);
+
+            // If already showing this row, nothing to do.
+            if (currentRow === $row[0] && $currentPanel && $currentPanel.length) {
+                return;
+            }
+
+            // If already pending show for same row, nothing to do.
+            if (pendingRow === $row[0]) {
+                return;
+            }
+
+            // Cancel any previous pending show.
+            clearTimeout(showTimeout);
+            pendingRow = $row[0];
+            $pendingTrigger = $trigger;
+
+            showTimeout = setTimeout(function() {
+                if (pendingRow === $row[0]) {
+                    doShow($row, $trigger);
+                    pendingRow = null;
+                    $pendingTrigger = null;
+                }
+            }, SHOW_DELAY);
         };
 
-        // Hover on explicit details triggers.
-        // For details-link (stretched-link), the ::after covers the row, so
-        // mouseenter/mouseleave fires when entering/leaving the row area.
+        // Hover on explicit details triggers - schedule show with delay.
         $container.on('mouseenter', '[data-action="open-details-modal"]', function() {
-            cancelHide();
             var $trigger = $(this);
             var $row = findRow($trigger, $container);
             if ($row.length) {
-                show($row, $trigger);
+                scheduleShow($row, $trigger);
             }
         });
-        $container.on('mouseleave', '[data-action="open-details-modal"]', hide);
 
-        // Explicit button / link clicks also show the panel.
+        // Mouseleave on trigger - schedule hide unless moving to panel.
+        $container.on('mouseleave', '[data-action="open-details-modal"]', function(e) {
+            if (isPartOfCurrentFloating(e.relatedTarget)) {
+                return;
+            }
+            scheduleHide();
+        });
+
+        // Explicit button / link clicks - show immediately.
         $container.on('click', '[data-action="open-details-modal"]', function(e) {
-            // Let the browser handle modifier clicks so the real URL can be followed.
             if (e.ctrlKey || e.metaKey || e.shiftKey || e.which === 2) {
                 return;
             }
@@ -521,8 +635,8 @@ define([
             var $clicked = $(this);
             var $row = findRow($clicked, $container, e);
             if ($row.length) {
-                cancelHide();
-                show($row, $clicked);
+                cancelAllTimeouts();
+                doShow($row, $clicked);
                 updateHash($clicked);
             }
         });

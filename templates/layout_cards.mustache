@@ -390,64 +390,236 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
 
     $(document).ready(function() {
         {{#preferences.detailareafloating}}
-            var floatingHandler = ".dash-block-content .card-layout-row.card-layout-{{uniqueid}} > div.card-block";
             var floatingParent = ".dash-block-content .card-layout-row.card-layout-{{uniqueid}}";
-            var floationHandlerEnabled = false;
-            $(floatingParent).on('mouseenter', '[data-action="open-details-modal"]', function() {
-                floationHandlerEnabled = true;
-            });
+            var floatingHideTimeout = null;
+            var floatingShowTimeout = null;
+            var floatingCurrentBlock = null;
+            var floatingPendingBlock = null;
+            var floatingIsVisible = false;
 
-            $(floatingParent).on('mouseenter mouseleave', '[data-action="open-details-modal"]', function(e) {
-                var $cardBlock = $(this).closest('.card-block');
-                if (floationHandlerEnabled) {
+            // Timing configuration (in milliseconds).
+            var SHOW_DELAY = 150;   // Delay before showing (prevents accidental triggers).
+            var HIDE_DELAY = 400;   // Delay before hiding (allows mouse to move to panel).
+
+            /**
+             * Actually show floating details for a card block (internal).
+             */
+            function doShowFloatingDetails($cardBlock) {
+                // If already showing for this block, nothing to do.
+                if (floatingCurrentBlock === $cardBlock[0] && floatingIsVisible) {
+                    return;
+                }
+
+                // Hide any currently visible block first.
+                if (floatingCurrentBlock && floatingCurrentBlock !== $cardBlock[0]) {
+                    doHideFloatingDetails();
+                }
+
+                floatingCurrentBlock = $cardBlock[0];
+                floatingIsVisible = true;
+
+                // Remove floating-details from other blocks.
+                if ($cardBlock.hasClass('slider')) {
+                    $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($cardBlock).removeClass("floating-details");
+                } else {
+                    $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock).removeClass("floating-details");
+                }
+                $cardBlock.closest('.layout_base').addClass("floating-card");
+
+                if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
+                    $cardBlock.addClass('floating-details');
                     if ($cardBlock.hasClass('slider')) {
-                        $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($cardBlock).removeClass("floating-details");
-                        if (!$(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('floating-details')) {
-                            $cardBlock.closest('.layout_base').addClass("floating-card");
-                        } else {
-                            $cardBlock.closest('.layout_base').removeClass("floating-card");
-                        }
+                        $cardBlock.parents(".slick-slide").addClass("float-slider-column");
+                        $cardBlock.parents(".slick-slide").prevAll(".slick-active").addClass('slider-n-float');
                     } else {
-                        $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock).removeClass("floating-details");
-                        if (!$(floatingHandler).hasClass('floating-details')) {
-                            $cardBlock.closest('.layout_base').addClass("floating-card");
-                        } else {
-                            $cardBlock.closest('.layout_base').removeClass("floating-card");
-                        }
+                        $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock.prevAll()).removeClass("block-n-float");
+                        $cardBlock.prevAll().addClass('block-n-float');
+                    }
+                    $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                    $cardBlock.find(".card.details-area-block").addClass('show-detail');
+                } else {
+                    $cardBlock.addClass('floating-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $(".card-layout-row.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                        $cardBlock.find(".card.details-area-block").addClass('show-detail');
+                    } else {
+                        {{#preferences.layout_default}}
+                            $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.next(".details-area-block")).removeClass("show-detail");
+                            $cardBlock.next(".card.details-area-block").addClass('show-detail');
+                        {{/preferences.layout_default}}
                     }
 
-                    if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
-                        $cardBlock.toggleClass('floating-details');
-                        if ($cardBlock.hasClass('slider')) {
-                            $cardBlock.parents(".slick-slide").toggleClass("float-slider-column");
-                            $cardBlock.parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-float');
-                        } else {
-                            $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock.prevAll()).removeClass("block-n-float");
-                            $cardBlock.prevAll().toggleClass('block-n-float');
-                        }
-                        $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
-                        $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
-                    } else {
-                        $cardBlock.toggleClass('floating-details');
-                        if ($cardBlock.hasClass('slider')) {
-                            $(".card-layout-row.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
-                            $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
-                        } else {
-                            {{#preferences.layout_default}}
-                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.next(".details-area-block")).removeClass("show-detail");
-                                $cardBlock.next(".card.details-area-block").toggleClass('show-detail');
-                            {{/preferences.layout_default}}
-                        }
-
-                        if ($cardBlock.hasClass('masonry')) {
-                            {{#preferences.layout_masonry}}
-                                $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
-                                $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
-                            {{/preferences.layout_masonry}}
-                        }
-
+                    if ($cardBlock.hasClass('masonry')) {
+                        {{#preferences.layout_masonry}}
+                            $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                            $cardBlock.find(".card.details-area-block").addClass('show-detail');
+                        {{/preferences.layout_masonry}}
                     }
                 }
+            }
+
+            /**
+             * Actually hide floating details (internal).
+             */
+            function doHideFloatingDetails() {
+                if (!floatingCurrentBlock) {
+                    return;
+                }
+                var $cardBlock = $(floatingCurrentBlock);
+
+                if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
+                    $cardBlock.removeClass('floating-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.parents(".slick-slide").removeClass("float-slider-column");
+                        $cardBlock.parents(".slick-slide").prevAll(".slick-active").removeClass('slider-n-float');
+                    } else {
+                        $cardBlock.prevAll().removeClass('block-n-float');
+                    }
+                    $cardBlock.find(".card.details-area-block").removeClass('show-detail');
+                } else {
+                    $cardBlock.removeClass('floating-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.find(".card.details-area-block").removeClass('show-detail');
+                    } else {
+                        {{#preferences.layout_default}}
+                            $cardBlock.next(".card.details-area-block").removeClass('show-detail');
+                        {{/preferences.layout_default}}
+                    }
+
+                    if ($cardBlock.hasClass('masonry')) {
+                        {{#preferences.layout_masonry}}
+                            $cardBlock.find(".card.details-area-block").removeClass('show-detail');
+                        {{/preferences.layout_masonry}}
+                    }
+                }
+
+                $cardBlock.closest('.layout_base').removeClass("floating-card");
+                floatingCurrentBlock = null;
+                floatingIsVisible = false;
+            }
+
+            /**
+             * Schedule showing with a small delay (debounce rapid movements).
+             */
+            function scheduleFloatingShow($cardBlock) {
+                // Cancel any pending hide.
+                clearTimeout(floatingHideTimeout);
+
+                // If already showing this block, nothing to do.
+                if (floatingCurrentBlock === $cardBlock[0] && floatingIsVisible) {
+                    return;
+                }
+
+                // If already pending show for same block, nothing to do.
+                if (floatingPendingBlock === $cardBlock[0]) {
+                    return;
+                }
+
+                // Cancel any previous pending show.
+                clearTimeout(floatingShowTimeout);
+                floatingPendingBlock = $cardBlock[0];
+
+                floatingShowTimeout = setTimeout(function() {
+                    // Only show if this block is still the pending one.
+                    if (floatingPendingBlock === $cardBlock[0]) {
+                        doShowFloatingDetails($cardBlock);
+                        floatingPendingBlock = null;
+                    }
+                }, SHOW_DELAY);
+            }
+
+            /**
+             * Schedule hide with delay to allow mouse to move to panel.
+             */
+            function scheduleFloatingHide() {
+                // Cancel any pending show.
+                clearTimeout(floatingShowTimeout);
+                floatingPendingBlock = null;
+
+                // Cancel any existing hide timeout.
+                clearTimeout(floatingHideTimeout);
+
+                floatingHideTimeout = setTimeout(function() {
+                    doHideFloatingDetails();
+                }, HIDE_DELAY);
+            }
+
+            /**
+             * Cancel all pending show/hide operations.
+             */
+            function cancelAllFloatingTimeouts() {
+                clearTimeout(floatingShowTimeout);
+                clearTimeout(floatingHideTimeout);
+                floatingPendingBlock = null;
+            }
+
+            /**
+             * Check if element is part of the current floating details (trigger or panel).
+             */
+            function isPartOfCurrentFloating(element) {
+                if (!element) {
+                    return false;
+                }
+                // Check against current block.
+                if (floatingCurrentBlock) {
+                    var $cardBlock = $(floatingCurrentBlock);
+                    if ($cardBlock[0] === element || $.contains($cardBlock[0], element)) {
+                        return true;
+                    }
+                    var $detailsPanel = $cardBlock.find(".details-area-block").add($cardBlock.next(".details-area-block"));
+                    for (var i = 0; i < $detailsPanel.length; i++) {
+                        if ($detailsPanel[i] === element || $.contains($detailsPanel[i], element)) {
+                            return true;
+                        }
+                    }
+                }
+                // Check against pending block.
+                if (floatingPendingBlock) {
+                    var $pendingBlock = $(floatingPendingBlock);
+                    if ($pendingBlock[0] === element || $.contains($pendingBlock[0], element)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // Mouseenter on trigger - schedule show with delay.
+            $(floatingParent).on('mouseenter', '[data-action="open-details-modal"]', function() {
+                var $cardBlock = $(this).closest('.card-block');
+                scheduleFloatingShow($cardBlock);
+            });
+
+            // Mouseleave on trigger - schedule hide unless moving to the panel.
+            $(floatingParent).on('mouseleave', '[data-action="open-details-modal"]', function(e) {
+                if (isPartOfCurrentFloating(e.relatedTarget)) {
+                    return;
+                }
+                scheduleFloatingHide();
+            });
+
+            // Mouseenter on details panel - cancel any pending hide.
+            $(floatingParent).on('mouseenter', '.details-area-block', function() {
+                cancelAllFloatingTimeouts();
+            });
+
+            // Mouseleave on details panel - schedule hide unless moving to trigger.
+            $(floatingParent).on('mouseleave', '.details-area-block', function(e) {
+                if (isPartOfCurrentFloating(e.relatedTarget)) {
+                    return;
+                }
+                scheduleFloatingHide();
+            });
+
+            // Also bind to card-block for better coverage.
+            $(floatingParent).on('mouseenter', '.card-block.floating-details', function() {
+                cancelAllFloatingTimeouts();
+            });
+
+            $(floatingParent).on('mouseleave', '.card-block.floating-details', function(e) {
+                if (isPartOfCurrentFloating(e.relatedTarget)) {
+                    return;
+                }
+                scheduleFloatingHide();
             });
         {{/preferences.detailareafloating}}
         var layoutClickHandler = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row > div.card-block";
