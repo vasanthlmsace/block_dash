@@ -2875,7 +2875,7 @@ form fieldset .fitem.fitem_f .felement {
 .card-block.floating-details .card:not(.details-area-block),
 .block_dash .dash-container .dash-block-content .card-layout-row.floating-block.card_layout_masonry.fit-card
 .card-block.floating-details .card.card-background img {
-    display: block;
+    display: flex;
 }
 .block_dash .dash-container .dash-block-content .card_layout_slider.floating-block .slick-list .slick-slide
 .card-block.floating-details .card.card-background img {
