@@ -421,6 +421,9 @@ body .select2-container {
 .modal .mform .fcontainer .block_dash-form-range-input .admin_range + .form-control {
     max-width: 60px;
 }
+.modal .modal-content .modal-body .card-body a {
+    color: var(--bs-heading-color);
+}
 /* Mylearning -widget */
 
 
