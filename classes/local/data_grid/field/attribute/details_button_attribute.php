@@ -43,7 +43,7 @@ class details_button_attribute extends abstract_field_attribute {
      */
     public function transform_data($data, \stdClass $record) {
         if ($data) {
-            $label = get_string('details_button', 'block_dash');
+            $label = get_string('details', 'block_dash');
             $blockinstanceid = (int) $this->get_option('blockinstanceid');
             $detailid = details_link_attribute::build_detail_id($record, $blockinstanceid);
             return \html_writer::tag(
