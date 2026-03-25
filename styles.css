@@ -1165,20 +1165,30 @@ tr.dash-details-expanded {
 
 /* --- Floating mode (all layouts share this) --- */
 .dash-details-floating-panel {
+    position: relative;
     min-width: 280px;
     max-width: 420px;
     display: none;
     background: #fff;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
     border-radius: 8px;
-    overflow: hidden;
+    overflow: visible; /* Allow hover bridge to extend outside */
     pointer-events: auto;
-    /* position: absolute;
-    z-index: 1040; */
+    z-index: 1040;
 }
 .dash-details-floating-panel.show {
     display: block;
     animation: dashFloatIn 0.2s ease-out;
+}
+/* Invisible bridge to prevent flickering when mouse moves from trigger to panel */
+.dash-floating-hover-bridge {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 25px;
+    background: transparent;
+    pointer-events: auto;
 }
 /* .dash-details-enabled.dash-details-mode-floating:not(.dash-table) {
     display: flex;
@@ -2079,7 +2089,7 @@ a.stretched-link::after {
     padding-right: 0;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default > .card-block.floating-details {
-    width: 100%;
+    /* width: 100%; */
     flex: 1;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row:not.card-layout-default.fit-content > .card-block {
@@ -2225,6 +2235,9 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash.block .card-body .card-body-2 p,
 .block_dash.block .card-body .card-body-3 p {
     margin-bottom: 0;
+}
+.block_dash.block .card-body .card-body-2:has(button) {
+    overflow: visible;
 }
 .block_dash.block .card-body > .singlebutton {
     margin-bottom: 10px;
