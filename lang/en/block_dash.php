@@ -372,6 +372,7 @@ $string['details_body_1'] = "Details Body 1";
 $string['details_body_2'] = "Details Body 2";
 $string['details_body_3'] = "Details Body 3";
 $string['details_button'] = 'Details button';
+$string['details'] = 'Details';
 $string['details_custom_content'] = 'Details custom content';
 $string['details_custom_content_height'] = 'Details custom content height';
 $string['details_custom_content_height_help'] = 'Enter a minimum height for the custom content area, e.g. "400px" or "30vh". Leave empty for no minimum height.';
@@ -1107,7 +1108,3 @@ $string['zone_type_polygon'] = 'Polygon';
 $string['zone_type_rectangle'] = 'Rectangle';
 $string['zones_found'] = 'Zones found';
 $string['zones_saved_successfully'] = 'Zone configuration saved successfully';
-
-
-
-
