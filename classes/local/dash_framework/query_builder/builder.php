@@ -27,8 +27,6 @@ namespace block_dash\local\dash_framework\query_builder;
 use coding_exception;
 use dml_exception;
 
-use function GuzzleHttp\debug_resource;
-
 /**
  * Builds a query.
  *

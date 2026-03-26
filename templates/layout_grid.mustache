@@ -29,7 +29,7 @@
             {{#noresult}}{{{noresult}}}{{/noresult}}
         {{/data.rows}}
         <div class="table-responsive{{#preferences.hidetable}} d-none{{/preferences.hidetable}}">
-            <table class="table dash-table{{#preferences.showdetailsarea}} dash-details-enabled{{/preferences.showdetailsarea}}" id="dash-grid-{{uniqueid}}">
+            <table class="table dash-table">
                 <thead>
                     <tr>
                         {{#data.first_child.data}}
@@ -44,12 +44,7 @@
                 </thead>
                 <tbody>
                     {{#data.rows}}
-                        <tr class="card-table {{#is_active}}table-active{{/is_active}}"
-                            data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
-                            data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
-                            data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
-                            data-detailfooterright="{{detailfooterright}}"
-                            data-customcontent="{{customcontent}}">
+                        <tr {{#is_active}}class="table-active"{{/is_active}}>
                             {{#data}}
                                 {{#is_visible}}
                                     <td>{{{get_value}}}</td>
@@ -60,19 +55,5 @@
                 </tbody>
             </table>
         </div>
-        {{#preferences.showdetailsarea}}
-            {{#js}}
-                require(['block_dash/details_area'], function(DetailsArea) {
-                    DetailsArea.init('#dash-grid-{{uniqueid}}', {
-                        detailsBgColor: '{{preferences.details_bg_color}}',
-                        detailsTextColor: '{{preferences.details_text_color}}',
-                        rowSelector: 'tbody tr[data-detailheader]',
-                        mode: '{{preferences.details_area_mode}}',
-                        detailsAreaSize: '{{preferences.details_area_size}}',
-                        customContentHeight: '{{preferences.details_custom_content_height}}'
-                    });
-                });
-            {{/js}}
-        {{/preferences.showdetailsarea}}
     {{/body}}
 {{/ block_dash/layout }}

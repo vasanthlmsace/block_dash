@@ -214,7 +214,7 @@ class data_collection implements \ArrayAccess, data_collection_interface {
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset): mixed {
+    public function offsetGet($offset) {
         if ($offset == 'data') {
             return $this->get_data();
         }
@@ -238,7 +238,7 @@ class data_collection implements \ArrayAccess, data_collection_interface {
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value): void {
+    public function offsetSet($offset, $value) {
         throw new \coding_exception('Setting data not supported with array access.');
     }
 
@@ -251,7 +251,7 @@ class data_collection implements \ArrayAccess, data_collection_interface {
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset): void {
+    public function offsetUnset($offset) {
         throw new \coding_exception('Unsetting data not supported with array access.');
     }
 }
