@@ -398,8 +398,22 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
             var floatingIsVisible = false;
 
             // Timing configuration (in milliseconds).
-            var SHOW_DELAY = 150;   // Delay before showing (prevents accidental triggers).
-            var HIDE_DELAY = 400;   // Delay before hiding (allows mouse to move to panel).
+            var SHOW_DELAY = 180;   // Delay before showing (prevents accidental triggers).
+            var HIDE_DELAY = 350;   // Delay before hiding (allows mouse to move to panel).
+
+            /**
+             * Hide ALL floating details in this layout - ensures only one is ever visible.
+             */
+            function hideAllFloatingDetails() {
+                // Remove all floating-details classes from all blocks.
+                $(".card-layout-{{uniqueid}} .card-block").removeClass("floating-details");
+                // Remove all show-detail classes from all details panels.
+                $(".card-layout-{{uniqueid}} .details-area-block").removeClass("show-detail");
+                // Remove related layout classes.
+                $(".card-layout-{{uniqueid}} .card-block").removeClass("block-n-float");
+                $(".card-layout-{{uniqueid}} .slick-slide").removeClass("float-slider-column slider-n-float");
+                $(".card-layout-{{uniqueid}}").removeClass("floating-card");
+            }
 
             /**
              * Actually show floating details for a card block (internal).
@@ -410,20 +424,12 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                     return;
                 }
 
-                // Hide any currently visible block first.
-                if (floatingCurrentBlock && floatingCurrentBlock !== $cardBlock[0]) {
-                    doHideFloatingDetails();
-                }
+                // ALWAYS hide ALL other details first - ensures only one visible at a time.
+                hideAllFloatingDetails();
 
                 floatingCurrentBlock = $cardBlock[0];
                 floatingIsVisible = true;
 
-                // Remove floating-details from other blocks.
-                if ($cardBlock.hasClass('slider')) {
-                    $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($cardBlock).removeClass("floating-details");
-                } else {
-                    $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock).removeClass("floating-details");
-                }
                 $cardBlock.closest('.layout_base').addClass("floating-card");
 
                 if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
@@ -432,26 +438,21 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                         $cardBlock.parents(".slick-slide").addClass("float-slider-column");
                         $cardBlock.parents(".slick-slide").prevAll(".slick-active").addClass('slider-n-float');
                     } else {
-                        $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock.prevAll()).removeClass("block-n-float");
-                        $cardBlock.prevAll().addClass('block-n-float');
+                        $cardBlock.prevAll(".card-block").addClass('block-n-float');
                     }
-                    $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
                     $cardBlock.find(".card.details-area-block").addClass('show-detail');
                 } else {
                     $cardBlock.addClass('floating-details');
                     if ($cardBlock.hasClass('slider')) {
-                        $(".card-layout-row.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
                         $cardBlock.find(".card.details-area-block").addClass('show-detail');
                     } else {
                         {{#preferences.layout_default}}
-                            $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.next(".details-area-block")).removeClass("show-detail");
                             $cardBlock.next(".card.details-area-block").addClass('show-detail');
                         {{/preferences.layout_default}}
                     }
 
                     if ($cardBlock.hasClass('masonry')) {
                         {{#preferences.layout_masonry}}
-                            $(".card-layout-row.card-layout-{{uniqueid}}.floating-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
                             $cardBlock.find(".card.details-area-block").addClass('show-detail');
                         {{/preferences.layout_masonry}}
                     }
@@ -462,38 +463,8 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
              * Actually hide floating details (internal).
              */
             function doHideFloatingDetails() {
-                if (!floatingCurrentBlock) {
-                    return;
-                }
-                var $cardBlock = $(floatingCurrentBlock);
-
-                if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
-                    $cardBlock.removeClass('floating-details');
-                    if ($cardBlock.hasClass('slider')) {
-                        $cardBlock.parents(".slick-slide").removeClass("float-slider-column");
-                        $cardBlock.parents(".slick-slide").prevAll(".slick-active").removeClass('slider-n-float');
-                    } else {
-                        $cardBlock.prevAll().removeClass('block-n-float');
-                    }
-                    $cardBlock.find(".card.details-area-block").removeClass('show-detail');
-                } else {
-                    $cardBlock.removeClass('floating-details');
-                    if ($cardBlock.hasClass('slider')) {
-                        $cardBlock.find(".card.details-area-block").removeClass('show-detail');
-                    } else {
-                        {{#preferences.layout_default}}
-                            $cardBlock.next(".card.details-area-block").removeClass('show-detail');
-                        {{/preferences.layout_default}}
-                    }
-
-                    if ($cardBlock.hasClass('masonry')) {
-                        {{#preferences.layout_masonry}}
-                            $cardBlock.find(".card.details-area-block").removeClass('show-detail');
-                        {{/preferences.layout_masonry}}
-                    }
-                }
-
-                $cardBlock.closest('.layout_base').removeClass("floating-card");
+                // Use the cleanup function to ensure ALL details are hidden.
+                hideAllFloatingDetails();
                 floatingCurrentBlock = null;
                 floatingIsVisible = false;
             }
@@ -508,6 +479,13 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                 // If already showing this block, nothing to do.
                 if (floatingCurrentBlock === $cardBlock[0] && floatingIsVisible) {
                     return;
+                }
+
+                // Immediately hide any other visible block so two panels are never shown at once.
+                if (floatingIsVisible && floatingCurrentBlock && floatingCurrentBlock !== $cardBlock[0]) {
+                    hideAllFloatingDetails();
+                    floatingCurrentBlock = null;
+                    floatingIsVisible = false;
                 }
 
                 // If already pending show for same block, nothing to do.
@@ -585,6 +563,7 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
 
             // Mouseenter on trigger - schedule show with delay.
             $(floatingParent).on('mouseenter', '[data-action="open-details-modal"]', function() {
+                cancelAllFloatingTimeouts();
                 var $cardBlock = $(this).closest('.card-block');
                 scheduleFloatingShow($cardBlock);
             });
