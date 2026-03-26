@@ -1488,8 +1488,8 @@ tr.dash-details-expanded {
     padding: 0;
     margin-bottom: 10px;
 }
-.accordion-layout.dash-details-mode-expanding .card .card,
-.accordion-layout.dash-details-mode-floating .card .card {
+.accordion-layout.dash-details-mode-expanding.dash-details-size-like-item .card .card,
+.accordion-layout.dash-details-mode-floating.dash-details-size-like-item .card .card {
     display: flex;
     flex-direction: row;
 }
