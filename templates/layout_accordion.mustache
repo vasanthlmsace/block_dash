@@ -43,7 +43,9 @@
                                     <thead>
                                         <tr>
                                             {{#first_child.data}}
-                                                <th>{{get_label}}</th>
+                                                {{#is_visible}}
+                                                  <th>{{get_label}}</th>
+                                                {{/is_visible}}
                                             {{/first_child.data}}
                                         </tr>
                                     </thead>
@@ -55,7 +57,9 @@
                                             data-detailfooterright="{{detailfooterright}}"
                                             data-customcontent="{{customcontent}}">
                                             {{#data}}
-                                                <td>{{{get_value}}}</td>
+                                                {{#is_visible}}
+                                                  <td>{{{get_value}}}</td>
+                                                {{/is_visible}}
                                             {{/data}}
                                         </tr>
                                     {{/rows}}
