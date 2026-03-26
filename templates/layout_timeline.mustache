@@ -20,12 +20,12 @@
     Example context (json):
     {
         "sitefullname": "Moodle - 311",
-		"courseurl": "https://localhost/moodle/course/view.php?id=2"
+        "courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
 {{< block_dash/layout }}
     {{$body}}
-        <div class="container" id="dash-timeline-{{uniqueid}}">
+        <div class="container timeline-layout" id="dash-timeline-{{uniqueid}}">
             <ul class="timeline">
                 {{#data.rows}}
                     <li class="timeline-inverted"

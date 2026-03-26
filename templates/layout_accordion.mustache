@@ -20,12 +20,12 @@
     Example context (json):
     {
         "sitefullname": "Moodle - 311",
-		"courseurl": "https://localhost/moodle/course/view.php?id=2"
+        "courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
 {{< block_dash/layout }}
     {{$body}}
-        <div id="accordion-{{uniqueid}}" class="accordion-table-layout">
+        <div id="accordion-{{uniqueid}}" class="accordion-layout accordion-table-layout">
             {{#data.sections}}
                 <div class="card">
                     <div class="card-header" id="heading-{{uniqueid}}-{{groupby}}">
@@ -43,7 +43,9 @@
                                     <thead>
                                         <tr>
                                             {{#first_child.data}}
-                                                <th>{{get_label}}</th>
+                                                {{#is_visible}}
+                                                  <th>{{get_label}}</th>
+                                                {{/is_visible}}
                                             {{/first_child.data}}
                                         </tr>
                                     </thead>
@@ -55,7 +57,9 @@
                                             data-detailfooterright="{{detailfooterright}}"
                                             data-customcontent="{{customcontent}}">
                                             {{#data}}
-                                                <td>{{{get_value}}}</td>
+                                                {{#is_visible}}
+                                                  <td>{{{get_value}}}</td>
+                                                {{/is_visible}}
                                             {{/data}}
                                         </tr>
                                     {{/rows}}

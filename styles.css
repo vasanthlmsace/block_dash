@@ -1093,10 +1093,10 @@ h5:before,
 [data-detailheader] {
     cursor: pointer;
 }
-.accordion-table-layout [data-detailheader] {
+.accordion-layout [data-detailheader] {
     transition: background-color 0.15s ease;
 }
-/* .accordion-table-layout [data-detailheader]:hover {
+/* .accordion-layout [data-detailheader]:hover {
     background-color: rgba(0, 0, 0, 0.04);
 } */
 
@@ -1115,7 +1115,7 @@ tr.dash-details-expanded {
 .dash-details-expand-row > td {
     background: transparent;
 }
-.dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel .card-body a,
+.dash-details-size-like-item.accordion-layout .dash-details-expand-panel .card-body a,
 .block_dash .dash-container .dash-block-content .card-layout-row .card-block .card-body a,
 .dash-details-expand-row .dash-details-expand-content .details-area-block .card-body a {
     color: var(--bs-heading-color);
@@ -1225,6 +1225,13 @@ tr.dash-details-expanded {
 .block_dash-local-layout-two_stat_layout .dash-details-enabled.dash-details-size-like-item .floating-details-show > div {
     width: 100%;
 }
+.block_dash.block .card-body .dash-details-size-fit-conten .dash-details-floating-panel {
+    max-width: none;
+    width: 100%;
+    position: absolute;
+    /* top: 100%; */
+    z-index: 1000;
+}
 
 @keyframes dashFloatIn {
     from {
@@ -1236,6 +1243,7 @@ tr.dash-details-expanded {
         transform: translateY(0);
     }
 }
+
 .dash-details-floating-panel .details-area-block {
     margin: 0;
     border-radius: 8px;
@@ -1257,7 +1265,7 @@ tr.dash-details-expanded {
 .dash-table tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content {
     border-radius: 5px;
 }
-.accordion-table-layout .dash-table tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content.dash-details-expand-content {
+.accordion-layout .dash-table tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content.dash-details-expand-content {
     width: 100%;
 }
 .dash-table tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content.dash-details-expand-content {
@@ -1276,12 +1284,6 @@ tr.dash-details-expanded {
 }
 .block_dash.block .card-body .dash-table-block .table-responsive:has(.dash-table) {
     overflow-y: hidden;
-}
-.block_dash.block .card-body .dash-details-size-fit-content .dash-details-floating-panel {
-    max-width: none;
-    width: 96%;
-    position: absolute;
-    z-index: 1;
 }
 .block_dash .dash-container .dash-table td .activity-completion-override {
     cursor: pointer;
@@ -1302,6 +1304,14 @@ tr.dash-details-expanded {
 .dash-details-expand-row.dash-details-size-like-item td:has(.dash-details-expand-content) {
     border: 0;
     padding: 0;
+}
+.block_dash .dash-container  .accordion-table-layout .dash-details-floating-panel.dash-details-size-fit-content,
+.block_dash .dash-container .table-layout .dash-details-floating-panel.dash-details-size-fit-content {
+    position: absolute;
+}
+.block_dash .dash-container .timeline-layout .dash-details-floating-panel.dash-details-size-fit-content {
+    position: absolute;
+    top: 100%;
 }
 
 /* -- Accordion2 (div) expanding: fit_content -- */
@@ -1358,94 +1368,99 @@ tr.dash-details-expanded {
 }
 
 /* -- Container-level hooks -- */
-.accordion-table-layout .card .collapse > .card-body,
-.accordion-table-layout .card .collapsing > .card-body {
+.accordion-layout .card .collapse > .card-body,
+.accordion-layout .card .collapsing > .card-body {
     padding-right: 0;
 }
-.accordion-table-layout.dash-details-mode-expanding {
+.accordion-layout.dash-details-mode-expanding {
     position: relative;
 }
-.accordion-table-layout.dash-details-mode-expanding:has(table.dash-table) > .card,
-.accordion-table-layout.dash-details-mode-floating:has(table.dash-table) > .card {
+.accordion-layout.dash-details-mode-expanding:has(table.dash-table) > .card,
+.accordion-layout.dash-details-mode-floating:has(table.dash-table) > .card {
     z-index: auto;
 }
-.accordion-table-layout.dash-details-mode-floating [data-detailheader] {
+.accordion-layout.dash-details-mode-floating [data-detailheader] {
     position: relative;
 }
-.accordion-table-layout.dash-details-size-fit-content .dash-details-expand-panel,
-.accordion-table-layout.dash-details-size-fit-content .dash-details-expand-li {
+.accordion-layout.dash-details-size-fit-content .dash-details-expand-panel,
+.accordion-layout.dash-details-size-fit-content .dash-details-expand-li {
     clear: both;
 }
-.accordion-table-layout.dash-details-size-fit-content .dash-details-expand-panel .details-area-block .card-body a {
+.accordion-layout.dash-details-size-fit-content .dash-details-expand-panel .details-area-block .card-body a {
     color: var(--bs-heading-color);
 }
-.accordion-table-layout.dash-details-size-like-item:not(table) {
+.accordion-layout.dash-details-size-like-item:not(table) {
     display: flex;
 }
-.accordion-table-layout {
+.accordion-layout {
     flex-direction: column;
 }
-.accordion-table-layout .card .card-header {
+.accordion-layout .card .card-header {
     width: 100%;
     border-bottom: 0;
     border-radius: 5px;
     padding: 0;
     margin-bottom: 10px;
 }
-.accordion-table-layout .card .card .card-body > div {
+.accordion-layout.dash-details-mode-expanding.dash-details-size-like-item .card .card,
+.accordion-layout.dash-details-mode-floating.dash-details-size-like-item .card .card {
+    display: flex;
+    flex-direction: row;
+}
+.accordion-layout .card .card.dash-details-expanded .floating-details-show,
+.accordion-layout .card .card.dash-details-expanded .dash-details-expand-panel {
+    width: 100%;
+}
+.accordion-layout .card .card .card-body > div {
     margin-bottom: 15px;
     align-items: center;
     gap: 15px;
 }
-.accordion-table-layout .card .card .card-body .icons-no-margin {
+.accordion-layout .card .card .card-body .icons-no-margin {
     display: flex;
     align-items: center;
     gap: 15px;
 }
-.accordion-table-layout .card .card-header a h5 {
+.accordion-layout .card .card-header a h5 {
     padding: 10px 25px;
     display: flex;
     justify-content: space-between;
 }
-.accordion-table-layout .card .card-header a:hover {
+.accordion-layout .card .card-header a:hover {
     text-decoration: none;
     /* color: var(--white);
     background-color: var(--primary); */
 }
-.accordion-table-layout .card .card-header a h5:after {
+.accordion-layout .card .card-header a h5:after {
     content: '\f078';
     font-family: var(--fa-style-family, "Font Awesome 6 Free", fontawesome);
     font-weight: var(--fa-style, 900);
 }
-.accordion-table-layout .card .card-header a h5.collapsed:after {
+.accordion-layout .card .card-header a h5.collapsed:after {
     content: '\f054';
 }
 a.stretched-link::after {
     z-index: -1;
 }
-.accordion-table-layout .card .collapse,
-.accordion-table-layout .card .collapsing {
+.accordion-layout .card .collapse,
+.accordion-layout .card .collapsing {
     max-width: 750px;
     width: 100%;
 }
-.accordion-table-layout .collapse > .card-body,
-.accordion-table-layout .collapsing > .card-body {
+.accordion-layout .collapse > .card-body,
+.accordion-layout .collapsing > .card-body {
     padding-left: 0;
 }
-.accordion-table-layout.dash-details-size-like-item > div {
+.accordion-layout.dash-details-size-like-item > div {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.accordion-table-layout.dash-details-size-like-item > .dash-details-expand-panel .details-area-block .card-body a {
+.accordion-layout.dash-details-size-like-item > .dash-details-expand-panel .details-area-block .card-body a {
     color: var(--bs-heading-color);
 }
-.dash-details-size-like-item.accordion-table-layout > .card .collapse > .card-body {
-    display: flex;
-    gap: 20px;
-}
-.dash-details-size-like-item.accordion-table-layout .dash-details-expand-panel {
+.dash-details-size-like-item.accordion-layout .dash-details-expand-panel {
     width: 100%;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
@@ -1456,14 +1471,14 @@ a.stretched-link::after {
  * Timeline, Cards, Slider, Masonry, Details area for cards
  * ======================================================= */
 
-/* @keyframes fadeIn {
+@keyframes fadeIn {
     0% {
         opacity: 0;
     }
     100% {
         opacity: 1;
     }
-} */
+}
 
 @keyframes skeleton-loading {
     0% {
@@ -1783,7 +1798,7 @@ a.stretched-link::after {
     height: 100%;
     display: block;
     margin-bottom: 0;
-    /* animation: fadeIn ease 1s; */
+    animation: fadeIn ease 1s;
     z-index: 1;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default
@@ -2270,7 +2285,7 @@ form fieldset .fitem.fitem_f .felement {
 }
 .block_dash .dash-block-content .card_layout_slider.slider-center-mode .slick-list .slick-slide.slick-center {
     transform: scale(1.1);
-    /* animation: fadeIn ease 1s; */
+    animation: fadeIn ease 1s;
     z-index: 1;
 }
 .block_dash .dash-block-content .card_layout_slider.slider-center-mode .slick-list .slick-slide.expand-slider-column {
@@ -2410,7 +2425,7 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash .dash-block-content .card_layout_slider .slick-list .slick-slide .card-block .slider-card
 .card.details-area-block.show-detail {
     left: 0;
-    /* animation: fadeIn ease 1s; */
+    animation: fadeIn ease 1s;
 }
 .block_dash .dash-block-content .card_layout_slider .slick-list .slick-slide .card-block .slider-card
 .card.details-area-block.show-detail .card-block .card-body {
@@ -2438,6 +2453,7 @@ form fieldset .fitem.fitem_f .felement {
 .block_dash .dash-block-content .card_layout_slider.floating-card .slick-list .slick-slide .card-block .card {
     height: auto;
     margin-bottom: 0;
+    animation: fadeIn ease 1s;
 }
 .block_dash .dash-block-content .card_layout_slider.expand-card .slick-list
 .slick-slide .card-block .card:not(.details-area-block),
@@ -2778,7 +2794,7 @@ form fieldset .fitem.fitem_f .felement {
 .card-block.floating-details .card:not(.details-area-block),
 .block_dash .dash-container .dash-block-content .card-layout-row.floating-block.card_layout_masonry.fit-card
 .card-block.floating-details .card.card-background img {
-    display: block;
+    display: flex;
 }
 .block_dash .dash-container .dash-block-content .card_layout_slider.floating-block .slick-list .slick-slide
 .card-block.floating-details .card.card-background img {
