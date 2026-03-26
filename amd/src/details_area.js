@@ -312,8 +312,10 @@ define([
                     '<div class="dash-details-expand-content">' + html + '</div>' +
                     '</div>');
             } else {
+                console.log($originalRow);
                 // Accordion2 has .floating-details-show; custom layouts may not.
-                var $floating = $originalRow.closest('.floating-details-show').first();
+                var $floating = $originalRow.find('.floating-details-show').first();
+                console.log($floating);
                 if ($floating.length) {
                     $insertPoint = $floating;
                 }
