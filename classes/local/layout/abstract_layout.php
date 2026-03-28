@@ -191,12 +191,14 @@ abstract class abstract_layout implements layout_interface, \templatable {
         $customcontent = '';
         if ($customcontentkey && $customcontentkey !== 'none') {
             if ($customcontentkey === 'standard_terms') {
-                $customcontent = get_config('local_dash', 'standard_terms');
+                $customcontent = get_config('block_dash', 'standard_terms');
                 $customcontent = $customcontent ? format_text($customcontent, FORMAT_HTML) : '';
             } else {
-                if ($layout = $DB->get_record('dashaddon_developer_layout', ['id' => $customcontentkey])) {
-                    if (!empty($layout->mustache_template)) {
-                        $customcontent = format_text($layout->mustache_template, FORMAT_HTML);
+                if(block_dash_has_pro()){
+                    if ($layout = $DB->get_record('dashaddon_developer_layout', ['id' => $customcontentkey])) {
+                        if (!empty($layout->mustache_template)) {
+                            $customcontent = format_text($layout->mustache_template, FORMAT_HTML);
+                        }
                     }
                 }
             }
@@ -234,44 +236,46 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $content = $customcontent;
             $customcontentkey = $this->get_data_source()->get_preferences('details_custom_content');
             if ($customcontentkey && $customcontentkey !== 'none' && $customcontentkey !== 'standard_terms') {
-                if ($layout = $DB->get_record('dashaddon_developer_layout', ['id' => $customcontentkey])) {
-                    $renderer = $PAGE->get_renderer('block_dash');
-                    $layoutobject = new \dashaddon_developer\layout\persistent_layout(
-                        $this->get_data_source()
-                    );
-                    $layoutobject->set_custom_layout(
-                        new \dashaddon_developer\model\custom_layout($layout->id)
-                    );
-                    $template = $layoutobject->get_mustache_template_name();
-                    $rootcollection = new \block_dash\local\data_grid\data\data_collection();
-                    $rootcollection->add_child_collection('rows', $childcollection);
+                if(block_dash_has_pro()){
+                    if ($layout = $DB->get_record('dashaddon_developer_layout', ['id' => $customcontentkey])) {
+                        $renderer = $PAGE->get_renderer('block_dash');
+                        $layoutobject = new \dashaddon_developer\layout\persistent_layout(
+                            $this->get_data_source()
+                        );
+                        $layoutobject->set_custom_layout(
+                            new \dashaddon_developer\model\custom_layout($layout->id)
+                        );
+                        $template = $layoutobject->get_mustache_template_name();
+                        $rootcollection = new \block_dash\local\data_grid\data\data_collection();
+                        $rootcollection->add_child_collection('rows', $childcollection);
 
-                    $context = [
-                        'data' => $rootcollection,
-                    ];
+                        $context = [
+                            'data' => $rootcollection,
+                        ];
 
-                    $varsclass = '\dashaddon_developer\layout\vars';
+                        $varsclass = '\dashaddon_developer\layout\vars';
 
-                    if (class_exists($varsclass)) {
-                        if (method_exists($varsclass, 'current_user_context')) {
-                            $rowuser = null;
+                        if (class_exists($varsclass)) {
+                            if (method_exists($varsclass, 'current_user_context')) {
+                                $rowuser = null;
 
-                            if (isset($childcollection['u_id']) && !empty($childcollection['u_id'])) {
-                                $rowuser = (object) ['id' => $childcollection['u_id']];
+                                if (isset($childcollection['u_id']) && !empty($childcollection['u_id'])) {
+                                    $rowuser = (object) ['id' => $childcollection['u_id']];
+                                }
+
+                                $context = array_merge($context, $varsclass::current_user_context($rowuser));
                             }
 
-                            $context = array_merge($context, $varsclass::current_user_context($rowuser));
+                            if (method_exists($varsclass, 'current_course_context')) {
+                                $context = array_merge($context, $varsclass::current_course_context($childcollection));
+                            }
                         }
 
-                        if (method_exists($varsclass, 'current_course_context')) {
-                            $context = array_merge($context, $varsclass::current_course_context($childcollection));
-                        }
+                        $content = $renderer->render_from_template(
+                            $template,
+                            $context
+                        );
                     }
-
-                    $content = $renderer->render_from_template(
-                        $template,
-                        $context
-                    );
                 }
             }
             if ($content) {
@@ -568,7 +572,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
     protected function get_custom_content_options(array $options): array {
         global $DB;
 
-        if (!empty($DB)) {
+        if (!empty($DB) && block_dash_has_pro()) {
             $layouts = $DB->get_records('dashaddon_developer_layout');
     
             foreach ($layouts as $layout) {
