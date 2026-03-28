@@ -33,7 +33,6 @@ use MoodleQuickForm;
  * @package block_dash
  */
 class filter implements filter_interface {
-
     /**
      * @var mixed The value a user has chosen. Or the default.
      */
@@ -84,6 +83,13 @@ class filter implements filter_interface {
      * @var array
      */
     private $preferences;
+
+    /**
+     * Is the filter supports the current user. this will be updated by the datasource.
+     *
+     * @var bool
+     */
+    protected $supportcurrentuser = false;
 
     /**
      * Filter constructor.
@@ -335,7 +341,7 @@ class filter implements filter_interface {
                 $sql = "$select >= :$placeholder";
                 break;
             case self::OPERATION_IN_OR_EQUAL:
-                list ($sql, $params) = $this->get_in_or_equal();
+                 [$sql, $params] = $this->get_in_or_equal();
                 $sql = "$select $sql";
                 break;
             case self::OPERATION_LIKE:
@@ -344,7 +350,7 @@ class filter implements filter_interface {
             case self::OPERATION_LIKE_WILDCARD:
                 $sql = "$select LIKE :$placeholder";
                 // Convert value to wildcard.
-                $params[$placeholder] = '%'.$params[$placeholder].'%';
+                $params[$placeholder] = '%' . $params[$placeholder] . '%';
                 break;
             case self::OPERATION_CUSTOM:
                 $sql = $this->get_custom_operation();
@@ -379,7 +385,6 @@ class filter implements filter_interface {
         }
 
         if (is_null($this->sqlandparams)) {
-
             $values = $this->get_values();
 
             $this->sqlandparams = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED);
@@ -395,8 +400,10 @@ class filter implements filter_interface {
      * @param string $elementnameprefix
      * @throws \Exception
      */
-    public function create_form_element(filter_collection_interface $filtercollection,
-                                        $elementnameprefix = '') {
+    public function create_form_element(
+        filter_collection_interface $filtercollection,
+        $elementnameprefix = ''
+    ) {
         throw new coding_exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
     }
 
@@ -452,7 +459,7 @@ class filter implements filter_interface {
      *
      * @param array $preferences
      */
-    public function set_preferences(array $preferences = null): void {
+    public function set_preferences($preferences = null): void {
         $this->preferences = $preferences;
     }
 
@@ -478,7 +485,8 @@ class filter implements filter_interface {
     public function build_settings_form_fields(
         moodleform $moodleform,
         MoodleQuickForm $mform,
-        $fieldnameformat = 'filters[%s]'): void {
+        $fieldnameformat = 'filters[%s]'
+    ): void {
         $fieldname = sprintf($fieldnameformat, $this->get_name());
 
         $totaratitle = block_dash_is_totara() ? $this->get_label() : null;
@@ -488,5 +496,33 @@ class filter implements filter_interface {
             [$identifier, $component] = $this->get_help();
             $mform->addHelpButton($fieldname . '[enabled]', $identifier, $component);
         }
+    }
+
+    /**
+     * Set this datasource is support the profile page user.
+     *
+     * @return void
+     */
+    public function set_support_currentuser() {
+        $this->supportcurrentuser = true;
+    }
+
+    /**
+     * Get the current userid.
+     *
+     * The current page is user profile page, then use the profile user id. Otherwise returns the current loggedin userid.
+     *
+     * @return int
+     */
+    public function get_userid() {
+        global $PAGE, $USER;
+
+        if ($this->supportcurrentuser) {
+            // Confirm the dash is addon on user profile page, then use the profile page user as report user.
+            $isprofilepage = $PAGE->pagelayout == 'mypublic' && $PAGE->pagetype == 'user-profile';
+            $userid = $isprofilepage ? $PAGE->context->instanceid : $USER->id;
+        }
+
+        return $userid ?? $USER->id;
     }
 }

@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class my_groups_condition extends condition {
-
     /**
      * Condition values.
      *
@@ -46,12 +45,13 @@ class my_groups_condition extends condition {
      * @throws \coding_exception
      */
     public function get_values() {
+
         if (is_null($this->values)) {
-            global $USER;
+            $userid = $this->get_userid();
 
             $this->values = [];
 
-            foreach (group_filter::get_user_groups($USER->id, $this->get_context()) as $group) {
+            foreach (group_filter::get_user_groups($userid, $this->get_context()) as $group) {
                 $this->values[] = $group->id;
             }
         }
@@ -80,7 +80,7 @@ class my_groups_condition extends condition {
      * @throws \coding_exception|\dml_exception
      */
     public function get_sql_and_params() {
-        list($sql, $params) = parent::get_sql_and_params();
+        [$sql, $params] = parent::get_sql_and_params();
 
         if ($sql) {
             $sql = 'EXISTS (SELECT * FROM {groups_members} gm300 WHERE gm300.userid = u.id AND ' . $sql . ')';

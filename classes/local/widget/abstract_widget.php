@@ -36,8 +36,7 @@ use block_dash\local\paginator;
 /**
  * Widgets extend class for new widgets.
  */
-abstract class abstract_widget extends abstract_data_source implements data_source_interface, widget_interface, \templatable {
-
+abstract class abstract_widget extends abstract_data_source implements data_source_interface, \templatable, widget_interface {
     /**
      * List of data to generate widget template content.
      *
@@ -51,8 +50,6 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
      * @var bool
      */
     public $iswidget = true;
-
-
 
     /**
      * Constructor.

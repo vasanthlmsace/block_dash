@@ -28,13 +28,12 @@ defined('MOODLE_INTERNAL') || die('No direct access');
 
 use html_writer;
 
-require_once($CFG->dirroot.'/lib/tablelib.php');
+require_once($CFG->dirroot . '/lib/tablelib.php');
 
 /**
  * List of group memebers table.
  */
 class members_totara extends \table_sql {
-
     /**
      * Define table field definitions and filter data
      *
@@ -82,7 +81,7 @@ class members_totara extends \table_sql {
         ];
 
         foreach ($attrs as $key => $val) {
-            $this->set_attribute('data-table-'.$key, $val);
+            $this->set_attribute('data-table-' . $key, $val);
         }
         $this->set_attribute('data-table-dynamic', 'true');
     }
@@ -115,7 +114,6 @@ class members_totara extends \table_sql {
     public function get_context(): \context {
         return \context_block::instance($this->uniqueid);
     }
-
 
     /**
      * Set the base url of the table, used in the ajax data update.
@@ -159,7 +157,7 @@ class members_totara extends \table_sql {
     public function col_fullname($row) {
         global $OUTPUT;
 
-        return $OUTPUT->user_picture($row, ['size' => 35, 'courseid' => $row->courseid]).' '.fullname($row);
+        return $OUTPUT->user_picture($row, ['size' => 35, 'courseid' => $row->courseid]) . ' ' . fullname($row);
     }
 
     /**

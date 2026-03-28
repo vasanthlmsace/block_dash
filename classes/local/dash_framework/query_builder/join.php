@@ -35,7 +35,6 @@ use dml_exception;
  * @package block_dash
  */
 class join {
-
     /**
      * Inner JOIN query.
      */
@@ -47,6 +46,11 @@ class join {
     const TYPE_LEFT_JOIN = 'LEFT JOIN';
 
     /**
+     * SQL right Join.
+     */
+    const TYPE_RIGHT_JOIN = 'RIGHT JOIN';
+
+    /**
      * @var string Table name of joined table.
      */
     private $table;
@@ -54,24 +58,24 @@ class join {
     /**
      * @var string Joined table alias.
      */
-    private $alias;
+    protected $alias;
 
     /**
      * @var array
      */
-    private $joinconditions = [];
+    protected $joinconditions = [];
 
     /**
      * SQL join type. See self::TYPE_*
      *
      * @var string
      */
-    private $jointype;
+    protected $jointype;
 
     /**
      * @var array Extra paramters used in query build.
      */
-    private $extraparameters;
+    protected $extraparameters;
 
     /**
      * Constructors
@@ -82,8 +86,14 @@ class join {
      * @param string $jointype SQL join type. See self::TYPE_*
      * @param array $extraparameters Extra parameters used in join SQL.
      */
-    public function __construct(string $table, string $alias, string $jointablefield, string $origintablefield,
-                                $jointype = self::TYPE_INNER_JOIN, array $extraparameters = []) {
+    public function __construct(
+        string $table,
+        string $alias,
+        string $jointablefield,
+        string $origintablefield,
+        $jointype = self::TYPE_INNER_JOIN,
+        array $extraparameters = []
+    ) {
         $this->table = $table;
         $this->alias = $alias;
         // Join table field.
@@ -110,6 +120,15 @@ class join {
      */
     public function add_join_condition(string $condition): void {
         $this->joinconditions[] = $condition;
+    }
+
+    /**
+     * Remove a join condition.
+     *
+     * @return array
+     */
+    public function get_join_conditions(): array {
+        return $this->joinconditions;
     }
 
     /**

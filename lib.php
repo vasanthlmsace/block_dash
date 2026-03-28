@@ -25,10 +25,15 @@
 use block_dash\local\data_source\categories_data_source;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
+use block_dash\local\layout\cards_layout;
+use block_dash\local\layout\cards_slider_layout;
+use block_dash\local\layout\cards_masonry_layout;
 use block_dash\local\layout\accordion_layout;
+use block_dash\local\layout\accordion_layout2;
 use block_dash\local\layout\one_stat_layout;
+use block_dash\local\layout\two_stat_layout;
+use block_dash\local\layout\timeline_layout;
 use block_dash\local\data_source\users_data_source;
-
 use block_dash\local\widget\mylearning\mylearning_widget;
 use block_dash\local\widget\groups\groups_widget;
 use block_dash\local\widget\contacts\contacts_widget;
@@ -78,6 +83,38 @@ function block_dash_register_layouts() {
         [
             'name' => get_string('layoutgrid', 'block_dash'),
             'identifier' => grid_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards', 'block_dash'),
+            'identifier' => cards_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards_slider', 'block_dash'),
+            'identifier' => cards_slider_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards_masonry', 'block_dash'),
+            'identifier' => cards_masonry_layout::class,
+        ],
+        [
+            'name' => get_string('layoutaccordion', 'block_dash'),
+            'identifier' => accordion_layout::class,
+        ],
+        [
+            'name' => get_string('layoutaccordion2', 'block_dash'),
+            'identifier' => accordion_layout2::class,
+        ],
+        [
+            'name' => get_string('layoutonestat', 'block_dash'),
+            'identifier' => one_stat_layout::class,
+        ],
+        [
+            'name' => get_string('layouttwostat', 'block_dash'),
+            'identifier' => two_stat_layout::class,
+        ],
+        [
+            'name' => get_string('layouttimeline', 'block_dash'),
+            'identifier' => timeline_layout::class,
         ],
     ];
 }
@@ -174,7 +211,7 @@ function block_dash_output_fragment_block_preferences_form($args) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
+function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
 
     if ($context->contextlevel != CONTEXT_BLOCK && $context->contextlevel != CONTEXT_SYSTEM) {
         return false;
@@ -183,7 +220,6 @@ function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forced
     require_login();
 
     if ($filearea == 'images' || $filearea == 'categoryimg') {
-
         $relativepath = implode('/', $args);
 
         $fullpath = "/$context->id/block_dash/$filearea/$relativepath";
@@ -236,7 +272,8 @@ function block_dash_is_totara() {
  * @return bool
  */
 function block_dash_has_pro() {
-    return array_key_exists('dash', core_component::get_plugin_list('local'));
+    global $CFG;
+    return file_exists("$CFG->dirroot/local/dash");
 }
 
 /**
@@ -297,7 +334,7 @@ function block_dash_output_fragment_loadtable($args) {
     $args = (object) $args;
     $context = $args->context;
 
-    $classstr = 'block_dash\table\\'.$args->handler;
+    $classstr = 'block_dash\table\\' . $args->handler;
     $table = new $classstr($args->uniqueid);
     $table->set_filterset(json_decode($args->filter));
     $table->set_sort_column($args->sort);
@@ -311,7 +348,6 @@ function block_dash_output_fragment_loadtable($args) {
     ob_end_clean();
 
     return $tablehtml;
-
 }
 
 /**
@@ -357,8 +393,8 @@ function block_dash_visible_addons($id) {
             $addondependencies = $addon . "_extend_added_dependencies";
             if (get_config($addon, 'enabled')) {
                 $addonplugin = explode("dashaddon_", $addon)[1];
-                if (file_exists($CFG->dirroot. "/local/dash/addon/$addonplugin/lib.php")) {
-                    require_once($CFG->dirroot. "/local/dash/addon/$addonplugin/lib.php");
+                if (file_exists($CFG->dirroot . "/local/dash/addon/$addonplugin/lib.php")) {
+                    require_once($CFG->dirroot . "/local/dash/addon/$addonplugin/lib.php");
                     if (function_exists($addondependencies) && !empty($addondependencies())) {
                         return false;
                     }
@@ -369,4 +405,51 @@ function block_dash_visible_addons($id) {
         }
     }
     return true;
+}
+
+/**
+ * Get the disable addons list from the config file parameters.
+ *
+ * @return array $disabledaddons
+ */
+function block_dash_disabled_addons_list() {
+    global $CFG;
+    $disabledaddons = [];
+
+    // @codingStandardsIgnoreStart
+    if (file_exists($CFG->dirroot . '/blocks/dash/config.php')) {
+        require_once($CFG->dirroot . '/blocks/dash/config.php');
+        // @codingStandardsIgnoreEnd
+        // Fetch disabled addons from CFG.
+        $disabledaddons = isset($CFG->dashdisabledaddons) ? $CFG->dashdisabledaddons : [];
+    }
+
+    return $disabledaddons;
+}
+
+/**
+ * Get card block column class.
+ *
+ * @param int $column
+ * @return string
+ */
+function block_dash_get_card_column_customclass($column) {
+    switch ($column) {
+        case 12:
+            return 'one-column-block';
+        case 6:
+            return 'two-column-block';
+        case 4:
+            return 'three-column-block';
+        case 3:
+            return 'four-column-block';
+        case 25:
+            return 'five-column-block';
+        case 2:
+            return 'six-column-block';
+        case 1:
+            return 'twelve-column-block';
+        default:
+            return '';
+    }
 }

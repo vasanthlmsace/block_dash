@@ -30,7 +30,6 @@ namespace block_dash\local\widget;
  * @package block_dash
  */
 interface widget_interface {
-
     /**
      * Confirm the loaded data source is widget.
      *
@@ -87,4 +86,3 @@ interface widget_interface {
      */
     public function get_widget_data();
 }
-

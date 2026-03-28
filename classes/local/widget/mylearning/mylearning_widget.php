@@ -36,7 +36,6 @@ use moodle_url;
  * Mylearning widget class contains the courses user enrolled and not completed.
  */
 class mylearning_widget extends abstract_widget {
-
     /**
      * Get the name of widget.
      *
@@ -85,8 +84,8 @@ class mylearning_widget extends abstract_widget {
     public function build_widget() {
         global $USER, $CFG, $DB;
         $userid = $USER->id;
-        require_once($CFG->dirroot.'/lib/enrollib.php');
-        require_once($CFG->dirroot.'/course/renderer.php');
+        require_once($CFG->dirroot . '/lib/enrollib.php');
+        require_once($CFG->dirroot . '/course/renderer.php');
 
         $completed = $DB->get_records_sql(
             'SELECT * FROM {course_completions} cc
@@ -101,15 +100,15 @@ class mylearning_widget extends abstract_widget {
             'groupmode', 'groupmodeforce', 'cacherev',
         ];
         $courses = enrol_get_my_courses($basefields, null, 0, [], false, 0, $completedcourses);
-        array_walk($courses, function($course) {
+        array_walk($courses, function ($course) {
             $courseelement = (class_exists('\core_course_list_element'))
             ? new \core_course_list_element($course) : new \course_in_list($course);
             $summary = (new \coursecat_helper($course))->get_course_formatted_summary($courseelement);
 
             $category = (class_exists('\core_course_category'))
-            ? \core_course_category::get($course->category) : \coursecat::get($course->category);
+            ? \core_course_category::get($course->category, IGNORE_MISSING) : \coursecat::get($course->category, IGNORE_MISSING);
             $course->courseimage = $this->courseimage($course);
-            $course->category = (isset($category->name) ? format_string($category->name) : '');
+            $course->category = ($category && isset($category->name)) ? format_string($category->name) : '';
             $course->badges = $this->badges($course);
             $course->coursecontent = $this->coursecontent($course);
             $course->contacts = $this->contacts($course);
@@ -170,7 +169,7 @@ class mylearning_widget extends abstract_widget {
      */
     public function coursecontent($record) {
         global $CFG;
-        require_once($CFG->dirroot.'/course/externallib.php');
+        require_once($CFG->dirroot . '/course/externallib.php');
         $options = ['name' => 'excludecontents', 'value' => true];
         $contents = self::get_course_contents($record->id, [$options]);
         return $contents;
@@ -184,12 +183,12 @@ class mylearning_widget extends abstract_widget {
      */
     public function badges($record) {
         global $USER, $CFG;
-        require_once($CFG->dirroot.'/lib/badgeslib.php');
+        require_once($CFG->dirroot . '/lib/badgeslib.php');
         $badges = badges_get_badges(BADGE_TYPE_COURSE, $record->id);
         $userbadges = badges_get_user_badges($USER->id, $record->id);
         $userbadges = array_column($userbadges, 'id');
         $coursecontext = \context_course::instance($record->id);
-        $images = array_map(function($badge) use ($coursecontext, $userbadges) {
+        $images = array_map(function ($badge) use ($coursecontext, $userbadges) {
             $collected = (in_array($badge->id, $userbadges)) ? 'collected' : '';
             return html_writer::tag('li', print_badge_image($badge, $coursecontext, 'f1'), ['class' => $collected]);
         }, $badges);
@@ -197,7 +196,7 @@ class mylearning_widget extends abstract_widget {
         $content = html_writer::tag('ul', implode('', $images));
 
         if ($images) {
-            return html_writer::tag('div', $heading.$content, ['class' => 'badge-block']);
+            return html_writer::tag('div', $heading . $content, ['class' => 'badge-block']);
         }
     }
 
@@ -213,7 +212,7 @@ class mylearning_widget extends abstract_widget {
         $course = (class_exists('\core_course_list_element'))
             ? new \core_course_list_element($courserecord) : new \course_in_list($courserecord);
         $contacts = $course->get_course_contacts();
-        $data = array_map(function($user) {
+        $data = array_map(function ($user) {
             global $PAGE;
             // Set the user picture data.
             $user = \core_user::get_user($user['user']->id);
@@ -239,7 +238,7 @@ class mylearning_widget extends abstract_widget {
             $heading = html_writer::tag('h5', get_string('coursestafftitle', 'block_dash'));
             $content = html_writer::tag('ul', implode('', $data));
 
-            return html_writer::tag('div', $heading.$content, ['class' => 'course-staff-block']);
+            return html_writer::tag('div', $heading . $content, ['class' => 'course-staff-block']);
         }
     }
 
@@ -269,9 +268,9 @@ class mylearning_widget extends abstract_widget {
             if ($fields) {
                 foreach ($fields as $field) {
                     $type = $field->datatype;
-                    if (file_exists($CFG->dirroot.'/totara/customfield/field/'.$type.'/field.class.php')) {
-                        require_once($CFG->dirroot.'/totara/customfield/field/'.$type.'/field.class.php');
-                        $classname = 'customfield_'.$type;
+                    if (file_exists($CFG->dirroot . '/totara/customfield/field/' . $type . '/field.class.php')) {
+                        require_once($CFG->dirroot . '/totara/customfield/field/' . $type . '/field.class.php');
+                        $classname = 'customfield_' . $type;
                         $output[] = [
                             'fieldname' => format_string($field->fullname),
                             'value' => $classname::display_item_data($field->data),
@@ -349,15 +348,15 @@ class mylearning_widget extends abstract_widget {
 
         // Now security checks.
         $context = context_course::instance($course->id);
-        // TODO: course content view capability check.
         $canupdatecourse = true;
 
         // Create return value.
         $coursecontents = [];
 
-        if ($canupdatecourse || $course->visible
-                || has_capability('moodle/course:viewhiddencourses', $context)) {
-
+        if (
+            $canupdatecourse || $course->visible
+                || has_capability('moodle/course:viewhiddencourses', $context)
+        ) {
             $modinfo = get_fast_modinfo($course);
             $sections = $modinfo->get_section_info_all();
             $courseformat = course_get_format($course);
@@ -376,9 +375,16 @@ class mylearning_widget extends abstract_widget {
                 $sectionvalues['visible'] = $section->visible;
 
                 $options = (object) ['noclean' => true];
-                list($sectionvalues['summary'], $sectionvalues['summaryformat']) =
-                        external_format_text($section->summary, $section->summaryformat,
-                                $context->id, 'course', 'section', $section->id, $options);
+                [$sectionvalues['summary'], $sectionvalues['summaryformat']] =
+                        external_format_text(
+                            $section->summary,
+                            $section->summaryformat,
+                            $context->id,
+                            'course',
+                            'section',
+                            $section->id,
+                            $options
+                        );
                 $sectionvalues['section'] = $section->section;
                 $sectionvalues['hiddenbynumsections'] = $section->section > $coursenumsections ? 1 : 0;
                 $sectionvalues['uservisible'] = $section->uservisible;
@@ -391,7 +397,6 @@ class mylearning_widget extends abstract_widget {
                 // For each module of the section.
                 $sectionactivitycompleted = $sectionactivitycount = 0;
                 if (!empty($modinfosections[$section->section])) {
-
                     foreach ($modinfosections[$section->section] as $cmid) {
                         $cm = $modinfo->cms[$cmid];
                         $cminfo = cm_info::create($cm);
@@ -441,18 +446,27 @@ class mylearning_widget extends abstract_widget {
                             // We want to use the external format. However from reading get_formatted_content(), $cm->content
                             // Format is always FORMAT_HTML.
                             $options = ['noclean' => true];
-                            list($module['description'], $descriptionformat) = external_format_text($cm->content,
-                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id, $options);
+                            [$module['description'], $descriptionformat] = external_format_text(
+                                $cm->content,
+                                FORMAT_HTML,
+                                $modcontext->id,
+                                $cm->modname,
+                                'intro',
+                                $cm->id,
+                                $options
+                            );
                         }
                         // Url of the module.
                         $url = $cm->url;
                         if ($url) {
                             $module['url'] = $url->out(false);
                         } else {
-                            $module['url'] = (new \moodle_url('/mod/'.$cm->modname.'/view.php', ['id' => $cm->id]))->out(false);
+                            $module['url'] = (new \moodle_url('/mod/' . $cm->modname . '/view.php', ['id' => $cm->id]))->out(false);
                         }
-                        $canviewhidden = has_capability('moodle/course:viewhiddenactivities',
-                                            context_module::instance($cm->id));
+                        $canviewhidden = has_capability(
+                            'moodle/course:viewhiddenactivities',
+                            context_module::instance($cm->id)
+                        );
                         // User that can view hidden module should know about the visibility.
                         $module['visible'] = $cm->visible;
                         $module['visibleoncoursepage'] = $cm->visibleoncoursepage;
@@ -481,6 +495,8 @@ class mylearning_widget extends abstract_widget {
                 }
                 $sectionvalues['modules'] = $sectioncontents;
                 $sectionvalues['hidemodules'] = count($sectioncontents) > 0 ? false : true;
+                $sectionvalues['datatoggle'] = ($CFG->branch >= 500) ? 'data-bs-toggle' : 'data-toggle';
+                $sectionvalues['datatarget'] = ($CFG->branch >= 500) ? 'data-bs-target' : 'data-target';
                 // Assign result to $coursecontents.
                 $coursecontents[$key] = $sectionvalues;
                 // Break the loop if we are filtering.

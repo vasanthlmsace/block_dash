@@ -24,13 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die('No direct access');
 
-require_once($CFG->dirroot.'/lib/formslib.php');
+require_once($CFG->dirroot . '/lib/formslib.php');
+require($CFG->dirroot . '/lib/tablelib.php');
+
+use block_dash\local\data_source\data_source_interface;
 
 /**
  * Moodleform to create group with course selector option.
  */
 class create_group extends moodleform {
-
     /**
      * Get the definition of the moodle form.
      *

@@ -29,7 +29,6 @@ namespace block_dash\local\dash_framework\structure;
  * @package block_dash
  */
 abstract class table implements table_interface {
-
     /**
      * @var string
      */
@@ -39,6 +38,16 @@ abstract class table implements table_interface {
      * @var string
      */
     private $alias;
+
+    /**
+     * @var array
+     */
+    protected $additionaljoins = [];
+
+    /**
+     * @var array
+     */
+    protected $sqlctelist = [];
 
     /**
      * Build a new table.
@@ -66,5 +75,24 @@ abstract class table implements table_interface {
      */
     public function get_alias(): string {
         return $this->alias;
+    }
+
+    /**
+     * Get additional joins necessary for this table.
+     *
+     * @return array|null
+     */
+    public function get_additional_joins(): ?array {
+        return $this->additionaljoins;
+    }
+
+    /**
+     * Get sql CTE definition if necessary.
+     *
+     * @return array|null
+     */
+    public function get_sql_cte(): ?array {
+
+        return $this->sqlctelist;
     }
 }

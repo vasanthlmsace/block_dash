@@ -44,7 +44,6 @@ use coding_exception;
  * @package block_dash
  */
 abstract class abstract_data_source implements data_source_interface, \templatable {
-
     /**
      * @var \context
      */
@@ -126,7 +125,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return string
      * @throws coding_exception
      */
-    public static function get_name_from_class($fullclassname, $help=false) {
+    public static function get_name_from_class($fullclassname, $help = false) {
         $component = explode('\\', $fullclassname)[0];
         $class = array_reverse(explode('\\', $fullclassname))[0];
 
@@ -146,7 +145,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         if ($help && !empty($helpid)) {
-            return ($stringmanager->string_exists($helpid['name'].'_help', $helpid['component'])) ? $helpid : [];
+            return ($stringmanager->string_exists($helpid['name'] . '_help', $helpid['component'])) ? $helpid : [];
         }
 
         return ($help) ? $helpid : $name;
@@ -182,7 +181,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
         if ($this->paginator == null) {
             $this->paginator = new paginator(function () {
-                $count = $this->get_query()->count();
+                $count = $this->get_query(true)->count($this->count_by_uniqueid());
                 if ($maxlimit = $this->get_max_limit()) {
                     return $maxlimit < $count ? $maxlimit : $count;
                 }
@@ -196,18 +195,29 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Get fully built query for execution.
      *
+     * @param bool $count
      * @return builder
      */
-    final public function get_query(): builder {
-        if (is_null($this->query)) {
-            $this->query = $this->get_query_template();
+    final public function get_query($count = false): builder {
+        global $DB;
+
+        if (is_null($this->query) || $count) {
+            $visiblefields = [];
+            $fields = $this->get_preferences('available_fields') ?? [];
+            foreach ($fields as $fieldname => $preferences) {
+                if (isset($preferences['visible']) && $preferences['visible']) {
+                    $visiblefields[] = $fieldname;
+                }
+            }
+
+            $this->query = $count ? $this->get_count_query_template() : $this->get_query_template();
 
             if (count($this->get_available_fields()) == 0) {
                 throw new \moodle_exception('Cannot build empty query in data source.');
             }
 
             if ($this->get_filter_collection() && $this->get_filter_collection()->has_filters()) {
-                list ($filtersql, $filterparams) = $this->get_filter_collection()->get_sql_and_params();
+                 [$filtersql, $filterparams] = $this->get_filter_collection()->get_sql_and_params();
                 $this->query->where_raw($filtersql[0], $filterparams);
             }
 
@@ -215,6 +225,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             foreach ($fields as $field) {
                 if (is_null($field->get_select())) {
+                    continue;
+                }
+
+                // Dont include the selects for the fields, which is have join and not visible.
+                if ($field->get_field_join_sql() && !in_array($field->get_alias(), $visiblefields) && !$field->is_force_join()) {
                     continue;
                 }
 
@@ -232,13 +247,43 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $identifierselects = [];
             foreach ($this->get_available_fields() as $field) {
                 if ($field->has_attribute(identifier_attribute::class)) {
-                    $identifierselects[] = $field->get_select();
+                    $identifierselects[] = "COALESCE(" . $field->get_select() . ", '0')";
+                }
+
+                // Include the custom join for fields.
+                $fjoin = $field->get_field_join_sql();
+                if ($fjoin && (in_array($field->get_alias(), $visiblefields) || $field->is_force_join())) {
+                    $this->query->join_raw($fjoin, []);
                 }
             }
-            global $DB;
+
             $concat = $DB->sql_concat_join("'-'", $identifierselects);
+
             if (count($identifierselects) > 1) {
+                // Quick FIX - DASH-1128
+                // In Some cases the still the same unique id is generated even with multiple identifiers.
+                // Add Distinct to ensure uniqueness. Still need to Include better way to generate unique ids.
+                // TO avoid the distinct for high volume data sets performance issues.
+                $concat = !$this->supports_ajax_pagination() ? 'DISTINCT ' . $concat : $concat;
                 $this->query->select($concat, 'unique_id');
+            }
+
+            // Include joins for tables.
+            foreach ($this->get_tables() as $table) {
+                $sqlcte = $table->get_sql_cte();
+                if (!empty($sqlcte)) {
+                    $this->query->set_sql_cte($sqlcte);
+                }
+
+                $additionaljoins = $table->get_additional_joins();
+
+                if (empty($additionaljoins)) {
+                    continue;
+                }
+
+                foreach ($additionaljoins as $additionaljoin) {
+                    $this->query->join_raw($additionaljoin);
+                }
             }
 
             if ($this->get_layout()->supports_pagination()) {
@@ -271,6 +316,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                     $this->query->orderby($this->get_field($field)->get_sort_select(), $direction);
                 }
             }
+        }
+
+        if ($count) {
+            $query = clone $this->query;
+            $this->query = null; // Reset query so it is rebuilt next time.
+            return $query;
         }
 
         return $this->query;
@@ -375,6 +426,21 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
+     * Set the intital data to the datasource for pagination.
+     */
+    final public function set_data_pagination() {
+
+        if (is_null($this->data)) {
+            // If the block has no preferences do not query any data.
+            if (empty($this->get_all_preferences())) {
+                return block_dash_get_data_collection();
+            }
+
+            $this->before_data();
+        }
+    }
+
+    /**
      * Modify objects after data is retrieved.
      *
      * @param data_collection_interface $datacollection
@@ -446,8 +512,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if ($form->get_tab() == preferences_form::TAB_GENERAL) {
             $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
 
-            $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
-                layout_factory::get_layout_form_options());
+            $mform->addElement(
+                'select',
+                'config_preferences[layout]',
+                get_string('layout', 'block_dash'),
+                layout_factory::get_layout_form_options()
+            );
             $mform->setType('config_preferences[layout]', PARAM_TEXT);
         }
 
@@ -455,7 +525,8 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $layout->build_preferences_form($form, $mform);
         }
 
-        if ($form->get_tab() == preferences_form::TAB_FIELDS) {
+        if ($form->get_tab() == preferences_form::TAB_GENERAL && !$this->is_widget()) {
+            // Sort by, sort direction, limit and per-page are shown on the Layout tab.
             $mform->addElement('html', '<hr>');
 
             $sortablefields = [];
@@ -465,13 +536,20 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 }
             }
 
-            $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
-                $sortablefields);
+            $mform->addElement(
+                'select',
+                'config_preferences[default_sort]',
+                get_string('defaultsortfield', 'block_dash'),
+                $sortablefields
+            );
             $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
             $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
 
-            $mform->addElement('select', 'config_preferences[default_sort_direction]',
-                get_string('defaultsortdirection', 'block_dash'), [ 'asc' => 'ASC', 'desc' => 'DESC']
+            $mform->addElement(
+                'select',
+                'config_preferences[default_sort_direction]',
+                get_string('defaultsortdirection', 'block_dash'),
+                [ 'asc' => 'ASC', 'desc' => 'DESC']
             );
             $mform->setType('config_preferences[default_sort_direction]', PARAM_TEXT);
 
@@ -589,10 +667,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function get_sorted_fields() {
         if (is_null($this->sortedfields)) {
-            $fields = $this->get_available_fields();;
+            $fields = $this->get_available_fields();
+            ;
 
             if ($this->get_layout()->supports_field_visibility()) {
-
                 $sortedfields = [];
 
                 // First add the identifiers, in order, so they always come first in the query.
@@ -620,7 +698,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
                     $fields = $sortedfields;
                 }
-
             }
 
             $this->sortedfields = array_values($fields);
@@ -719,4 +796,21 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         return false;
     }
 
+    /**
+     * Count a data record by uniqueid.
+     *
+     * @return boolean
+     */
+    public function count_by_uniqueid() {
+        return false;
+    }
+
+    /**
+     * Load the pagination via ajax.
+     *
+     * For the large data sets, it is better to load the pagination via ajax.
+     */
+    public function supports_ajax_pagination() {
+        return false;
+    }
 }

@@ -29,6 +29,7 @@ use block_dash\local\configuration\configuration;
 use block_dash\output\query_debug;
 use block_dash\output\renderer;
 use html_writer;
+use moodle_exception;
 
 /**
  * Helper class for creating block instance content.
@@ -36,7 +37,6 @@ use html_writer;
  * @package block_dash
  */
 class block_builder {
-
     /**
      * @var configuration_interface
      */
@@ -78,31 +78,11 @@ class block_builder {
         if ($this->blockinstance->page->course->id != SITEID) {
             $format = course_get_format($this->blockinstance->page->course->id);
             $course = $format->get_course();
-            if (isset($this->blockinstance->config->data_source_idnumber) && $this->blockinstance->page->user_is_editing() &&
-                $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype') {
+            if (
+                isset($this->blockinstance->config->data_source_idnumber) && $this->blockinstance->page->user_is_editing() &&
+                $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype'
+            ) {
                 return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Confirm the block is configured to display only for the section.
-     *
-     * @return bool
-     */
-    public function is_section_expand_content_addon() {
-        if ($this->is_collapsible_content_addon()) {
-            $currentsection = optional_param('section', 0, PARAM_INT);
-            if (isset($this->blockinstance->config->preferences)) {
-                $preferneces = $this->blockinstance->config->preferences;
-                if (isset($preferneces['filters'])) {
-                    $restrictedsections = isset($preferneces['filters']['sectiondisplay']['sections']) ?
-                        $preferneces['filters']['sectiondisplay']['sections'] : [];
-                    if (in_array((int)$currentsection, $restrictedsections)) {
-                        return true;
-                    }
-                }
             }
         }
         return false;
@@ -134,7 +114,6 @@ class block_builder {
             'pagelayout' => $this->blockinstance->page->pagelayout,
             'pagecontext' => $this->blockinstance->page->context->id,
             'collapseaction' => $this->is_collapsible_content_addon(),
-            'showcollapseblock' => $this->is_section_expand_content_addon(),
         ];
 
         if ($this->configuration->is_fully_configured()) {
@@ -157,15 +136,23 @@ class block_builder {
             $data += [
                 'preloaded' => $preload,
                 'editing' => $editing,
+                'sortirdirections' => $bb->get_configuration()->get_data_source()->get_sorting(),
             ];
+
             if (isset($this->blockinstance->config->header_content)) {
-                $data['header_content'] = format_text($this->blockinstance->config->header_content['text'],
-                        $this->blockinstance->config->header_content['format'], ['noclean' => true]);
+                $data['header_content'] = format_text(
+                    $this->blockinstance->config->header_content['text'],
+                    $this->blockinstance->config->header_content['format'],
+                    ['noclean' => true]
+                );
             }
 
             if (isset($this->blockinstance->config->footer_content)) {
-                $data['footer_content'] = format_text($this->blockinstance->config->footer_content['text'],
-                    $this->blockinstance->config->footer_content['format'], ['noclean' => true]);
+                $data['footer_content'] = format_text(
+                    $this->blockinstance->config->footer_content['text'],
+                    $this->blockinstance->config->footer_content['format'],
+                    ['noclean' => true]
+                );
             }
 
             $source->update_data_before_render($data);
@@ -181,14 +168,17 @@ class block_builder {
             // Ignore the phplint due to block class not allowed to include the PAGE global variable.
             if ($this->blockinstance->page->user_is_editing()) {
                 // @codingStandardsIgnoreEnd
-                require_once($CFG->dirroot.'/blocks/edit_form.php');
-                require_once($CFG->dirroot.'/blocks/dash/edit_form.php');
+                require_once($CFG->dirroot . '/blocks/edit_form.php');
+                require_once($CFG->dirroot . '/blocks/dash/edit_form.php');
 
-                $form = new \block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
+                $form = new \block_dash\form\block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
 
                 $desc = html_writer::tag('p', get_string('choosefeature', 'block_dash'));
-                $data['preloaded'] = html_writer::tag('div',
-                    $desc.$form->render(), ['class' => 'dash-configuration-form hide']);
+                $data['preloaded'] = html_writer::tag(
+                    'div',
+                    $desc . $form->render(),
+                    ['class' => 'dash-configuration-form hide']
+                );
                 $text .= $OUTPUT->render_from_template('block_dash/block', $data);
             } else {
                 $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
@@ -211,5 +201,4 @@ class block_builder {
     public static function create(\block_base $blockinstance) {
         return new block_builder($blockinstance);
     }
-
 }

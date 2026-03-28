@@ -36,15 +36,14 @@ use block_dash\local\dash_framework\query_builder\where;
  * @group bdecent
  * @group query_builder_test
  */
-class framework_query_builder_test extends \advanced_testcase {
-
+final class framework_query_builder_test extends \advanced_testcase {
     /**
      * Test for where() to ensure that the where conditions are correctly applied.
      *
      * @covers ::where
      * @return void
      */
-    public function test_where() {
+    public function test_where(): void {
         $this->resetAfterTest();
 
         $category = $this->getDataGenerator()->create_category();
@@ -97,7 +96,7 @@ class framework_query_builder_test extends \advanced_testcase {
      * @covers ::where_in_query
      * @return void
      */
-    public function test_where_in_query() {
+    public function test_where_in_query(): void {
         $this->resetAfterTest();
 
         $course1 = $this->getDataGenerator()->create_course([
@@ -140,7 +139,7 @@ class framework_query_builder_test extends \advanced_testcase {
      * @covers ::limits
      * @return void
      */
-    public function test_limits() {
+    public function test_limits(): void {
         $this->resetAfterTest();
 
         $users = [];
@@ -168,7 +167,7 @@ class framework_query_builder_test extends \advanced_testcase {
      * @covers ::orderby
      * @return void
      */
-    public function test_orderby() {
+    public function test_orderby(): void {
         $this->resetAfterTest();
 
         $courses = [];
@@ -201,7 +200,7 @@ class framework_query_builder_test extends \advanced_testcase {
      * @covers ::joins
      * @return void
      */
-    public function test_joins() {
+    public function test_joins(): void {
         $this->resetAfterTest();
 
         $category = $this->getDataGenerator()->create_category();

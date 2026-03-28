@@ -27,16 +27,15 @@ defined('MOODLE_INTERNAL') || die();
 $functions = [
     'block_dash_get_block_content' => [
         'classname'     => 'block_dash\external',
-        'classpath'     => '',
         'methodname'    => 'get_block_content',
         'description'   => 'Get rendered block content',
         'type'          => 'read',
         'ajax'          => true,
         'loginrequired' => false,
     ],
+
     'block_dash_submit_preferences_form' => [
         'classname'     => 'block_dash\external',
-        'classpath'     => '',
         'methodname'    => 'submit_preferences_form',
         'description'   => 'Handle preferences form submission.',
         'ajax'          => true,
@@ -74,5 +73,14 @@ $functions = [
        'description' => 'Generate a course backup file and return a link.',
        'type' => 'read',
        'ajax'        => true,
+    ],
+
+    'block_dash_get_block_pagination' => [
+        'classname'     => 'block_dash\external',
+        'methodname'    => 'get_block_pagination',
+        'description'   => 'Get rendered block pagination',
+        'type'          => 'read',
+        'ajax'          => true,
+        'loginrequired' => false,
     ],
 ];

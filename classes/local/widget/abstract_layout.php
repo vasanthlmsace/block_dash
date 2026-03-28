@@ -31,8 +31,7 @@ use block_dash\local\paginator;
 /**
  * widget layout definitions.
  */
-abstract class abstract_layout extends \block_dash\local\layout\abstract_layout  implements layout_interface, \templatable {
-
+abstract class abstract_layout extends \block_dash\local\layout\abstract_layout implements layout_interface, \templatable {
     /**
      * Get data for layout mustache template.
      *
@@ -49,7 +48,7 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
             'error' => '',
             'paginator' => '',
             'data' => null,
-            'uniqueid' => uniqid(),
+            'uniqueid' => $this->get_data_source()->get_block_instance()->instance->id,
             'is_totara' => block_dash_is_totara(),
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
             'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
@@ -61,7 +60,6 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
         if (!empty($this->get_data_source()->get_all_preferences())) {
             try {
                 $templatedata['data'] = $this->get_data_source()->get_widget_data();
-
             } catch (\Exception $e) {
                 $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
                 if (is_siteadmin()) {

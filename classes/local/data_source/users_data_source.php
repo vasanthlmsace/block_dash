@@ -50,7 +50,6 @@ use context;
  * @package block_dash
  */
 class users_data_source extends abstract_data_source {
-
     /**
      * Constructor.
      *
@@ -130,18 +129,34 @@ class users_data_source extends abstract_data_source {
 
         $filtercollection->add_filter(new group_filter('group', 'gm100.groupid'));
 
-        $filtercollection->add_filter(new user_field_filter('u_department', 'u.department', 'department',
-            get_string('department')));
-        $filtercollection->add_filter(new user_field_filter('u_institution', 'u.institution', 'institution',
-            get_string('institution')));
+        $filtercollection->add_filter(new user_field_filter(
+            'u_department',
+            'u.department',
+            'department',
+            get_string('department')
+        ));
+        $filtercollection->add_filter(new user_field_filter(
+            'u_institution',
+            'u.institution',
+            'institution',
+            get_string('institution')
+        ));
 
-        $filter = new date_filter('u_lastlogin', 'u.lastlogin', date_filter::DATE_FUNCTION_FLOOR,
-            get_string('lastlogin'));
+        $filter = new date_filter(
+            'u_lastlogin',
+            'u.lastlogin',
+            date_filter::DATE_FUNCTION_FLOOR,
+            get_string('lastlogin')
+        );
         $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
         $filtercollection->add_filter($filter);
 
-        $filter = new date_filter('u_firstaccess', 'u.firstaccess', date_filter::DATE_FUNCTION_FLOOR,
-            get_string('firstaccess'));
+        $filter = new date_filter(
+            'u_firstaccess',
+            'u.firstaccess',
+            date_filter::DATE_FUNCTION_FLOOR,
+            get_string('firstaccess')
+        );
         $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
         $filtercollection->add_filter($filter);
 
@@ -151,7 +166,7 @@ class users_data_source extends abstract_data_source {
         $filtercollection->add_filter(new current_course_condition('current_course', 'c.id'));
 
         if (block_dash_has_pro()) {
-            $filtercollection->add_filter(new \local_dash\data_grid\filter\parent_role_condition('parentrole', 'u.id'));
+            $filtercollection->add_filter(new \local_dash\data_grid\filter\relations_role_condition('parentrole', 'u.id'));
             $filtercollection->add_filter(new \local_dash\data_grid\filter\cohort_condition('cohort', 'u.id'));
             $filtercollection->add_filter(new \local_dash\data_grid\filter\users_mycohort_condition('users_mycohort', 'u.id'));
         }
@@ -164,8 +179,12 @@ class users_data_source extends abstract_data_source {
                     $definitions[] = new bool_filter($alias, $select, $field->name);
                     break;
                 case 'datetime':
-                    $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
-                            $field->name));
+                    $filtercollection->add_filter(new date_filter(
+                        $alias,
+                        $select,
+                        date_filter::DATE_FUNCTION_FLOOR,
+                        $field->name
+                    ));
                     break;
                 case 'textarea':
                     break;
@@ -188,10 +207,62 @@ class users_data_source extends abstract_data_source {
      */
     public function set_default_preferences(&$data) {
         $configpreferences = $data['config_preferences'];
+
+        // Grid/Table and Accordion layout defaults (available_fields visibility).
         $configpreferences['available_fields']['u_firstname']['visible'] = true;
         $configpreferences['available_fields']['u_lastname']['visible'] = true;
         $configpreferences['available_fields']['u_email']['visible'] = true;
         $configpreferences['available_fields']['u_lastlogin']['visible'] = true;
+
+        // Cards layout defaults.
+        if (empty($configpreferences['headingfield'])) {
+            $configpreferences['headingfield'] = 'u_fullname';
+        }
+        if (empty($configpreferences['subheadingfield'])) {
+            $configpreferences['subheadingfield'] = 'u_email';
+        }
+        if (empty($configpreferences['bodyfield'])) {
+            $configpreferences['bodyfield'] = 'u_department';
+        }
+        if (empty($configpreferences['imageurlfield'])) {
+            $configpreferences['imageurlfield'] = 'u_picture_url';
+        }
+        if (empty($configpreferences['footerfield'])) {
+            $configpreferences['footerfield'] = 'u_lastlogin';
+        }
+
+        // Timeline layout defaults.
+        if (empty($configpreferences['iconfield'])) {
+            $configpreferences['iconfield'] = 'u_picture';
+        }
+
+        // One stat layout defaults.
+        if (empty($configpreferences['stat_field_definition'])) {
+            $configpreferences['stat_field_definition'] = 'u_id';
+        }
+
+        // Accordion layout defaults.
+        if (empty($configpreferences['groupby_field_definition'])) {
+            $configpreferences['groupby_field_definition'] = 'u_fullname';
+        }
+        if (empty($configpreferences['group_label_field_definition'])) {
+            $configpreferences['group_label_field_definition'] = 'u_fullname';
+        }
+
+        // Accordion2 layout defaults (card-based accordion with field mapping).
+        if (empty($configpreferences['field1'])) {
+            $configpreferences['field1'] = 'u_fullname';
+        }
+        if (empty($configpreferences['field2'])) {
+            $configpreferences['field2'] = 'u_email';
+        }
+        if (empty($configpreferences['field3'])) {
+            $configpreferences['field3'] = 'u_department';
+        }
+        if (empty($configpreferences['field4'])) {
+            $configpreferences['field4'] = 'u_lastlogin';
+        }
+
         $data['config_preferences'] = $configpreferences;
     }
 }

@@ -36,7 +36,6 @@ use block_dash\local\layout\layout_interface;
  * @package block_dash
  */
 interface data_source_interface {
-
     /**
      * Get human readable name of data source.
      *
@@ -69,7 +68,6 @@ interface data_source_interface {
      * @param data_collection_interface $datacollection
      */
     public function after_data(data_collection_interface $datacollection);
-
 
     /**
      * Explicitly set layout.

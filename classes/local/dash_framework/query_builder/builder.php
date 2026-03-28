@@ -33,83 +33,101 @@ use dml_exception;
  * @package block_dash
  */
 class builder {
+    /**
+     * @var string
+     */
+    protected $table;
 
     /**
      * @var string
      */
-    private $table;
-
-    /**
-     * @var string
-     */
-    private $tablealias;
+    protected $tablealias;
 
     /**
      * @var string[]
      */
-    private $selects = [];
+    protected $selects = [];
 
     /**
      * @var array
      */
-    private $wheres = [];
+    protected $wheres = [];
 
     /**
      * @var array
      */
-    private $rawwhere;
+    protected $rawwhere;
 
     /**
      * @var array
      */
-    private $rawwhereparameters = [];
+    protected $rawwhereparameters = [];
 
     /**
      * @var int Return a subset of records, starting at this point (optional).
      */
-    private $limitfrom = 0;
+    protected $limitfrom = 0;
 
     /**
      * @var int Return a subset comprising this many records in total (optional, required if $limitfrom is set).
      */
-    private $limitnum = 0;
+    protected $limitnum = 0;
 
     /**
      * @var array ['field1' => 'ASC', 'field2' => 'DESC', ...]
      */
-    private $orderby = [];
+    protected $orderby = [];
 
     /**
      * @var join[]
      */
-    private $joins = [];
+    protected $joins = [];
 
     /**
      * @var array ['field1', 'field2', ...]
      */
-    private $groupby = [];
+    protected $groupby = [];
 
     /**
      * Extra conditions to be added in WHERE clause.
      *
      * @var array
      */
-    private $rawconditions = [];
+    protected $rawconditions = [];
 
     /**
      * @var array
      */
-    private $rawconditionparameters = [];
+    protected $rawconditionparameters = [];
 
     /**
      * @var array
      */
-    private $rawjoins = [];
+    protected $rawjoins = [];
 
     /**
      * @var array
      */
-    private $rawjoinsparameters = [];
+    protected $rawjoinsparameters = [];
+
+    /**
+     * @var int|null
+     */
+    protected static $lastcount = null;
+
+    /**
+     * Last count SQL and parameters.
+     *
+     * @var array
+     */
+    protected static $lastcountcachekey = null;
+
+    /**
+     * Whether to put order by before joins.
+     *
+     * @var array
+     */
+    protected $sqlctelist = [];
 
     /**
      * Fields to retried from sql query. Sql select field.
@@ -150,6 +168,17 @@ class builder {
     }
 
     /**
+     * Set whether to put order by before joins.
+     *
+     * @param array $fromsql
+     * @return $this
+     */
+    public function set_sql_cte($fromsql) {
+        $this->sqlctelist = array_merge($this->sqlctelist, $fromsql);
+        return $this;
+    }
+
+    /**
      * Join table in query.
      *
      * @param string $table Table name of joined table.
@@ -160,8 +189,14 @@ class builder {
      * @param array $extraparameters Extra parameters used in join SQL.
      * @return $this
      */
-    public function join(string $table, string $alias, string $jointablefield, string $origintablefield,
-                         $jointype = join::TYPE_INNER_JOIN, array $extraparameters = []): builder {
+    public function join(
+        string $table,
+        string $alias,
+        string $jointablefield,
+        string $origintablefield,
+        $jointype = join::TYPE_INNER_JOIN,
+        array $extraparameters = []
+    ): builder {
         $this->joins[] = new join($table, $alias, $jointablefield, $origintablefield, $jointype, $extraparameters);
         return $this;
     }
@@ -169,12 +204,11 @@ class builder {
     /**
      * Join raw in query.
      *
-     * @param string $joinsql SQL join type. See self::TYPE_*
-     * @param array $parameters Extra parameters used in join SQL.
+     * @param join $join
      * @return $this
      */
-    public function join_raw(string $joinsql, array $parameters = []): builder {
-        $this->rawjoins[] = [$joinsql, $parameters];
+    public function join_raw(join $join): builder {
+        $this->rawjoins[] = $join;
         return $this;
     }
 
@@ -213,8 +247,12 @@ class builder {
      *
      * @return where
      */
-    public function where(string $selector, array $values, string $operator = where::OPERATOR_EQUAL,
-        string $conjunctive = where::CONJUNCTIVE_OPERATOR_AND): where {
+    public function where(
+        string $selector,
+        array $values,
+        string $operator = where::OPERATOR_EQUAL,
+        string $conjunctive = where::CONJUNCTIVE_OPERATOR_AND
+    ): where {
         $where = new where($selector, $values, $operator, $conjunctive);
         $this->wheres[] = $where;
         return $where;
@@ -355,6 +393,14 @@ class builder {
      */
     protected function build_select(): string {
         $selects = [];
+
+        // Move the unique id to the first position.
+        if (array_key_exists('unique_id', $this->selects)) {
+            $uniqueid = $this->selects['unique_id'];
+            unset($this->selects['unique_id']);
+            $this->selects = array_merge(['unique_id' => $uniqueid], $this->selects);
+        }
+
         foreach ($this->selects as $alias => $select) {
             $selects[] = $select . ' AS ' . $alias;
         }
@@ -397,7 +443,19 @@ class builder {
      * @throws exception\invalid_operator_exception
      */
     final public function get_sql_and_params(): array {
-        $sql = 'SELECT DISTINCT ' . $this->build_select() . ' FROM {' . $this->table . '} ' . $this->tablealias;
+        global $DB;
+
+        $sql = '';
+
+        if (!empty($this->sqlctelist)) {
+            foreach ($this->sqlctelist as $viewname => $fromsql) {
+                $sql .= $fromsql . ' ';
+            }
+        }
+
+        $unique = array_key_exists('unique_id', $this->selects) ? '' : 'DISTINCT';
+        $sql .= 'SELECT ' . $unique . ' ' . $this->build_select() . ' FROM {' . $this->table . '} ' . $this->tablealias;
+
         $params = [];
 
         foreach ($this->joins as $join) {
@@ -407,7 +465,7 @@ class builder {
         }
 
         foreach ($this->rawjoins as $join) {
-            [$jsql, $jparams] = $join;
+            [$jsql, $jparams] = $join->get_sql_and_params();
             $sql .= ' ' . $jsql . ' ';
             $params = array_merge($params, $jparams);
         }
@@ -438,7 +496,7 @@ class builder {
     /**
      * Execute query and return results.
      *
-     * @return array
+     * @return moodle_recordset
      * @throws dml_exception
      * @throws exception\invalid_operator_exception
      */
@@ -446,24 +504,49 @@ class builder {
         global $DB;
 
         [$sql, $params] = $this->get_sql_and_params();
-
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
     }
 
     /**
      * Get number of records this query will return.
      *
+     * @param int $isunique Counted by unique id.
      * @return int
      * @throws dml_exception
      * @throws exception\invalid_operator_exception
      */
-    public function count(): int {
+    public function count($isunique): int {
+        global $DB;
+
         $builder = clone $this;
-        $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
-        $builder->limitfrom(0)->limitnum(0)->remove_orderby();
-        if (!$records = $builder->query()) {
-            return 0;
+
+        if ($isunique) {
+            $builder->set_selects(['count' => 'COUNT(*)']);
+        } else {
+            $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
         }
-        return array_values($records)[0]->count;
+
+        $builder->limitfrom(0)->limitnum(0)->remove_orderby();
+        [$sql, $params] = $builder->get_sql_and_params();
+
+        $countcachekey = md5($sql . serialize($params));
+
+        if (self::$lastcount !== null) {
+            // If count is already calculated, return it.
+            if (self::$lastcountcachekey == $countcachekey) {
+                return self::$lastcount;
+            }
+        }
+
+        self::$lastcountcachekey = $countcachekey;
+
+        // Instead of count_records_sql we use get_field_sql to avoid non negative
+        // count exception due do the groupby in the datasource.
+        $count = $DB->get_field_sql($sql, $params);
+        $count = $count ?: 0;
+
+        self::$lastcount = $count;
+
+        return $count;
     }
 }

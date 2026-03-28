@@ -32,7 +32,6 @@ use MoodleQuickForm;
  * @package block_dash
  */
 class filter_collection implements filter_collection_interface {
-
     /**
      * @var filter_interface[] Every filter that belongs to this collection.
      */
@@ -254,7 +253,7 @@ class filter_collection implements filter_collection_interface {
         $havingsql = [];
         $wheresql = [];
         foreach ($this->get_filters_with_values() as $filter) {
-            list($filtersql, $filterparams) = $filter->get_sql_and_params();
+            [$filtersql, $filterparams] = $filter->get_sql_and_params();
             // Ignore filters with no values.
             if (empty($filterparams)) {
                 continue;
@@ -288,7 +287,7 @@ class filter_collection implements filter_collection_interface {
      * @throws \Exception
      * @return string|null
      */
-    public function create_form_elements($elementnameprefix = '', $layout='') {
+    public function create_form_elements($elementnameprefix = '', $layout = '') {
         if (!$this->has_filters()) {
             return null;
         }
@@ -373,7 +372,8 @@ class filter_collection implements filter_collection_interface {
         moodleform $form,
         MoodleQuickForm $mform,
         string $type = 'filter',
-        $fieldnameformat = 'filters[%s]'): void {
+        $fieldnameformat = 'filters[%s]'
+    ): void {
 
         foreach ($this->get_filters() as $filter) {
             if ($type == 'filter') {

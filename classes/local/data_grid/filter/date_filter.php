@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class date_filter extends filter {
-
     /**
      * Round date up to the end of the day.
      */
@@ -142,8 +141,10 @@ class date_filter extends filter {
      * @throws \Exception
      * @return string
      */
-    public function create_form_element(filter_collection_interface $filtercollection,
-                                        $elementnameprefix = '') {
+    public function create_form_element(
+        filter_collection_interface $filtercollection,
+        $elementnameprefix = ''
+    ) {
         global $OUTPUT;
 
         $name = $elementnameprefix . $this->get_name();

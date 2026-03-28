@@ -33,6 +33,7 @@ use block_dash\local\data_source\form\preferences_form;
 use block_dash\output\renderer;
 use block_dash\local\configuration\configuration;
 use block_dash\local\data_source\data_source_factory;
+use block_dash\local\paginator;
 use external_api;
 
 /**
@@ -44,6 +45,74 @@ use external_api;
  */
 class external extends external_api {
     // Region get_block_content.
+
+    /**
+     * Returns description of get_database_schema_structure() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function get_block_pagination_parameters() {
+        return new \external_function_parameters([
+            'block_instance_id' => new \external_value(PARAM_INT),
+            'filter_form_data' => new \external_value(PARAM_RAW),
+            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
+            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
+            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
+            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
+            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
+        ]);
+    }
+
+    /**
+     * Get block pagination.
+     *
+     * @param int $blockinstanceid
+     * @param string $filterformdata
+     * @param int $page
+     * @param string $sortfield
+     * @param string $sortdirection
+     * @param string $pagelayout
+     * @param int $pagecontext
+     *
+     * @return array
+     * @throws \coding_exception
+     * @throws \invalid_parameter_exception
+     * @throws \moodle_exception
+     * @throws \restricted_context_exception
+     */
+    public static function get_block_pagination(
+        $blockinstanceid,
+        $filterformdata,
+        $page,
+        $sortfield,
+        $sortdirection,
+        $pagelayout = '',
+        $pagecontext = 0
+    ) {
+        global $PAGE, $DB, $OUTPUT, $SITE;
+
+        return self::get_block_content(
+            $blockinstanceid,
+            $filterformdata,
+            $page,
+            $sortfield,
+            $sortdirection,
+            $pagelayout,
+            $pagecontext,
+            true
+        );
+    }
+
+    /**
+     * Returns description of get_block_content() result value.
+     *
+     * @return \external_description
+     */
+    public static function get_block_pagination_returns() {
+        return new \external_single_structure([
+            'html' => new \external_value(PARAM_RAW),
+        ]);
+    }
 
     /**
      * Returns description of get_database_schema_structure() parameters.
@@ -72,6 +141,7 @@ class external extends external_api {
      * @param string $sortdirection
      * @param string $pagelayout
      * @param int $pagecontext
+     * @param bool $returnpagination If true, only return the pagination html.
      *
      * @return array
      * @throws \coding_exception
@@ -79,8 +149,16 @@ class external extends external_api {
      * @throws \moodle_exception
      * @throws \restricted_context_exception
      */
-    public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
-        $pagelayout = '', $pagecontext = 0) {
+    public static function get_block_content(
+        $blockinstanceid,
+        $filterformdata,
+        $page,
+        $sortfield,
+        $sortdirection,
+        $pagelayout = '',
+        $pagecontext = 0,
+        $returnpagination = false
+    ) {
         global $PAGE, $DB, $OUTPUT, $SITE;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
@@ -104,8 +182,11 @@ class external extends external_api {
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
         if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
-            if ($dashboard = \dashaddon_dashboard\model\dashboard::get_record(
-                    ['shortname' => $block->instance->defaultregion])) {
+            if (
+                $dashboard = \dashaddon_dashboard\model\dashboard::get_record(
+                    ['shortname' => $block->instance->defaultregion]
+                )
+            ) {
                 if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
                     $public = true;
                 }
@@ -114,7 +195,7 @@ class external extends external_api {
 
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.
-            list($unused, $course, $cm) = get_context_info_array($block->context->id);
+            [$unused, $course, $cm] = get_context_info_array($block->context->id);
             if (isset($course->id) && $course->id == $SITE->id && !isloggedin()) {
                 require_course_login($course);
                 $coursecontext = \context_course::instance($course->id);
@@ -142,27 +223,38 @@ class external extends external_api {
                     ->apply_filter($filter['name'], $filter['value']);
             }
 
+            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
+
             $datasource = $bb->get_configuration()->get_data_source();
 
-            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
-            if (get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
-                    && $datasource->supports_currentscript()) {
-                // Cloned from moodle lib\external\externalib.php 422.
-                // Hack alert: Set a default URL to stop the annoying debug.
-                $PAGE->set_url('/');
-                // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
-                $OUTPUT->header();
-
-                $PAGE->start_collecting_javascript_requirements();
-
-                $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
-
-                $javascript = $PAGE->requires->get_end_code();
-            } else {
-                $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
-                $javascript = '';
+            // ... Only need to send the pagination html.
+            if ($returnpagination) {
+                $datasource->set_data_pagination();
+                return ['html' => $OUTPUT->render_from_template(paginator::TEMPLATE, $datasource
+                    ->get_paginator()->export_for_template($OUTPUT))];
             }
-            return ['html' => $datarendered, 'scripts' => $javascript];
+
+            // Cloned from moodle lib\external\externalib.php 422.
+            // Hack alert: Set a default URL to stop the annoying debug.
+            $PAGE->set_url('/');
+            // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
+            $OUTPUT->header();
+
+            $PAGE->start_collecting_javascript_requirements();
+
+            $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
+
+            $javascript = $PAGE->requires->get_end_code();
+            $layout = '';
+            if (!empty($block->config->preferences['layout'])) {
+                $layout = str_replace('\\', '-', $block->config->preferences['layout']);
+            }
+
+            return [
+                'html' => $datarendered,
+                'scripts' => $javascript,
+                'layoutclass' => $layout
+            ];
         }
 
         return ['html' => 'Error', 'scripts' => ''];
@@ -177,10 +269,11 @@ class external extends external_api {
         return new \external_single_structure([
             'html' => new \external_value(PARAM_RAW),
             'scripts' => new \external_value(PARAM_RAW),
+            'layoutclass' => new \external_value(PARAM_TEXT, 'Layout class')
         ]);
     }
 
-    // Endregion.
+// Endregion.
 
     // Region submit_preferences_form.
 
@@ -227,7 +320,7 @@ class external extends external_api {
         if (!empty($block->config)) {
             $config = clone($block->config);
         } else {
-            $config = new \stdClass;
+            $config = new \stdClass();
         }
 
         if (!isset($config->preferences)) {
@@ -240,8 +333,10 @@ class external extends external_api {
 
         if (isset($data['config_data_source_idnumber'])) {
             $config->data_source_idnumber = $data['config_data_source_idnumber'];
-            $datasource = data_source_factory::build_data_source($config->data_source_idnumber,
-                $context);
+            $datasource = data_source_factory::build_data_source(
+                $config->data_source_idnumber,
+                $context
+            );
             if ($datasource) {
                 if (method_exists($datasource, 'set_default_preferences')) {
                     $datasource->set_default_preferences($data);

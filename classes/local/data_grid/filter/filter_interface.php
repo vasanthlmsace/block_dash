@@ -32,7 +32,6 @@ use MoodleQuickForm;
  * @package block_dash
  */
 interface filter_interface {
-
     /**
      * Filter value is required
      */
@@ -264,8 +263,10 @@ interface filter_interface {
      * @param string $elementnameprefix
      * @throws \Exception
      */
-    public function create_form_element(filter_collection_interface $filtercollection,
-                                        $elementnameprefix = '');
+    public function create_form_element(
+        filter_collection_interface $filtercollection,
+        $elementnameprefix = ''
+    );
 
     /**
      * Get option label based on value.
@@ -308,7 +309,7 @@ interface filter_interface {
      *
      * @param array $preferences
      */
-    public function set_preferences(array $preferences = null): void;
+    public function set_preferences($preferences = null): void;
 
     /**
      * Get preferences related to this filter.
@@ -324,6 +325,9 @@ interface filter_interface {
      * @param MoodleQuickForm $mform
      * @param string $fieldnameformat
      */
-    public function build_settings_form_fields(moodleform $moodleform,
-        MoodleQuickForm $mform, $fieldnameformat = 'filters[%s]'): void;
+    public function build_settings_form_fields(
+        moodleform $moodleform,
+        MoodleQuickForm $mform,
+        $fieldnameformat = 'filters[%s]'
+    ): void;
 }

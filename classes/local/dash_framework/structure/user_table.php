@@ -35,6 +35,7 @@ use block_dash\local\data_grid\field\attribute\moodle_url_attribute;
 use block_dash\local\data_grid\field\attribute\rename_group_ids_attribute;
 use block_dash\local\data_grid\field\attribute\user_image_url_attribute;
 use block_dash\local\data_grid\field\attribute\bool_attribute;
+use block_dash\local\dash_framework\query_builder\join_raw;
 use lang_string;
 use moodle_url;
 
@@ -44,7 +45,6 @@ use moodle_url;
  * @package block_dash
  */
 class user_table extends table {
-
     /**
      * Build a new table.
      */
@@ -75,8 +75,12 @@ class user_table extends table {
             new field('firstname', new lang_string('firstname'), $this),
             new field('lastname', new lang_string('lastname'), $this),
             new field('fullname', new lang_string('fullname'), $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname'])),
-            new field('fullname_linked', new lang_string('fullnamelinked', 'block_dash'),
-                $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']), [
+            new field(
+                'fullname_linked',
+                new lang_string('fullnamelinked', 'block_dash'),
+                $this,
+                $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']),
+                [
                     new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
                     new link_attribute(['label_field' => 'u_fullname_linked']),
                 ],
@@ -143,8 +147,10 @@ class user_table extends table {
         require_once("$CFG->dirroot/user/profile/lib.php");
 
         $i = 0;
+        $select = ['userid'];
         foreach (profile_get_custom_fields() as $customfield) {
             $name = 'pf_' . strtolower($customfield->shortname);
+
             $profileattributes = [];
 
             switch ($customfield->datatype) {
@@ -162,13 +168,28 @@ class user_table extends table {
                 $name,
                 new lang_string('customfield', 'block_dash', ['name' => format_string($customfield->name)]),
                 $this,
-                "(SELECT profile$i.data FROM {user_info_data} profile$i
-                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
-                $profileattributes, [], field_interface::VISIBILITY_VISIBLE , '',
+                "profile.$name$i",
+                $profileattributes,
+                [],
+                field_interface::VISIBILITY_VISIBLE,
+                '',
             );
+
+            $select[] = "MAX(CASE WHEN profile.fieldid = $customfield->id THEN profile.data END) AS $name$i";
 
             $i++;
         }
+
+        // Create one join with all profile fields.
+        $query = "SELECT " . implode(', ', $select) . " FROM {user_info_data} profile GROUP BY profile.userid";
+        // Add the profile field join to the user table.
+        $this->additionaljoins['profile'] = new join_raw(
+            $query,
+            'profile',
+            'userid',
+            'u.id',
+            join_raw::TYPE_LEFT_JOIN
+        );
 
         return $fields;
     }

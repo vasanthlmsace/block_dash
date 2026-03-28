@@ -28,12 +28,11 @@ use html_writer;
 
 defined('MOODLE_INTERNAL') || die('No direct access');
 
-require_once($CFG->dirroot.'/lib/tablelib.php');
+require_once($CFG->dirroot . '/lib/tablelib.php');
 /**
  * List of groups table.
  */
 class groups_totara extends \table_sql {
-
     /**
      * Define table field definitions and filter data
      *
@@ -79,7 +78,7 @@ class groups_totara extends \table_sql {
         ];
 
         foreach ($attrs as $key => $val) {
-            $this->set_attribute('data-table-'.$key, $val);
+            $this->set_attribute('data-table-' . $key, $val);
         }
         $this->set_attribute('data-table-dynamic', 'true');
     }
