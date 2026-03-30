@@ -606,7 +606,6 @@ abstract class abstract_layout implements layout_interface, \templatable {
 
         if (block_dash_has_pro() && $DB->get_manager()->table_exists('dashaddon_developer_layout')) {
             $layouts = $DB->get_records('dashaddon_developer_layout');
-    
             foreach ($layouts as $layout) {
                 if (in_array($layout->type, ['detailsarea', 'both'])) {
                     $options[$layout->id] = $layout->name;
