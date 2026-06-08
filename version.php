@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version detailsd:\xampp\htdocs\moodle\moodle-50\blocks\dash\lang\en\block_dash.php
  *
  * @package    block_dash
  * @copyright  2022 bdecent gmbh <https://bdecent.de>
@@ -24,9 +23,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026032603;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2021051700;        // Requires this Moodle version.
+$plugin->version   = 2026032803;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2024100700;        // Requires this Moodle version.
 $plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release = '2.8';
-$plugin->supported = [401, 500];
+$plugin->supported = [405, 501];

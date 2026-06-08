@@ -70,6 +70,11 @@ class filter_collection implements filter_collection_interface {
      */
     public function init() {
         foreach ($this->get_filters() as $filter) {
+            // Skip filters that are not used in this request to avoid loading
+            // (and then discarding) their options. See filter::should_initialise().
+            if (!$filter->should_initialise()) {
+                continue;
+            }
             $filter->init();
         }
     }
@@ -240,42 +245,6 @@ class filter_collection implements filter_collection_interface {
         }
 
         return $filters;
-    }
-
-    /**
-     * Build WHERE SQL and params from all active filters except the named one.
-     *
-     * @param string $excludefiltername Name of filter to exclude.
-     * @return array
-     */
-    public function get_filter_sql_excluding(string $excludefiltername): array {
-        $wheresql = [];
-        $params = [];
-
-        foreach ($this->get_filters() as $filter) {
-            if ($filter->get_name() === $excludefiltername) {
-                continue;
-            }
-
-            if (!$filter->has_raw_value()) {
-                continue;
-            }
-
-            $result = $filter->get_sql_and_params();
-            if (!is_array($result) || count($result) < 2) {
-                continue;
-            }
-
-            [$sql, $filterparams] = $result;
-            if (empty($sql) || empty($filterparams)) {
-                continue;
-            }
-
-            $wheresql[] = $sql;
-            $params = array_merge($params, $filterparams);
-        }
-
-        return [$wheresql, $params];
     }
 
     /**
