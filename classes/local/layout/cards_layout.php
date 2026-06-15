@@ -112,6 +112,9 @@ class cards_layout extends abstract_layout {
                 $preferences['variableWidth'] = ($preferences['variableWidth']) ? 'true' : 'false';
                 $preferences['vertical'] = ($preferences['vertical']) ? 'true' : 'false';
                 $preferences['verticalSwiping'] = ($preferences['verticalSwiping']) ? 'true' : 'false';
+                if ($preferences['vertical'] === 'true' || $preferences['verticalSwiping'] === 'true') {
+                    $preferences['fade'] = 'false';
+                }
                 $preferences['centerPadding'] = isset($preferences['centerPadding']) ?
                     intval($preferences['centerPadding']) : '';
                 $preferences['sliderclass'] = $sliderclass;
