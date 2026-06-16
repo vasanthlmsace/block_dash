@@ -93,7 +93,7 @@ class renderer extends \plugin_renderer_base {
                 $helpers['flex_icon'] = [$flexhelper, 'flex_icon'];
             }
 
-            if ($CFG->branch >= 502) { // Moodle 5.2+
+            if ($CFG->branch >= 502) { // Moodle 5.2+.
                 $this->mustache = new \core\output\mustache_engine([
                     'cache' => $cachedir,
                     'escape' => 's',
@@ -115,7 +115,6 @@ class renderer extends \plugin_renderer_base {
                     'blacklistednestedhelpers' => ['js'],
                 ]);
             }
-
         }
 
         return $this->mustache;

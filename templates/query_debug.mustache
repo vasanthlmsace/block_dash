@@ -49,12 +49,15 @@
                     type: ModalFactory.types.SAVE_CANCEL,
                     large: true
                 }, trigger).then(function(modal) {
-                    trigger.on('click', function() { modal.show(); });
+                    trigger.on('click', function() {
+                        modal.show();
+                    });
                     modal.getRoot().on(Events.shown, function() {
                         var params = JSON.stringify(trigger.data('params'), null, 2);
                         $(this).find('.modal-body').find('pre').html(params);
                     });
-                });
+                    return modal;
+                }).catch(Notification.exception);
             });
         }
 
