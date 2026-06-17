@@ -148,6 +148,33 @@ function block_dash_register_widget() {
 }
 
 /**
+ * Get preferences form tabs for skilladdon (tool_skills addon) widgets
+ *
+ * @return array array of tab constants.
+ */
+function block_dash_get_skilladdon_preferences_tabs(): array {
+    $widgettabs = [];
+
+    if (core_component::get_component_directory('skilladdon_skillprogress')) {
+        $widgettabs[\skilladdon_skillprogress\widget\skillprogress_widget::class] = [
+            preferences_form::TAB_GENERAL,
+            preferences_form::TAB_FIELDS,
+            preferences_form::TAB_CONDITIONS,
+        ];
+    }
+
+    if (core_component::get_component_directory('skilladdon_skill_levelvisuals')) {
+        $widgettabs[\skilladdon_skill_levelvisuals\widget\levelvisuals_widget::class] = [
+            preferences_form::TAB_GENERAL,
+            preferences_form::TAB_FIELDS,
+            preferences_form::TAB_CONDITIONS,
+        ];
+    }
+
+    return $widgettabs;
+}
+
+/**
  * Serve the new group form as a fragment.
  *
  * @param array $args List of named arguments for the fragment loader.
@@ -190,6 +217,11 @@ function block_dash_output_fragment_block_preferences_form($args) {
         $datasource = $configuration->get_data_source();
         if (method_exists($datasource, 'get_preferences_form_tabs')) {
             $activetabs = $datasource->get_preferences_form_tabs();
+        } else {
+            $skilladdontabs = block_dash_get_skilladdon_preferences_tabs();
+            if (isset($skilladdontabs[get_class($datasource)])) {
+                $activetabs = $skilladdontabs[get_class($datasource)];
+            }
         }
     }
 
